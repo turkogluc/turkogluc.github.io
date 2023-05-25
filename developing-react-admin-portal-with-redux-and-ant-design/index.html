@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" href="/assets/css/app.css?v=b36b0218e7" as="style" />
+    <link rel="preload" href="/assets/js/manifest.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor/content-api.min.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/app.js?v=b36b0218e7" as="script" />
+
+      <link rel="preload" href="/assets/css/post.css?v=b36b0218e7" as="style" />
+  <link rel="preload" href="/assets/js/post.js?v=b36b0218e7" as="script" />
+
+
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7");
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7#iefix") format('embedded-opentype'),
+        url("/assets/fonts/icomoon/icomoon.ttf?101fc3?v=b36b0218e7") format('truetype'),
+        url("/assets/fonts/icomoon/icomoon.woff?101fc3?v=b36b0218e7") format('woff'),
+        url("/assets/fonts/icomoon/icomoon.svg?101fc3?v=b36b0218e7#icomoon") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/app.css?v=b36b0218e7" media="screen" />
+
+      <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=b36b0218e7" media="screen" />
+
+
+
+
+    <meta name="description" content="Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, creating layout.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/amp/">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)">
+    <meta property="og:description" content="Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, Creating layout, React Routing">
+    <meta property="og:url" content="https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/10/reactjs-thumb.jpg">
+    <meta property="article:published_time" content="2020-10-18T09:30:05.000Z">
+    <meta property="article:modified_time" content="2020-10-18T10:51:51.000Z">
+    <meta property="article:tag" content="React">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)">
+    <meta name="twitter:description" content="Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, Creating layout, React Routing">
+    <meta name="twitter:url" content="https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/10/reactjs-thumb.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="React">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="960">
+    <meta property="og:image:height" content="540">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)",
+    "url": "https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/",
+    "datePublished": "2020-10-18T09:30:05.000Z",
+    "dateModified": "2020-10-18T10:51:51.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/10/reactjs-thumb.jpg",
+        "width": 960,
+        "height": 540
+    },
+    "keywords": "React",
+    "description": "Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, Creating layout, React Routing",
+    "mainEntityOfPage": "https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.32/umd/portal.min.js" data-i18n="false" data-ghost="https://turkogluc.com/" data-key="8aed1ac6d3b2be60cf4aedf769" data-api="https://turkogluc.com/ghost/api/content/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/sodo-search.min.js" data-key="8aed1ac6d3b2be60cf4aedf769" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/main.css" data-sodo-search="https://turkogluc.com/" crossorigin="anonymous"></script>
+
+    <link href="https://turkogluc.com/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=b36b0218e7"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=b36b0218e7">
+    <script defer src="/public/member-attribution.min.js?v=b36b0218e7"></script>
+    <!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/idea.min.css" integrity="sha512-jxbAYisMjIOokHq0YnYxWqTUfJRe8s1U2F1lp+se3vv0CS8floaFL3Mc3GEpG3HCG2s6lxHb3QvQdmUOT1ZzKw==" crossorigin="anonymous" />
+
+<style>
+   .l-post-content pre>code {
+    white-space:inherit
+  }
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+
+</style>
+
+<!-- prism.js -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-okaidia.min.css" />
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-tomorrow.min.css" />
+-->
+<style>
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+</style>
+
+
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+-->
+<style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+    <style>
+      :root {
+        --primary-subtle-color: var(--ghost-accent-color) !important;
+      }
+    </style>
+
+    <script>
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "https://turkogluc.com"
+      // @license-end
+    </script>
+
+  </head>
+  <body class="post-template tag-react tag-hash-import-2023-05-25-09-05">
+
+
+
+
+
+<header class="m-header with-picture js-header">
+  <div class="m-mobile-topbar" data-aos="fade-down">
+    <button class="m-icon-button in-mobile-topbar js-open-menu" aria-label="Open menu">
+      <span class="icon-menu" aria-hidden="true"></span>
+    </button>
+      <a href="https://turkogluc.com" class="m-logo in-mobile-topbar">
+        <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+      </a>
+    <button class="m-icon-button in-mobile-topbar js-open-search" aria-label="Open search">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="m-menu js-menu">
+    <button class="m-icon-button outlined as-close-menu js-close-menu" aria-label="Close menu">
+      <span class="icon-close"></span>
+    </button>
+    <div class="m-menu__main" data-aos="fade-down">
+      <div class="l-wrapper">
+        <div class="m-nav js-main-nav">
+          <nav class="m-nav__left js-main-nav-left" role="navigation" aria-label="Main menu">
+            <ul>
+                <li class="only-desktop">
+                  <a href="https://turkogluc.com" class="m-logo">
+                    <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+                  </a>
+                </li>
+
+    <li class="nav-home">
+      <a href="https://turkogluc.com/">Home</a>
+    </li>
+    <li class="nav-spring">
+      <a href="https://turkogluc.com/tag/spring/">Spring</a>
+    </li>
+    <li class="nav-kafka">
+      <a href="https://turkogluc.com/tag/apache-kafka/">Kafka</a>
+    </li>
+    <li class="nav-java">
+      <a href="https://turkogluc.com/tag/java/">Java</a>
+    </li>
+    <li class="nav-jenkins">
+      <a href="https://turkogluc.com/tag/jenkins/">Jenkins</a>
+    </li>
+    <li class="nav-react">
+      <a href="https://turkogluc.com/tag/react/">React</a>
+    </li>
+
+              <li class="submenu-option js-submenu-option">
+                <button class="m-icon-button in-menu-main more js-toggle-submenu" aria-label="Open submenu">
+                  <span class="icon-more" aria-hidden="true"></span>
+                </button>
+                <div class="m-submenu js-submenu">
+                  <div class="l-wrapper in-submenu">
+                    <section class="m-recent-articles">
+                      <h3 class="m-submenu-title in-recent-articles">Recent articles</h3>
+                          <div class="swiper js-recent-slider">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                  <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Centralized Logging and Monitoring with Elastic Stack">
+                                      Centralized Logging and Monitoring with Elastic Stack
+                                    </h3>
+                                    <span class="m-recent-article__date">a year ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/sql-window-functions/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="SQL Window Functions Introduction">
+                                      SQL Window Functions Introduction
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Server Sent Events with Spring Boot and ReactJS">
+                                      Server Sent Events with Spring Boot and ReactJS
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/java-creating-pdf-reports-with-itext/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Creating PDF Reports with iText 7 in Java">
+                                      Creating PDF Reports with iText 7 in Java
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                            </div>
+                          </div>
+                    </section>
+                    <section class="m-tags">
+                      <h3 class="m-submenu-title">Tags</h3>
+                        <ul>
+                            <li>
+                              <a href="/tag/aop/">AOP</a>
+                            </li>
+                            <li>
+                              <a href="/tag/apache-kafka/">Apache Kafka</a>
+                            </li>
+                            <li>
+                              <a href="/tag/concurrency/">Concurrency</a>
+                            </li>
+                            <li>
+                              <a href="/tag/devops/">devops</a>
+                            </li>
+                            <li>
+                              <a href="/tag/docker/">docker</a>
+                            </li>
+                            <li>
+                              <a href="/tag/elasticsearch/">Elasticsearch</a>
+                            </li>
+                            <li>
+                              <a href="/tag/event-handling/">Event Handling</a>
+                            </li>
+                            <li>
+                              <a href="/tag/java/">Java</a>
+                            </li>
+                            <li>
+                              <a href="/tag/jenkins/">Jenkins</a>
+                            </li>
+                        </ul>
+                    </section>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div class="m-nav__right">
+            <button class="m-icon-button in-menu-main js-open-search" aria-label="Open search">
+              <span class="icon-search" aria-hidden="true"></span>
+            </button>
+            <div class="m-toggle-darkmode js-tooltip" data-tippy-content="Toggle light/dark mode" tabindex="0">
+              <label for="toggle-darkmode" class="sr-only">
+                Toggle light/dark mode
+              </label>
+              <input id="toggle-darkmode" type="checkbox" class="js-toggle-darkmode">
+              <div>
+                <span class="icon-moon moon" aria-hidden="true"></span>
+                <span class="icon-sunny sun" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<main class="main-wrap">
+
+  <section class="m-hero with-picture" data-aos="fade">
+    <div class="m-hero__picture in-post">
+      <img
+        srcset="
+          /content/images/size/w300/2020/10/reactjs-thumb.jpg 300w,
+          /content/images/size/w600/2020/10/reactjs-thumb.jpg 600w,
+          /content/images/size/w1000/2020/10/reactjs-thumb.jpg 1000w,
+          /content/images/size/w2000/2020/10/reactjs-thumb.jpg 2000w
+        "
+        sizes="(max-width: 600px) 600px, (max-width: 1000px) 1000px, 2000px"
+        src="/content/images/size/w1000/2020/10/reactjs-thumb.jpg"
+        alt=""
+      />
+    </div>
+    </section>
+
+  <article>
+    <div class="l-content in-post">
+        <div class="l-wrapper in-post  js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)</h1>
+              <div class="m-heading__meta">
+                  <a href="https://turkogluc.com/tag/react/" class="m-heading__meta__tag">React</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                <span class="m-heading__meta__time">Oct 18, 2020</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text=Developing%20a%20Modern%20Admin%20Portal%20with%20React%2C%20Redux%2C%20and%20Ant%20Design%20(Part-1)&url=https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="Scroll to top">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <h2 id="getting-started">Getting Started</h2><p>In this series I would like to share a step by step guide for developing high quality admin portals with <code>React</code> and <code>Ant Design</code>. I will share reusable generic components that will fasten the ground up development. In order to focus on the certain aspects, I divided it to multiple parts.</p><p>In this part I present the steps for preparing React and necessary modules, and then, gradually show the implementation of each separate component to build up the Admin Portal. If you like to see the complete code I committed in the following public repository:</p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://github.com/turkogluc/react-admin-portal?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">turkogluc/react-admin-portal</div><div class="kg-bookmark-description">Contribute to turkogluc/react-admin-portal development by creating an account on GitHub.</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="https://github.githubassets.com/favicons/favicon.svg" alt><span class="kg-bookmark-author">GitHub</span><span class="kg-bookmark-publisher">turkogluc</span></div></div><div class="kg-bookmark-thumbnail"><img src="https://avatars3.githubusercontent.com/u/15093288?s&#x3D;400&amp;v&#x3D;4" alt></div></a></figure><p>I use the <code><a href="https://ant.design/?ref=localhost">Ant Design</a></code> as the user interface design framework as it contains a set of high quality components and ready to use demos for building rich, interactive user interfaces. The list of Ant Design react components can be found in the following link:</p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://ant.design/components/overview/?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">Components Overview - Ant Design</div><div class="kg-bookmark-description">antd provides plenty of UI components to enrich your web applications, and we will improve components experience consistently. We also recommand some great Third-Party Libraries additionally.</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="https://gw.alipayobjects.com/zos/rmsportal/rlpTLlbMzTNYuZGGCVYM.png" alt><span class="kg-bookmark-author">Ant Design</span></div></div><div class="kg-bookmark-thumbnail"><img src="https://gw.alipayobjects.com/zos/rmsportal/rlpTLlbMzTNYuZGGCVYM.png" alt></div></a></figure><h3 id="initializing-the-react-project">Initializing the React project</h3><p>We can use the following boilerplate code as it already contains <code>React 16</code>, <code>Webpack 4</code> with <code>babel 7</code>, the <code>webpack-dev-server</code>, <code>react-hot-loader</code> and <code>CSS-Modules</code>:</p><ul><li><a href="https://github.com/HashemKhalifa/webpack-react-boilerplate?ref=localhost">webpack-react-boilerplate </a></li></ul><pre><code class="language-bash">git clone https://github.com/HashemKhalifa/webpack-react-boilerplate.git
+mv webpack-react-boilerplate react-admin-portal
+cd react-admin-portal
+yarn install
+yarn start</code></pre><p>This repository is maintained continuously and the dependencies are upgraded. So it is good starting point as the most of the environment is already prepared and the technologies are up to date. </p><p>The web application starts at <code>http://localhost:8080</code> address.</p><h3 id="installing-ant-design">Installing Ant Design</h3><pre><code>yarn add antd
+yarn add babel-plugin-import
+yarn add less-loader
+yarn add less</code></pre><p>While using <code>antd</code>, we can either import the complete style file in our root file, or add styling only for the used components which is better in terms of performance. That's why we added <code>babel-plugin-import</code> module and we will update the <code>webpack</code> configuration to import <code>less</code> styles as follows:</p><p>Add <code>antd</code> library option in <code>babel-loader</code>  rule in <code>webpack-common.js</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-json">{
+  test: /\.(js|jsx)$/,
+  loader: 'babel-loader',
+  exclude: /(node_modules)/,
+  options: {
+    presets: ['@babel/react'],
+    plugins: [['import', { libraryName: 'antd', style: true }]],
+  },
+},</code></pre><figcaption>webpack-common.js</figcaption></figure><p>In the same file add also <code>.less</code> to the extensions:</p><pre><code>extensions: ['*', '.js', '.jsx', '.css', '.scss', '.less'],</code></pre><p>Add <code>less-loader</code> to the <code>webpack-dev.js</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-json">{
+	test: /\.less$/,
+	use: [
+		'style-loader',
+		'css-loader',
+		'sass-loader',
+		{
+            loader: 'less-loader',
+            options: {
+              lessOptions: {
+                javascriptEnabled: true,
+              },
+            },
+		},
+	],
+},</code></pre><figcaption>webpack-dev.js</figcaption></figure><p>You can find these changes in the commit <a href="https://github.com/turkogluc/react-admin-portal/commit/6f0001f3db28392e10ffdcdbaf085fee05d079f5?ref=localhost"><strong>6f0001f</strong></a>.</p><h3 id="installing-redux">Installing Redux</h3><pre><code>yarn add @reduxjs/toolkit
+yarn add react-redux
+yarn add redux-logger</code></pre><p>Let's create our first reducer just as an example:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">const INITIAL_STATE = {};
+
+export default (state = INITIAL_STATE, action) =&gt; {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};</code></pre><figcaption>initReducer.js</figcaption></figure><p>And add this reducer to global reducers list:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import { combineReducers } from 'redux';
+import initReducer from './initReducer';
+
+export default combineReducers({
+  initReducer,
+});</code></pre><figcaption>reducer/index.js</figcaption></figure><p>Now we can create our <code>store</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import { createLogger } from 'redux-logger';
+import { applyMiddleware, createStore } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import reducer from './reducer';
+
+const loggerMiddleware = createLogger();
+
+export const store = createStore(
+  reducer,
+  applyMiddleware(thunkMiddleware, loggerMiddleware)
+);</code></pre><figcaption>store.js</figcaption></figure><p>And wrap the <code>App</code> component with <code>Provider</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">function App() {
+  return (
+    &lt;Provider store={store}&gt;
+      Hello world
+    &lt;/Provider&gt;
+  );
+}</code></pre><figcaption>App.js</figcaption></figure><p>See the commit for changes: <a href="https://github.com/turkogluc/react-admin-portal/commit/98dd23bb90f8d2c14bdf2e408982747a41f489dc?ref=localhost"><strong>98dd23b</strong></a>.</p><h3 id="installing-react-router">Installing React Router</h3><pre><code class="language-javascript">yarn add react-router-dom</code></pre><p>Let's create browser history:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import { createBrowserHistory } from 'history';
+
+export default createBrowserHistory();</code></pre><figcaption>history.js</figcaption></figure><p>We can create an empty <code>dashboard</code> page as the initial page in the routing list.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+
+function Dashboard() {
+  return &lt;div&gt;Dashboard Page&lt;/div&gt;;
+}
+
+export default Dashboard;</code></pre><figcaption>Dashboard.js</figcaption></figure><p>Now we can create Routing list that will contain the path and the component mapping. <code>routes</code> variable contains the list of path component mapping. Dashboard Page is be added as the first path and the root path (<code>/</code>). </p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { Route } from 'react-router-dom';
+import Dashboard from '../page/dashboard/Dashboard';
+
+const routes = [
+  {
+    path: '/',
+    component: Dashboard,
+    key: '/',
+  },
+];
+
+function RoutingList() {
+  return routes.map(item =&gt; {
+    if (item.path.split('/').length === 2) {
+      return (
+        &lt;Route
+          exact
+          path={item.path}
+          component={item.component}
+          key={item.key}
+        /&gt;
+      );
+    }
+    return &lt;Route path={item.path} component={item.component} key={item.key} /&gt;;
+  });
+}
+
+export default RoutingList;</code></pre><figcaption>RoutingList.js</figcaption></figure><p>And we can wrap the <code>App</code> component with <code>BrowserRouter</code>. So the App component becomes as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { hot } from 'react-hot-loader/root';
+import { Provider } from 'react-redux';
+import { BrowserRouter, Switch } from 'react-router-dom';
+import { store } from './redux/store';
+import history from './router/history';
+import MainLayout from './page/layout/MainLayout';
+
+function App() {
+  return (
+    &lt;Provider store={store}&gt;
+      &lt;BrowserRouter history={history}&gt;
+        &lt;Switch&gt;
+          &lt;MainLayout /&gt;
+        &lt;/Switch&gt;
+      &lt;/BrowserRouter&gt;
+    &lt;/Provider&gt;
+  );
+}
+export default hot(App);</code></pre><figcaption>App.js</figcaption></figure><p>I have added another empty component which is <code>MainLayout</code>. It is the component that will contain the structure of the layout.</p><p>See the commit for changes: <strong><a href="https://github.com/turkogluc/react-admin-portal/commit/7afcd0c28ab9d4f0307d2806212b4c2ad5aa235b?ref=localhost">7afcd0c</a></strong>.</p><hr><h2 id="designing-the-layout">Designing the Layout</h2><p><code>MainLayout</code> component contains sider menu on the left header at the top and the content in the middle. Content part will be controller by the Router. We will place <code>&lt;RoutingList /&gt;</code> component in the content place so that we can to change the content by routing different paths. See the structures of the mentioned components in the next picture.</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/10/Screenshot-2020-10-16-at-23.14.47.png" class="kg-image" alt loading="lazy"></figure><p>Let's see the implementation of each component in details.</p><h3 id="user-avatar-component">User Avatar Component</h3><p>I use Ant Design <code><a href="https://ant.design/components/avatar/?ref=localhost">Avatar</a></code> component in order to represent User Avatar based on the users first name. </p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { Avatar } from 'antd';
+
+function getColor(username) {
+  const colors = [
+    '#ffa38a',
+    '#a9a7e0',
+    '#D686D4',
+    '#96CE56',
+    '#4A90E2',
+    '#62b3d0',
+    '#ef7676',
+  ];
+  const firstChar = username.charCodeAt(0);
+  const secondChar = username.charCodeAt(1);
+  const thirdChar = username.charCodeAt(2);
+
+  return colors[(firstChar + secondChar + thirdChar) % 7];
+}
+
+export const getUsernameAvatar = (username, size = 'large') =&gt; {
+  return (
+    &lt;div&gt;
+      &lt;Avatar
+        style={{
+          backgroundColor: getColor(username),
+          verticalAlign: 'middle',
+        }}
+        size={size}
+      &gt;
+        {username ? username.charAt(0).toUpperCase() : ''}
+      &lt;/Avatar&gt;
+    &lt;/div&gt;
+  );
+};</code></pre><figcaption>UserAvatar.js</figcaption></figure><p>It looks as follows:</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/10/Screenshot-2020-10-16-at-23.04.11.png" class="kg-image" alt loading="lazy"></figure><h3 id="layout-banner-component">Layout Banner Component</h3><p>It is the header component in the layout that contains  some horizontal <code><a href="https://ant.design/components/menu/?ref=localhost">menu</a></code>s from Ant Design such as user menu, language switcher etc.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import {
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  QuestionCircleOutlined,
+  GlobalOutlined,
+  BellOutlined,
+  UserOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
+import { Layout, Menu, Badge } from 'antd';
+import './Style.less';
+import { getUsernameAvatar } from '../../component/UserAvatar';
+
+const { Header } = Layout;
+const { SubMenu } = Menu;
+
+function LayoutBanner({ collapsed, handleOnCollapse }) {
+  const getCollapseIcon = () =&gt; {
+    if (collapsed) {
+      return (
+        &lt;MenuUnfoldOutlined onClick={handleOnCollapse} className="trigger" /&gt;
+      );
+    }
+    return &lt;MenuFoldOutlined onClick={handleOnCollapse} className="trigger" /&gt;;
+  };
+
+  const handleLanguageMenuClick = () =&gt; {};
+  const handleSettingMenuClick = () =&gt; {};
+  const handleLogout = () =&gt; {};
+
+  return (
+    &lt;Header className="header" style={{ background: '#fff', padding: 0 }}&gt;
+      &lt;div
+        style={{
+          float: 'left',
+          width: '100%',
+          alignSelf: 'center',
+          display: 'flex',
+        }}
+      &gt;
+        {window.innerWidth &gt; 992 &amp;&amp; getCollapseIcon()}
+      &lt;/div&gt;
+      &lt;Menu
+        // onClick={this.handleLanguageMenuClick}
+        mode="horizontal"
+        className="menu"
+      &gt;
+        &lt;SubMenu title={&lt;QuestionCircleOutlined /&gt;} /&gt;
+      &lt;/Menu&gt;
+      &lt;Menu
+        // onClick={this.handleLanguageMenuClick}
+        mode="horizontal"
+        className="menu"
+      &gt;
+        &lt;SubMenu
+          title={
+            &lt;Badge dot&gt;
+              &lt;BellOutlined /&gt;
+            &lt;/Badge&gt;
+          }
+        /&gt;
+      &lt;/Menu&gt;
+      &lt;Menu
+        onClick={handleLanguageMenuClick}
+        mode="horizontal"
+        className="menu"
+      &gt;
+        &lt;SubMenu title={&lt;GlobalOutlined /&gt;}&gt;
+          &lt;Menu.Item key="en"&gt;
+            &lt;span role="img" aria-label="English"&gt;
+              🇺🇸 English
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="it"&gt;
+            &lt;span role="img" aria-label="Italian"&gt;
+              🇮🇹 Italian
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+      &lt;/Menu&gt;
+      &lt;Menu onClick={handleSettingMenuClick} mode="horizontal" className="menu"&gt;
+        &lt;SubMenu title={getUsernameAvatar('Cemal')}&gt;
+          &lt;Menu.Item key="setting:1"&gt;
+            &lt;span&gt;
+              &lt;UserOutlined /&gt;
+              Profile
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="setting:2"&gt;
+            &lt;span&gt;
+              &lt;LogoutOutlined onClick={handleLogout} /&gt;
+              Logout
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+      &lt;/Menu&gt;
+    &lt;/Header&gt;
+  );
+}
+
+export default LayoutBanner;
+</code></pre><figcaption>LayoutBanner.js</figcaption></figure><p>Adding styles:</p><figure class="kg-card kg-code-card"><pre><code class="language-css">.header {
+  display: flex;
+}
+
+.trigger {
+  margin-left: 16px;
+  margin-right: 16px;
+  align-self: center;
+
+}
+
+.menu {
+  .ant-menu-horizontal {
+    &amp; &gt; .ant-menu-submenu {
+      float: right;
+    }
+    border: none;
+  }
+  box-shadow: #e4ecef;
+  position: relative;
+  .ant-menu-submenu-title {
+    width: 64px;
+    height: 64px;
+    text-align: center;
+    padding-top: 8px;
+  }
+}</code></pre><figcaption>Sytle.less</figcaption></figure><p>So it looks as follows:</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/10/Screenshot-2020-10-16-at-23.11.36.png" class="kg-image" alt loading="lazy"></figure><h3 id="sider-menu-component">Sider Menu Component</h3><p>This component uses <code><a href="https://ant.design/components/layout/?ref=localhost#components-layout-demo-side">Sider</a></code>, <code><a href="https://ant.design/components/menu/?ref=localhost">Menu</a></code>, <code><a href="https://ant.design/components/icon/?ref=localhost">Icon</a></code> components of <a href="https://ant.design/components/overview/?ref=localhost">Ant Design</a>.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { Layout, Menu } from 'antd';
+import { useHistory } from 'react-router-dom';
+import {
+  DashboardOutlined,
+  FundProjectionScreenOutlined,
+  PartitionOutlined,
+  SettingOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
+import './Style.less';
+
+const { SubMenu } = Menu;
+
+const { Sider } = Layout;
+
+function SiderMenu({ handleOnCollapse, collapsed }) {
+  const theme = 'light';
+
+  const history = useHistory();
+
+  const handleSiderMenuClick = action =&gt; {
+    console.log('menu:', action);
+    switch (action.key) {
+      case 'dashboard':
+        history.push('/');
+        break;
+      case 'showProducts':
+        history.push('/products');
+        break;
+      case 'addProduct':
+        history.push('/add-product');
+        break;
+      case 'showCustomers':
+        history.push('/customers');
+        break;
+      case 'addCustomer':
+        history.push('/add-customer');
+        break;
+      default:
+        history.push('/');
+    }
+  };
+
+  return (
+    &lt;Sider
+      breakpoint="lg"
+      collapsedWidth="80"
+      onCollapse={handleOnCollapse}
+      collapsed={collapsed}
+      width="256"
+      theme={theme}
+    &gt;
+      &lt;a&gt;
+        &lt;div className="menu-logo" /&gt;
+      &lt;/a&gt;
+      &lt;Menu mode="inline" theme={theme} onClick={handleSiderMenuClick}&gt;
+        &lt;Menu.Item key="dashboard"&gt;
+          &lt;DashboardOutlined /&gt;
+          &lt;span className="nav-text"&gt;Dashboard&lt;/span&gt;
+        &lt;/Menu.Item&gt;
+        &lt;SubMenu
+          key="products"
+          title={
+            &lt;span&gt;
+              &lt;PartitionOutlined /&gt;
+              &lt;span&gt;Products&lt;/span&gt;
+            &lt;/span&gt;
+          }
+        &gt;
+          &lt;Menu.Item key="showProducts"&gt;
+            &lt;span className="nav-text"&gt;Show Products&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="addProduct"&gt;
+            &lt;span className="nav-text"&gt;Add Product&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+        &lt;SubMenu
+          key="customers"
+          title={
+            &lt;span&gt;
+              &lt;TeamOutlined /&gt;
+              &lt;span&gt;Customers&lt;/span&gt;
+            &lt;/span&gt;
+          }
+        &gt;
+          &lt;Menu.Item key="showCustomers"&gt;
+            &lt;span className="nav-text"&gt;Show Customers&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="addCustomer"&gt;
+            &lt;span className="nav-text"&gt;Add Customer&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+        &lt;Menu.Item key="settings"&gt;
+          &lt;SettingOutlined /&gt;
+          &lt;span className="nav-text"&gt;Settings&lt;/span&gt;
+        &lt;/Menu.Item&gt;
+        &lt;Menu.Item key="reports"&gt;
+          &lt;FundProjectionScreenOutlined /&gt;
+          &lt;span className="nav-text"&gt;Reports&lt;/span&gt;
+        &lt;/Menu.Item&gt;
+      &lt;/Menu&gt;
+    &lt;/Sider&gt;
+  );
+}
+
+export default SiderMenu;</code></pre><figcaption>SiderMenu.js</figcaption></figure><p>We can add a logo above the sider menu, within the less style file.</p><figure class="kg-card kg-code-card"><pre><code class="language-css">.menu-logo {
+  background-image: url('../../../public/icon.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 35px;
+  background-size: 100%;
+  margin: 20px;
+  color: #ffffff;
+}</code></pre><figcaption>Sytle.less</figcaption></figure><h3 id="main-layout-component">Main Layout Component</h3><p>Main Layout component contains the <code><a href="https://ant.design/components/layout/?ref=localhost">Layout</a></code> and <code><a href="https://ant.design/components/layout/?ref=localhost#components-layout-demo-top">Content</a></code> of Ant Design. Layout wraps the entire body, our custom <code>SiderMenu</code> is placed on the left and <code>LayoutBanner</code> stands above the content. <code>RoutingList</code> component is added within the <code>Content</code>. React Router will render the route at this place.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React, { useState } from 'react';
+import { Layout } from 'antd';
+import SiderMenu from './SiderMenu';
+import LayoutBanner from './LayoutBanner';
+import './Style.less';
+import RoutingList from '../../router/RoutingList';
+
+const { Content } = Layout;
+
+function MainLayout() {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const handleOnCollapse = () =&gt; {
+    setCollapsed(prevState =&gt; !prevState);
+  };
+
+  return (
+    &lt;Layout style={{ minHeight: '100vh' }}&gt;
+      &lt;SiderMenu collapsed={collapsed} handleOnCollapse={handleOnCollapse} /&gt;
+      &lt;Layout&gt;
+        &lt;LayoutBanner
+          collapsed={collapsed}
+          handleOnCollapse={handleOnCollapse}
+        /&gt;
+        &lt;Content style={{ margin: '24px 16px 0' }}&gt;
+          &lt;div style={{ padding: 24, background: '#fff', minHeight: 20 }}&gt;
+            &lt;RoutingList /&gt;
+          &lt;/div&gt;
+        &lt;/Content&gt;
+      &lt;/Layout&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export default MainLayout;</code></pre><figcaption>MainLayout.js</figcaption></figure><p>See the commit for changes: <strong><a href="https://github.com/turkogluc/react-admin-portal/commit/229b7762a78a8d222240186330d8f93d9189ce39?ref=localhost">229b776</a></strong>.</p><hr><h2 id="adding-new-pages-routes">Adding New Pages/Routes</h2><p>We create new components, with a simple content:</p><pre><code class="language-javascript">function ShowCustomers() {
+  return &lt;div&gt;Customer Page&lt;/div&gt;;
+}
+
+function ShowProducts() {
+  return &lt;div&gt;Product Page&lt;/div&gt;;
+}</code></pre><p>And we can add new routes to the <code>RoutingList</code> component as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">const routes = [
+  {
+    path: '/',
+    component: Dashboard,
+    key: '/',
+  },
+  {
+    path: '/customers',
+    component: ShowCustomers,
+    key: '/customers',
+  },
+  {
+    path: '/products',
+    component: ShowProducts,
+    key: '/products',
+  },
+];</code></pre><figcaption>RoutingList.js</figcaption></figure><p>In the <code>SiderMenu</code> click action sends these paths for the clicked keys:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">case 'showProducts':
+	history.push('/products');
+	break;
+
+case 'showCustomers':
+    history.push('/customers');
+    break;</code></pre><figcaption>SiderMenu.js</figcaption></figure><p>Now clicking <code>Show Products</code> renders the <code>ShowProducts</code> component within the content area.</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/10/Screenshot-2020-10-17-at-00.35.56.png" class="kg-image" alt loading="lazy"></figure><p>See the commit for changes: <strong><a href="https://github.com/turkogluc/react-admin-portal/commit/4c52d5b901a5c34c0779fb0ea92fc8dc5c94e97d?ref=localhost">4c52d5b</a></strong>.</p><h3 id="what-is-next">What is Next?</h3><ul><li><a href="https://turkogluc.com/developing-admin-portal-with-react-redux-and-ant-design-part-2/">Developing Admin Portal with React, Redux, and Ant Design (Part-2)</a></li><li><a href="https://turkogluc.com/developing-admin-portal-with-react-redux-and-ant-design-part-3/">Developing Admin Portal with React, Redux, and Ant Design (Part-3)</a></li></ul>
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">Tags</h3>
+                  <ul>
+                      <li>
+                        <a href="/tag/react/" title="React">React</a>
+                      </li>
+                  </ul>
+                </section>
+            </div>
+          </div>
+        </div>
+          <section class="m-subscribe-section js-newsletter">
+            <div class="l-wrapper in-post">
+              <div class="m-subscribe-section__content">
+                <div class="m-subscribe-section__text">
+                  <h4 class="m-subscribe-section__title">Subscribe to our newsletter</h4>
+                  <p class="m-subscribe-section__description">
+                    Get the latest posts delivered right to your inbox.
+                  </p>
+                </div>
+                <div class="m-subscribe-section__form">
+
+<div class="m-subscribe-section__form">
+  <form data-members-form="subscribe" id="newsletter-form" class="m-subscribe-section__container">
+    <div class="m-subscribe__form">
+      <div class="pos-relative">
+        <label for="newsletter-input" class="sr-only">Your email address</label>
+        <input data-members-email id="newsletter-input" class="m-input in-subscribe-section" type="email"
+          placeholder="Your email address" required />
+      </div>
+      <button id="newsletter-button" class="m-button primary block" type="submit">Subscribe</button>
+    </div>
+    <div class="m-subscribe__success">
+      <header class="m-heading no-margin">
+        <img src="/assets/images/success.png?v=b36b0218e7" alt="Success!" class="m-subscribe__success_icon">
+        <p class="m-heading__description in-newsletter-form">
+          Now check your inbox and click the link to confirm your subscription.
+        </p>
+      </header>
+    </div>
+    <p class="m-subscribe__invalid m-small-text">
+      Please enter a valid email address
+    </p>
+    <p class="m-subscribe__error m-small-text">
+      Oops! There was an error sending the email, please try later.
+    </p>
+  </form>
+</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="https://turkogluc.com/author/cemal/" class="m-author-picture" aria-label="Cemal Turkoglu">
+                  <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="https://turkogluc.com/author/cemal/">Cemal Turkoglu</a>
+              </h4>
+              <ul class="m-author-links">
+              </ul>
+            </div>
+          </div>
+        </section>
+            <section class="m-recommended">
+              <div class="l-wrapper in-recommended">
+                <h3 class="m-section-title in-recommended">Recommended for you</h3>
+                <div class="m-recommended-articles">
+                  <div class="m-recommended-slider swiper js-recommended-slider">
+                    <div class="swiper-wrapper">
+
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-spring tag-react tag-event-handling tag-java tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/spring/" class="m-article-card__tag">Spring</a>
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__info-link" aria-label="Server Sent Events with Spring Boot and ReactJS">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Server Sent Events with Spring Boot and ReactJS">
+            Server Sent Events with Spring Boot and ReactJS
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>2 years ago</span>
+          <span>&bull;</span>
+          <span>7 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-elasticsearch tag-java tag-devops tag-hash-import-2023-05-25-09-05 featured">
+    <div class="m-article-card__picture">
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+        <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__featured js-tooltip" data-tippy-content="Featured" aria-label="Featured">
+          <span class="icon-star" aria-hidden="true"></span>
+        </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/elasticsearch/" class="m-article-card__tag">Elasticsearch</a>
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__info-link" aria-label="Centralized Logging and Monitoring with Elastic Stack">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Centralized Logging and Monitoring with Elastic Stack">
+            Centralized Logging and Monitoring with Elastic Stack
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>a year ago</span>
+          <span>&bull;</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-docker tag-react tag-spring tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2020/09/docker-banner2.jpg" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/docker/" class="m-article-card__tag">docker</a>
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__info-link" aria-label="Running ReactJS + Spring Boot Application with Docker Compose">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Running ReactJS + Spring Boot Application with Docker Compose">
+            Running ReactJS + Spring Boot Application with Docker Compose
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>3 years ago</span>
+          <span>&bull;</span>
+          <span>2 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+                    </div>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-prev" aria-label="Previous">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-next" aria-label="Next">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+    </div>
+  </article>
+</main>
+
+
+
+
+<div class="m-search js-search" role="dialog" aria-modal="true" aria-label="Search">
+  <button class="m-icon-button outlined as-close-search js-close-search" aria-label="Close search">
+    <span class="icon-close" aria-hidden="true"></span>
+  </button>
+  <div class="m-search__content">
+    <form class="m-search__form">
+      <div class="pos-relative">
+        <span class="icon-search m-search-icon" aria-hidden="true"></span>
+        <label for="search-input" class="sr-only">
+          Type to search
+        </label>
+        <input id="search-input" type="text" class="m-input in-search js-input-search" placeholder="Type to search">
+      </div>
+    </form>
+    <div class="js-search-results hide"></div>
+    <p class="m-not-found align-center hide js-no-results">
+      No results for your search, please try with something else.
+    </p>
+  </div>
+</div>
+
+
+<footer class="m-footer">
+  <div class="m-footer__content">
+    <nav class="m-footer-social">
+        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+          <span class="icon-facebook" aria-hidden="true"></span>
+        </a>
+        <a href="https://twitter.com/turkoglu4c" target="_blank" rel="noopener" aria-label="Twitter">
+          <span class="icon-twitter" aria-hidden="true"></span>
+        </a>
+      <a href="https://turkogluc.com/rss" aria-label="RSS">
+        <span class="icon-rss" aria-hidden="true"></span>
+      </a>
+    </nav>
+    <p class="m-footer-copyright">
+      <span>Cemal Turkoglu &copy; 2023</span>
+      <span>&nbsp; &bull; &nbsp;</span>
+      <span>Published with <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></span>
+    </p>
+    <p class="m-footer-copyright jslicense">
+      <a href="/assets/html/javascript.html?v=b36b0218e7" rel="jslicense">JavaScript license information</a>
+    </p>
+  </div>
+</footer>
+
+    <script defer src="/assets/js/manifest.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor/content-api.min.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/app.js?v=b36b0218e7"></script>
+
+      <script defer src="/assets/js/post.js?v=b36b0218e7"></script>
+
+
+    <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/java.min.js" integrity="sha512-YVNh+JI3AZyDUu/aGDh2vLgstb4kYs5U/WsTge2QQhU5fTsQLPFgX64gVAE/6qDSPUfpMGtG8M74uT3Y1SUU/w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/javascript.min.js" integrity="sha512-QKMem5huKjrqi8ym4y9CvmmOvrimnBdRqEp269PoiENovcPr073iaXkoU8YPzGk+qJ4rNd4W/AatDTtB7uW52g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/yaml.min.js" integrity="sha512-Rd5FUDZGJkdJ4Z/pZTgK+6QMWl0ubeugVNnXMK/QhiDxw5IMuYYxJOoPcof66vzvkpg0XjumgSvdaLOftzR5uQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/groovy.min.js" integrity="sha512-+Pin3A2zbWHySvtjP3FIddvwD7Fl1fLZA+rwlrQOUWzQTdJ9ycbPpqqlJSgfnngME/WDlugENmeglfQilO/CgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/bash.min.js" integrity="sha512-VChHo3Iw9v3ZEvy8w2NFK62jJ27P7Y9N+uu94NwquvTSc/80oXBFnkK8Rk2z63rTwXHoJ9AiMbNbzLeB/BrryA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/json.min.js" integrity="sha512-FoN8JE+WWCdIGXAIT8KQXwpiavz0Mvjtfk7Rku3MDUNO0BDCiRMXAsSX+e+COFyZTcDb9HDgP+pM2RX12d4j+A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/dockerfile.min.js" integrity="sha512-PkYx44XPGihIBrIcdSUHi9gVPtedxVU4MiAxcdH3kG1B1ZA/2UZLLXg84gLWoFojIC2srDBjoOxNrJKGINwELw==" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-groovy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-sql.min.js"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166072389-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166072389-1');
+</script>
+  </body>
+</html>

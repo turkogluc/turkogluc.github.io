@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Database Based Multitenant Applications with Spring JPA</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" href="/assets/css/app.css?v=b36b0218e7" as="style" />
+    <link rel="preload" href="/assets/js/manifest.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor/content-api.min.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/app.js?v=b36b0218e7" as="script" />
+
+      <link rel="preload" href="/assets/css/post.css?v=b36b0218e7" as="style" />
+  <link rel="preload" href="/assets/js/post.js?v=b36b0218e7" as="script" />
+
+
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7");
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7#iefix") format('embedded-opentype'),
+        url("/assets/fonts/icomoon/icomoon.ttf?101fc3?v=b36b0218e7") format('truetype'),
+        url("/assets/fonts/icomoon/icomoon.woff?101fc3?v=b36b0218e7") format('woff'),
+        url("/assets/fonts/icomoon/icomoon.svg?101fc3?v=b36b0218e7#icomoon") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/app.css?v=b36b0218e7" media="screen" />
+
+      <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=b36b0218e7" media="screen" />
+
+
+
+
+    <meta name="description" content="This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/amp/">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Database Based Multitenant Applications with Spring JPA">
+    <meta property="og:description" content="This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.">
+    <meta property="og:url" content="https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/05/architect.png">
+    <meta property="article:published_time" content="2020-05-11T13:37:35.000Z">
+    <meta property="article:modified_time" content="2020-05-16T23:03:40.000Z">
+    <meta property="article:tag" content="Spring">
+    <meta property="article:tag" content="JPA">
+    <meta property="article:tag" content="Multitenancy">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Database Based Multitenant Applications with Spring JPA">
+    <meta name="twitter:description" content="This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.">
+    <meta name="twitter:url" content="https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/05/architect.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Spring, JPA, Multitenancy">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1234">
+    <meta property="og:image:height" content="887">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Database Based Multitenant Applications with Spring JPA",
+    "url": "https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/",
+    "datePublished": "2020-05-11T13:37:35.000Z",
+    "dateModified": "2020-05-16T23:03:40.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/05/architect.png",
+        "width": 1234,
+        "height": 887
+    },
+    "keywords": "Spring, JPA, Multitenancy",
+    "description": "This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.",
+    "mainEntityOfPage": "https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.32/umd/portal.min.js" data-i18n="false" data-ghost="https://turkogluc.com/" data-key="8aed1ac6d3b2be60cf4aedf769" data-api="https://turkogluc.com/ghost/api/content/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/sodo-search.min.js" data-key="8aed1ac6d3b2be60cf4aedf769" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/main.css" data-sodo-search="https://turkogluc.com/" crossorigin="anonymous"></script>
+
+    <link href="https://turkogluc.com/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=b36b0218e7"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=b36b0218e7">
+    <script defer src="/public/member-attribution.min.js?v=b36b0218e7"></script>
+    <!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/idea.min.css" integrity="sha512-jxbAYisMjIOokHq0YnYxWqTUfJRe8s1U2F1lp+se3vv0CS8floaFL3Mc3GEpG3HCG2s6lxHb3QvQdmUOT1ZzKw==" crossorigin="anonymous" />
+
+<style>
+   .l-post-content pre>code {
+    white-space:inherit
+  }
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+
+</style>
+
+<!-- prism.js -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-okaidia.min.css" />
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-tomorrow.min.css" />
+-->
+<style>
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+</style>
+
+
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+-->
+<style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+    <style>
+      :root {
+        --primary-subtle-color: var(--ghost-accent-color) !important;
+      }
+    </style>
+
+    <script>
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "https://turkogluc.com"
+      // @license-end
+    </script>
+
+  </head>
+  <body class="post-template tag-spring tag-jpa tag-multitenancy tag-hash-import-2023-05-25-09-05">
+
+
+
+
+
+<header class="m-header with-picture js-header">
+  <div class="m-mobile-topbar" data-aos="fade-down">
+    <button class="m-icon-button in-mobile-topbar js-open-menu" aria-label="Open menu">
+      <span class="icon-menu" aria-hidden="true"></span>
+    </button>
+      <a href="https://turkogluc.com" class="m-logo in-mobile-topbar">
+        <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+      </a>
+    <button class="m-icon-button in-mobile-topbar js-open-search" aria-label="Open search">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="m-menu js-menu">
+    <button class="m-icon-button outlined as-close-menu js-close-menu" aria-label="Close menu">
+      <span class="icon-close"></span>
+    </button>
+    <div class="m-menu__main" data-aos="fade-down">
+      <div class="l-wrapper">
+        <div class="m-nav js-main-nav">
+          <nav class="m-nav__left js-main-nav-left" role="navigation" aria-label="Main menu">
+            <ul>
+                <li class="only-desktop">
+                  <a href="https://turkogluc.com" class="m-logo">
+                    <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+                  </a>
+                </li>
+
+    <li class="nav-home">
+      <a href="https://turkogluc.com/">Home</a>
+    </li>
+    <li class="nav-spring">
+      <a href="https://turkogluc.com/tag/spring/">Spring</a>
+    </li>
+    <li class="nav-kafka">
+      <a href="https://turkogluc.com/tag/apache-kafka/">Kafka</a>
+    </li>
+    <li class="nav-java">
+      <a href="https://turkogluc.com/tag/java/">Java</a>
+    </li>
+    <li class="nav-jenkins">
+      <a href="https://turkogluc.com/tag/jenkins/">Jenkins</a>
+    </li>
+    <li class="nav-react">
+      <a href="https://turkogluc.com/tag/react/">React</a>
+    </li>
+
+              <li class="submenu-option js-submenu-option">
+                <button class="m-icon-button in-menu-main more js-toggle-submenu" aria-label="Open submenu">
+                  <span class="icon-more" aria-hidden="true"></span>
+                </button>
+                <div class="m-submenu js-submenu">
+                  <div class="l-wrapper in-submenu">
+                    <section class="m-recent-articles">
+                      <h3 class="m-submenu-title in-recent-articles">Recent articles</h3>
+                          <div class="swiper js-recent-slider">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                  <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Centralized Logging and Monitoring with Elastic Stack">
+                                      Centralized Logging and Monitoring with Elastic Stack
+                                    </h3>
+                                    <span class="m-recent-article__date">a year ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/sql-window-functions/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="SQL Window Functions Introduction">
+                                      SQL Window Functions Introduction
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Server Sent Events with Spring Boot and ReactJS">
+                                      Server Sent Events with Spring Boot and ReactJS
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/java-creating-pdf-reports-with-itext/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Creating PDF Reports with iText 7 in Java">
+                                      Creating PDF Reports with iText 7 in Java
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                            </div>
+                          </div>
+                    </section>
+                    <section class="m-tags">
+                      <h3 class="m-submenu-title">Tags</h3>
+                        <ul>
+                            <li>
+                              <a href="/tag/aop/">AOP</a>
+                            </li>
+                            <li>
+                              <a href="/tag/apache-kafka/">Apache Kafka</a>
+                            </li>
+                            <li>
+                              <a href="/tag/concurrency/">Concurrency</a>
+                            </li>
+                            <li>
+                              <a href="/tag/devops/">devops</a>
+                            </li>
+                            <li>
+                              <a href="/tag/docker/">docker</a>
+                            </li>
+                            <li>
+                              <a href="/tag/elasticsearch/">Elasticsearch</a>
+                            </li>
+                            <li>
+                              <a href="/tag/event-handling/">Event Handling</a>
+                            </li>
+                            <li>
+                              <a href="/tag/java/">Java</a>
+                            </li>
+                            <li>
+                              <a href="/tag/jenkins/">Jenkins</a>
+                            </li>
+                        </ul>
+                    </section>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div class="m-nav__right">
+            <button class="m-icon-button in-menu-main js-open-search" aria-label="Open search">
+              <span class="icon-search" aria-hidden="true"></span>
+            </button>
+            <div class="m-toggle-darkmode js-tooltip" data-tippy-content="Toggle light/dark mode" tabindex="0">
+              <label for="toggle-darkmode" class="sr-only">
+                Toggle light/dark mode
+              </label>
+              <input id="toggle-darkmode" type="checkbox" class="js-toggle-darkmode">
+              <div>
+                <span class="icon-moon moon" aria-hidden="true"></span>
+                <span class="icon-sunny sun" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<main class="main-wrap">
+
+  <section class="m-hero with-picture" data-aos="fade">
+    <div class="m-hero__picture in-post">
+      <img
+        srcset="
+          /content/images/size/w300/2020/05/architect.png 300w,
+          /content/images/size/w600/2020/05/architect.png 600w,
+          /content/images/size/w1000/2020/05/architect.png 1000w,
+          /content/images/size/w2000/2020/05/architect.png 2000w
+        "
+        sizes="(max-width: 600px) 600px, (max-width: 1000px) 1000px, 2000px"
+        src="/content/images/size/w1000/2020/05/architect.png"
+        alt=""
+      />
+    </div>
+    </section>
+
+  <article>
+    <div class="l-content in-post">
+        <div class="l-wrapper in-post  js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">Database Based Multitenant Applications with Spring JPA</h1>
+              <div class="m-heading__meta">
+                  <a href="https://turkogluc.com/tag/spring/" class="m-heading__meta__tag">Spring</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                <span class="m-heading__meta__time">May 11, 2020</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text=Database%20Based%20Multitenant%20Applications%20with%20Spring%20JPA&url=https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="Scroll to top">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p>Imagine that you deployed your application which consists of a frontend, a backend, and a database and you are providing a service to a customer. Once you get new clients you should implement a distribution mechanism to give service to all of your clients but also provide isolation among clients such that each client uses the same application without seeing each other's data.</p><p>Multitenancy as a term refers to deploying a single instance of the application to a server and providing services to multiple clients. The following approaches are used for a multitenant application. We implement the database per tenant application in this post.</p><ul><li>Database per tenant</li><li>Schema per tenant</li><li>Tenant identifier column to every table</li></ul><h2 id="provisioning-a-new-client">Provisioning a new client</h2><ol><li>A new database should be created for the new client. PostgreSQL creates the default schema <code>public</code> during database creation, this schema will be used.</li></ol><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/05/Screenshot-2020-05-03-at-22.53.30.png" class="kg-image" alt loading="lazy"></figure><p>2. Database access details should be added to the Spring’s <code>application.yml</code> file. </p><figure class="kg-card kg-code-card"><pre><code class="language-yaml">tenants:
+  datasources:
+    client1:
+      jdbcUrl: jdbc:postgresql://localhost:5432/client1
+      username: postgres
+      password: root
+
+    client2:
+      jdbcUrl: jdbc:postgresql://localhost:5432/client2
+      username: postgres
+      password: root</code></pre><figcaption>application.yml</figcaption></figure><h2 id="user-story">User Story</h2><ol><li>A tenant identifier is needed per client to distinguish clients from each other. When a user logs in for the first time, the client sends the username, password , and tenant identifier. The Frontend can add the tenant identifier to the API call from the subdomain name. For example when a user logs in to <code>client1.service.com</code> the Frontend should add the <code>client1</code> as the tenant identifier to the login call. </li><li>The Backend application handles the login request by checking credentials from the database of the given tenant.</li><li>In a successful authentication, Backend creates the JWT token to be given to the Frontend and adds the tenant identifier to the JWT token as a claim.</li><li>At the subsequent calls, the tenant identifier is retrieved from the JWT token and used to select the relevant database to be queried.</li></ol><h2 id="implementation">Implementation</h2><p>In a Spring application following 2 approaches could be the possible ways to configure multitenant systems:</p><ul><li>Spring JPA configuration with <strong>AbstractRoutingDataSource</strong></li><li>Hibernate configuration with <strong>MultiTenantConnectionProvider</strong></li></ul><p>I decided to use <code>AbstractRoutingDataSource</code> as it is a neater and simpler way to configure.</p><p>So we need to configure the JPA to select the relevant datasource per each request according to the tenant who makes the request. Tenant Identifier can be retrieved from the JWT token but note that login operation is exceptional because there is no token assigned to the client yet. So the client should specify the tenantId in the login call.</p><h3 id="1-startup-configuration">1.Startup configuration</h3><p>We should prevent the Spring to auto-configure the datasource at startup as there is supposed be no datasource selected at startup but rather it will be selected at runtime according to the tenant.</p><figure class="kg-card kg-code-card"><pre><code class="language-yml">spring:
+  jpa:
+    open-in-view: false        # Get Rid of OIV Warning
+    show-sql: true
+    database: postgresql       # Do not Auto-Detect the Database
+    hibernate:
+      ddl-auto: none   		   # Prevent Hibernate from Automatic Changes to the DDL Schema
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    initialization-mode: never  # Prevent JPA from trying to Initialize</code></pre><figcaption>application.yml</figcaption></figure><h3 id="2-storing-the-tenant-identifier">2.Storing the tenant identifier</h3><p>Tenant identifier will be retrieved from JWT token on each request and it will be assigned to ThreadLocal variable (as it will be accessible by the same thread during the request handling)</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class ThreadLocalStorage {
+
+    private static ThreadLocal&lt;String&gt; tenant = new ThreadLocal&lt;&gt;();
+
+    public static void setTenantName(String tenantName) {
+        tenant.set(tenantName);
+    }
+
+    public static String getTenantName() {
+        return tenant.get();
+    }
+}</code></pre><figcaption>ThreadLocalStorage.java</figcaption></figure><p>Please note that if you would like to share the ThreadLocal with the child thread, in case the service thread may create other threads while proceeding, you should use the <code>InheritableThreadLocal</code>. InheritableThreadLocal will pass the same variable to child threads and they will be aware of the tenant datasource.</p><h3 id="3-implementing-the-datasource-routing">3. Implementing the datasource routing</h3><p>Datasource selection is made at runtime based on the tenant identifier. This selection is made by <code>AbstractRoutingDataSource</code>. It is configured as follows</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class TenantAwareRoutingDataSource extends AbstractRoutingDataSource {
+
+    @Override
+    protected Object determineCurrentLookupKey() {
+        return ThreadLocalStorage.getTenantName();
+    }
+}</code></pre><figcaption>TenantAwareRoutingDataSource.java</figcaption></figure><h3 id="4-datasource-configuration">4. DataSource Configuration</h3><p>Datasource properties are retrieved by the following class from the <code>application.yml</code></p><figure class="kg-card kg-code-card"><pre><code class="language-java">@Component
+@ConfigurationProperties(prefix = "tenants")
+public class DataSourceProperties {
+
+    private Map &lt;Object, Object&gt; datasources = new LinkedHashMap &lt;&gt;();
+
+    public Map&lt;Object, Object&gt; getDatasources() {
+        return datasources;
+    }
+
+    public void setDatasources(Map&lt;String, Map&lt;String, String&gt;&gt; datasources) {
+        datasources
+                .forEach((key, value) -&gt; this.datasources.put(key, convert(value)));
+    }
+
+    private DataSource convert(Map &lt;String, String&gt; source) {
+        return DataSourceBuilder.create()
+                .url(source.get("jdbcUrl"))
+                .driverClassName(source.get("driverClassName"))
+                .username(source.get("username"))
+                .password(source.get("password"))
+                .build();
+    }
+}</code></pre><figcaption>DataSourceProperties.java</figcaption></figure><p>Datasource configuration is implemented as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@Configuration
+public class DataSourceConfig {
+
+    private final DataSourceProperties dataSourceProperties;
+
+    public DataSourceConfig(DataSourceProperties dataSourceProperties) {
+        this.dataSourceProperties = dataSourceProperties;
+    }
+
+    @Bean
+    public DataSource getDataSource() {
+        TenantAwareRoutingDataSource tenantAwareRoutingDataSource = new TenantAwareRoutingDataSource();
+        tenantAwareRoutingDataSource.setTargetDataSources(dataSourceProperties.getDatasources());
+        tenantAwareRoutingDataSource.afterPropertiesSet();
+        return tenantAwareRoutingDataSource;
+    }
+}</code></pre><figcaption>DataSourceConfig.java</figcaption></figure><p>So an AbstractRoutingDataSource will be used at runtime as the datasource.</p><h3 id="5-extracting-the-tenant-identifier-from-the-request">5. Extracting the tenant identifier from the request</h3><p>A spring security filter is created to extract the tenant id from each request:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class TenantIdentificationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(TenantIdentificationFilter.class);
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().startsWith("/login");
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String token = request.getHeader(HEADER_STRING);
+        if (token != null) {
+            // parse the token.
+            String tenant = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
+                    .build()
+                    .verify(token.replace(TOKEN_PREFIX, ""))
+                    .getClaim("tenant").asString();
+
+            // set the tenant identifier
+            ThreadLocalStorage.setTenantName(tenant);
+            logger.debug("Tenant found in the request: {}", tenant);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}</code></pre><figcaption>TenantIdentificationFilter.java</figcaption></figure><p>Note that this filter is not applied to <code>/login</code> request as there is no JWT token assigned to the client before a successful login. This filter is added to the <code>WebSecurityConfigurerAdapter</code> as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@EnableWebSecurity
+public class WebSecurity extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().
+                csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                // add tenant filter
+                .addFilterBefore(new TenantIdentificationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    // ...
+}</code></pre><figcaption>WebSecurity.class</figcaption></figure><p>Note that TenantIdentificationFilter is added before the authentication and authorization filters. Because before the authentication filter queries the database to check the user credentials, relevant datasource should be selected.</p><h3 id="6-login-operation">6. Login Operation</h3><p>The previous step adds the extracting the tenant from JWT and storing it in ThreadLocal. In case the user does not have a session, there will not be a JWT token assigned to request. So that's why this filter is not applied to login call. But we still need to select the datasource before checking user authentication.</p><p>In order to handle login calls we should implement the following steps:</p><h4 id="6-1-selecting-datasource-to-check-the-user-credentials">6.1. Selecting datasource to check the user credentials</h4><p>The client application should send the <code>Username</code>, <code>Password</code>, and <code>TenantId</code>. At the Frontend call, we can add the TenantId according to the subdomain name (<strong>client-name</strong>.domain.com)</p><p>In the <code>attemptAuthentication</code> method of the <code>UsernamePasswordAuthenticationFilter</code> we should populate the ThreadLocalStorage with the received tenantId as follows:</p><pre><code class="language-java">ThreadLocalStorage.setTenantName(user.getTenant());</code></pre><h4 id="6-2-add-the-tenant-id-to-the-issued-token">6.2. Add the tenant id to the issued token</h4><p>In the <code>successfulAuthentication</code> method of the <code>UsernamePasswordAuthenticationFilter</code>, the tenant identifier is added to the token as follows:</p><pre><code class="language-java">JWT.create().withClaim("tenant",ThreadLocalStorage.getTenantName())</code></pre><p>So after the steps 6.1 and 6.2, final <code>UsernamePasswordAuthenticationFilter</code> is as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private AuthenticationManager authenticationManager;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest req,
+                                                HttpServletResponse res) throws AuthenticationException {
+        try {
+            ApplicationUser user = new ObjectMapper()
+                    .readValue(req.getInputStream(), ApplicationUser.class);
+			// set tenant name
+            ThreadLocalStorage.setTenantName(user.getTenant());
+            return authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            user.getUsername(),
+                            user.getPassword(),
+                            new ArrayList &lt;&gt;())
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
+                                            FilterChain chain,
+                                            Authentication auth) throws IOException, ServletException {
+		// add tenant claim to the token
+        try {
+            String token = JWT.create()
+                    .withSubject(((User) auth.getPrincipal()).getUsername())
+                    .withClaim("tenant", ThreadLocalStorage.getTenantName())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                    .sign(HMAC256(SECRET.getBytes()));
+            res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        } catch (JWTDecodeException ex) {
+            logger.error("Token could not be parsed");
+        }
+    }
+}</code></pre><figcaption>JWTAuthenticationFilter.java</figcaption></figure><p>So we are done configuring multitancy. Now our spring application will start with an AbstractRoutingDataSource. List of datasources for customers will be provided from application.yml. JPA will select the database to query at run time based on the tenant identifier. The tenant identifier will be retrieved from JWT Token. If a user without session tries to log in, the Frontend should specify the tenant identifier to check username and password from relevant datasource.</p><h2 id="schema-migration">Schema Migration</h2><p>Having a single data source, JPA is able to track the schema changes based on the <code>@Entity</code> classes. With the following configuration any column, type, reference, etc changes of the entity are reflected in the related table.</p><figure class="kg-card kg-code-card"><pre><code class="language-java">spring:
+  jpa:
+    hibernate:
+      ddl-auto: update</code></pre><figcaption>application.yml</figcaption></figure><p>However, with multiple data sources, this is not an option. Because JPA does this operation at the startup and in the case of having multiple data sources there is no selected data source when the application starts. So we set this configuration as <code>never</code> to not let the JPA try to reflect the DDL changes.</p><p>So we need to keep consistency for each customer database. Handling it manually is not very wise option. If we change columns of a table we need to go and update databases of all customers. It is also error-prone.</p><p>As a result, <a href="https://flywaydb.org/?ref=localhost"><strong>Flyway</strong></a> comes into play as the schema migration tool to keep track of the changes in the schema and reflect all data sources. It is pretty easy to configure and use. </p><p>If you would like to get an overview of the configuration please see <a href="https://turkogluc.com/flyway/">Spring Database Migration with Flyway</a></p><h2 id="cache-collision-problem">Cache Collision Problem</h2><p>As it is mentioned at the beginning there are 2 ways to configure multitenancy in a Spring application, and in this post, we are experimenting with the former solution which is Spring JPA configuration with <strong>AbstractRoutingDataSource</strong>. This solution works like a charm until we start using 2nd level caching for entities (<strong>@Cacheable</strong>).</p><p>In this solution, hibernate in fact, is not aware of multi-tenancy, but data source connection is provided by JPA. As a result, collusion occurs in the cache as the same cache will be populated from different databases with the same key. So if caching is used in the project, then either the second approach should be chosen or handling key generation for caching is needed.</p><p>So to solve this we can implement a custom key generator and let the cache manager use it. </p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class CustomKeyGenerator extends SimpleKeyGenerator {
+
+    @Override
+    public Object generate(Object target, Method method, Object... params) {
+
+        return ThreadLocalStorage.getTenantName() + "_" + generateKey(params);
+    }
+}</code></pre><figcaption>CustomKeyGenerator.java</figcaption></figure><p>It uses the same key generation as before but with the addition of <strong><code>&lt;tenantName&gt;_</code> </strong>prefix.  So every key will have tenant identifier prefix and it prevents having collision on the caches for different databases.</p>
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">Tags</h3>
+                  <ul>
+                      <li>
+                        <a href="/tag/spring/" title="Spring">Spring</a>
+                      </li>
+                      <li>
+                        <a href="/tag/jpa/" title="JPA">JPA</a>
+                      </li>
+                      <li>
+                        <a href="/tag/multitenancy/" title="Multitenancy">Multitenancy</a>
+                      </li>
+                  </ul>
+                </section>
+            </div>
+          </div>
+        </div>
+          <section class="m-subscribe-section js-newsletter">
+            <div class="l-wrapper in-post">
+              <div class="m-subscribe-section__content">
+                <div class="m-subscribe-section__text">
+                  <h4 class="m-subscribe-section__title">Subscribe to our newsletter</h4>
+                  <p class="m-subscribe-section__description">
+                    Get the latest posts delivered right to your inbox.
+                  </p>
+                </div>
+                <div class="m-subscribe-section__form">
+
+<div class="m-subscribe-section__form">
+  <form data-members-form="subscribe" id="newsletter-form" class="m-subscribe-section__container">
+    <div class="m-subscribe__form">
+      <div class="pos-relative">
+        <label for="newsletter-input" class="sr-only">Your email address</label>
+        <input data-members-email id="newsletter-input" class="m-input in-subscribe-section" type="email"
+          placeholder="Your email address" required />
+      </div>
+      <button id="newsletter-button" class="m-button primary block" type="submit">Subscribe</button>
+    </div>
+    <div class="m-subscribe__success">
+      <header class="m-heading no-margin">
+        <img src="/assets/images/success.png?v=b36b0218e7" alt="Success!" class="m-subscribe__success_icon">
+        <p class="m-heading__description in-newsletter-form">
+          Now check your inbox and click the link to confirm your subscription.
+        </p>
+      </header>
+    </div>
+    <p class="m-subscribe__invalid m-small-text">
+      Please enter a valid email address
+    </p>
+    <p class="m-subscribe__error m-small-text">
+      Oops! There was an error sending the email, please try later.
+    </p>
+  </form>
+</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="https://turkogluc.com/author/cemal/" class="m-author-picture" aria-label="Cemal Turkoglu">
+                  <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="https://turkogluc.com/author/cemal/">Cemal Turkoglu</a>
+              </h4>
+              <ul class="m-author-links">
+              </ul>
+            </div>
+          </div>
+        </section>
+            <section class="m-recommended">
+              <div class="l-wrapper in-recommended">
+                <h3 class="m-section-title in-recommended">Recommended for you</h3>
+                <div class="m-recommended-articles">
+                  <div class="m-recommended-slider swiper js-recommended-slider">
+                    <div class="swiper-wrapper">
+
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-spring tag-react tag-event-handling tag-java tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/spring/" class="m-article-card__tag">Spring</a>
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__info-link" aria-label="Server Sent Events with Spring Boot and ReactJS">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Server Sent Events with Spring Boot and ReactJS">
+            Server Sent Events with Spring Boot and ReactJS
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>2 years ago</span>
+          <span>&bull;</span>
+          <span>7 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-elasticsearch tag-java tag-devops tag-hash-import-2023-05-25-09-05 featured">
+    <div class="m-article-card__picture">
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+        <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__featured js-tooltip" data-tippy-content="Featured" aria-label="Featured">
+          <span class="icon-star" aria-hidden="true"></span>
+        </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/elasticsearch/" class="m-article-card__tag">Elasticsearch</a>
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__info-link" aria-label="Centralized Logging and Monitoring with Elastic Stack">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Centralized Logging and Monitoring with Elastic Stack">
+            Centralized Logging and Monitoring with Elastic Stack
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>a year ago</span>
+          <span>&bull;</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-docker tag-react tag-spring tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2020/09/docker-banner2.jpg" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/docker/" class="m-article-card__tag">docker</a>
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__info-link" aria-label="Running ReactJS + Spring Boot Application with Docker Compose">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Running ReactJS + Spring Boot Application with Docker Compose">
+            Running ReactJS + Spring Boot Application with Docker Compose
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>3 years ago</span>
+          <span>&bull;</span>
+          <span>2 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+                    </div>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-prev" aria-label="Previous">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-next" aria-label="Next">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+    </div>
+  </article>
+</main>
+
+
+
+
+<div class="m-search js-search" role="dialog" aria-modal="true" aria-label="Search">
+  <button class="m-icon-button outlined as-close-search js-close-search" aria-label="Close search">
+    <span class="icon-close" aria-hidden="true"></span>
+  </button>
+  <div class="m-search__content">
+    <form class="m-search__form">
+      <div class="pos-relative">
+        <span class="icon-search m-search-icon" aria-hidden="true"></span>
+        <label for="search-input" class="sr-only">
+          Type to search
+        </label>
+        <input id="search-input" type="text" class="m-input in-search js-input-search" placeholder="Type to search">
+      </div>
+    </form>
+    <div class="js-search-results hide"></div>
+    <p class="m-not-found align-center hide js-no-results">
+      No results for your search, please try with something else.
+    </p>
+  </div>
+</div>
+
+
+<footer class="m-footer">
+  <div class="m-footer__content">
+    <nav class="m-footer-social">
+        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+          <span class="icon-facebook" aria-hidden="true"></span>
+        </a>
+        <a href="https://twitter.com/turkoglu4c" target="_blank" rel="noopener" aria-label="Twitter">
+          <span class="icon-twitter" aria-hidden="true"></span>
+        </a>
+      <a href="https://turkogluc.com/rss" aria-label="RSS">
+        <span class="icon-rss" aria-hidden="true"></span>
+      </a>
+    </nav>
+    <p class="m-footer-copyright">
+      <span>Cemal Turkoglu &copy; 2023</span>
+      <span>&nbsp; &bull; &nbsp;</span>
+      <span>Published with <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></span>
+    </p>
+    <p class="m-footer-copyright jslicense">
+      <a href="/assets/html/javascript.html?v=b36b0218e7" rel="jslicense">JavaScript license information</a>
+    </p>
+  </div>
+</footer>
+
+    <script defer src="/assets/js/manifest.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor/content-api.min.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/app.js?v=b36b0218e7"></script>
+
+      <script defer src="/assets/js/post.js?v=b36b0218e7"></script>
+
+
+    <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/java.min.js" integrity="sha512-YVNh+JI3AZyDUu/aGDh2vLgstb4kYs5U/WsTge2QQhU5fTsQLPFgX64gVAE/6qDSPUfpMGtG8M74uT3Y1SUU/w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/javascript.min.js" integrity="sha512-QKMem5huKjrqi8ym4y9CvmmOvrimnBdRqEp269PoiENovcPr073iaXkoU8YPzGk+qJ4rNd4W/AatDTtB7uW52g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/yaml.min.js" integrity="sha512-Rd5FUDZGJkdJ4Z/pZTgK+6QMWl0ubeugVNnXMK/QhiDxw5IMuYYxJOoPcof66vzvkpg0XjumgSvdaLOftzR5uQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/groovy.min.js" integrity="sha512-+Pin3A2zbWHySvtjP3FIddvwD7Fl1fLZA+rwlrQOUWzQTdJ9ycbPpqqlJSgfnngME/WDlugENmeglfQilO/CgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/bash.min.js" integrity="sha512-VChHo3Iw9v3ZEvy8w2NFK62jJ27P7Y9N+uu94NwquvTSc/80oXBFnkK8Rk2z63rTwXHoJ9AiMbNbzLeB/BrryA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/json.min.js" integrity="sha512-FoN8JE+WWCdIGXAIT8KQXwpiavz0Mvjtfk7Rku3MDUNO0BDCiRMXAsSX+e+COFyZTcDb9HDgP+pM2RX12d4j+A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/dockerfile.min.js" integrity="sha512-PkYx44XPGihIBrIcdSUHi9gVPtedxVU4MiAxcdH3kG1B1ZA/2UZLLXg84gLWoFojIC2srDBjoOxNrJKGINwELw==" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-groovy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-sql.min.js"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166072389-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166072389-1');
+</script>
+  </body>
+</html>

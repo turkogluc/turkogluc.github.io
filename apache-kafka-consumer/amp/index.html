@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html ⚡>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <title>Apache Kafka Advanced Consumers</title>
+
+    <meta name="description" content="Kafka Consumer Implemantation and advanced configuratons: Delivery Semantics, commits, offsets, reprocessing the data,  rebalance listeners.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/apache-kafka-consumer/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Apache Kafka Advanced Consumers">
+    <meta property="og:description" content="Basic Kafka Consumer Implemantations. Advanced Topics: Delivery Semantics, commits, offsets, reprocessing the data,  rebalance listeners">
+    <meta property="og:url" content="https://turkogluc.com/apache-kafka-consumer/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372-1.png">
+    <meta property="article:published_time" content="2020-06-03T19:54:29.000Z">
+    <meta property="article:modified_time" content="2020-06-03T19:55:22.000Z">
+    <meta property="article:tag" content="Apache Kafka">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Apache Kafka Advanced Consumers">
+    <meta name="twitter:description" content="Basic Kafka Consumer Implemantations. Advanced Topics: Delivery Semantics, commits, offsets, reprocessing the data,  rebalance listeners">
+    <meta name="twitter:url" content="https://turkogluc.com/apache-kafka-consumer/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372-1.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Apache Kafka">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="1200">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Apache Kafka Advanced Consumers",
+    "url": "https://turkogluc.com/apache-kafka-consumer/",
+    "datePublished": "2020-06-03T19:54:29.000Z",
+    "dateModified": "2020-06-03T19:55:22.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372-1.png",
+        "width": 1200,
+        "height": 1200
+    },
+    "keywords": "Apache Kafka",
+    "description": "Basic Kafka Consumer Implemantations. Advanced Topics: Delivery Semantics, commits, offsets, reprocessing the data,  rebalance listeners",
+    "mainEntityOfPage": "https://turkogluc.com/apache-kafka-consumer/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+
+    <style amp-custom>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        font-size: 62.5%;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        color: #3a4145;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.7rem;
+        line-height: 1.55em;
+        font-weight: 400;
+        font-style: normal;
+        background: #fff;
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    p,
+    ul,
+    ol,
+    li,
+    dl,
+    dd,
+    hr,
+    pre,
+    form,
+    table,
+    video,
+    figure,
+    figcaption,
+    blockquote {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul[class],
+    ol[class] {
+        padding: 0;
+        list-style: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    input,
+    button,
+    select,
+    textarea {
+        font: inherit;
+        -webkit-appearance: none;
+    }
+
+    fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        font-weight: 700;
+    }
+
+    hr {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid currentcolor;
+        opacity: 0.1;
+    }
+
+    ::selection {
+        text-shadow: none;
+        background: #cbeafb;
+    }
+
+    mark {
+        background-color: #fdffb6;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+    sup {
+        top: -0.5em;
+    }
+    sub {
+        bottom: -0.25em;
+    }
+
+    ul li + li {
+        margin-top: 0.6em;
+    }
+
+    a {
+        color: var(--ghost-accent-color, #1292EE);
+        text-decoration-skip-ink: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        font-weight: 700;
+        color: #121212;
+        line-height: 1.4em;
+    }
+
+    h1 {
+        font-size: 3.4rem;
+        line-height: 1.1em;
+    }
+
+    h2 {
+        font-size: 2.4rem;
+        line-height: 1.2em;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+    }
+
+    h4 {
+        font-size: 1.7rem;
+    }
+
+    h5 {
+        font-size: 1.6rem;
+    }
+
+    h6 {
+        font-size: 1.6rem;
+    }
+
+    amp-img {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    amp-img img {
+        object-fit: cover;
+    }
+
+    amp-youtube {
+        height: calc(100vw / 1.78);
+        width: 100vw;
+        position: relative;
+    }
+
+    amp-youtube img {
+        position: absolute;
+    }
+
+    .page-header {
+        padding: 50px 5vmin 30px;
+        text-align: center;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .page-header a {
+        color: #121212;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.6rem;
+        letter-spacing: -0.1px;
+    }
+
+    .post {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .post-header {
+        margin: 0 5vmin 5vmin;
+        text-align: center;
+    }
+
+    .post-meta {
+        margin: 1rem 0 0 0;
+        text-transform: uppercase;
+        color: #738a94;
+        font-weight: 500;
+        font-size: 1.3rem;
+    }
+
+    .post-image {
+        margin: 0 0 5vmin;
+    }
+
+    .post-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .post-content {
+        padding: 0 5vmin;
+    }
+
+    .post-content > * + * {
+        margin-top: 1.5em;
+    }
+
+    .post-content [id]:not(:first-child) {
+        margin: 2em 0 0;
+    }
+
+    .post-content > [id] + * {
+        margin-top: 1rem;
+    }
+
+    .post-content [id] + .kg-card,
+    .post-content blockquote + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content > ul,
+    .post-content > ol,
+    .post-content > dl {
+        padding-left: 1.9em;
+    }
+
+    .post-content hr {
+        margin-top: 40px;
+    }
+
+    .post .post-content hr + * {
+        margin-top: 40px;
+    }
+
+    .post-content amp-img {
+        background-color: #f8f8f8;
+    }
+
+    .post-content blockquote {
+        position: relative;
+        font-style: italic;
+    }
+
+    .post-content blockquote::before {
+        content: "";
+        position: absolute;
+        left: -1.5em;
+        top: 0;
+        bottom: 0;
+        width: 0.3rem;
+        background: var(--ghost-accent-color, #1292EE);
+    }
+
+    .post-content blockquote.kg-blockquote-alt {
+        font-size: 1.2em;
+        font-style: italic;
+        line-height: 1.6em;
+        text-align: center;
+        color: #738a94;
+        padding: 0.75em 3em 1.25em;
+    }
+
+    .post-content blockquote.kg-blockquote-alt::before {
+        display: none;
+    }
+
+    .post-content :not(.kg-card):not([id]) + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content .kg-card + :not(.kg-card) {
+        margin-top: 40px;
+    }
+
+    .kg-card figcaption {
+        padding: 1.5rem 1.5rem 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.4em;
+        opacity: 0.6;
+    }
+
+    .kg-card figcaption strong {
+        color: rgba(0,0,0,0.8);
+    }
+
+    .post-content :not(pre) code {
+        vertical-align: middle;
+        padding: 0.15em 0.4em 0.15em;
+        border: #e1eaef 1px solid;
+        font-weight: 400;
+        font-size: 0.9em;
+        line-height: 1em;
+        color: #15171a;
+        background: #f0f6f9;
+        border-radius: 0.25em;
+    }
+
+    .post-content > pre {
+        overflow: scroll;
+        padding: 16px 20px;
+        color: #fff;
+        background: #1F2428;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px -2px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+    }
+
+    .kg-embed-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .kg-image-card img {
+        margin: auto;
+    }
+
+    .kg-gallery-card + .kg-gallery-card {
+        margin-top: 0.75em;
+    }
+
+    .kg-gallery-container {
+        position: relative;
+    }
+
+    .kg-gallery-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .kg-gallery-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .kg-gallery-row:not(:first-of-type) {
+        margin: 0.75em 0 0 0;
+    }
+
+    .kg-gallery-image:not(:first-of-type) {
+        margin: 0 0 0 0.75em;
+    }
+
+    .kg-bookmark-card,
+    .kg-bookmark-publisher {
+        position: relative;
+    }
+
+    .kg-bookmark-container,
+    .kg-bookmark-container:hover {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+        color: currentColor;
+        background: rgba(255,255,255,0.6);
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        text-decoration: none;
+        border-radius: 3px;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+    }
+
+    .kg-bookmark-content {
+        flex-basis: 0;
+        flex-grow: 999;
+        padding: 20px;
+        order: 1;
+    }
+
+    .kg-bookmark-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 1.3em;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        max-height: 45px;
+        margin: 0.5em 0 0 0;
+        font-size: 1.4rem;
+        line-height: 1.55em;
+        overflow: hidden;
+        opacity: 0.8;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .kg-bookmark-metadata {
+        margin-top: 20px;
+    }
+
+    .kg-bookmark-metadata {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.3em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-metadata amp-img {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
+        margin-right: 10px;
+    }
+
+    .kg-bookmark-thumbnail {
+        display: flex;
+        flex-basis: 20rem;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+
+    .kg-bookmark-thumbnail amp-img {
+        max-height: 200px;
+    }
+
+    .kg-bookmark-author {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-publisher::before {
+        content: "•";
+        margin: 0 .5em;
+    }
+
+    .kg-toggle-card-icon {
+        display: none;
+    }
+
+    .kg-toggle-content {
+        margin-top: 0.8rem;
+    }
+
+    .kg-product-card-container {
+        background: transparent;
+        padding: 20px;
+        width: 100%;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 1px rgb(124 139 154 / 25%);
+    }
+
+    .kg-product-card-description p {
+        margin-top: 1.5em;
+    }
+
+    .kg-product-card-description ul {
+        margin-left: 24px;
+    }
+
+    .kg-product-card-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+    }
+
+    .kg-product-card-rating-star {
+        height: 28px;
+        width: 20px;
+        margin-right: 2px;
+    }
+
+    .kg-product-card-rating-star svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.15;
+    }
+
+    .kg-product-card-rating-active.kg-product-card-rating-star svg {
+    opacity: 1;
+    }
+
+    .kg-nft-card-container {
+        position: relative;
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+        text-decoration: none;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        box-shadow: 0 2px 6px -2px rgb(0 0 0 / 10%), 0 0 1px rgb(0 0 0 / 40%);
+        width: 100%;
+        max-width: 512px;
+        color: #15212A;
+        background: #fff;
+        border-radius: 5px;
+        transition: none;
+        margin: 0 auto;
+    }
+
+    .kg-nft-metadata {
+        padding: 2.0rem;
+    }
+
+    .kg-nft-image-container {
+        position: relative;
+    }
+
+    .kg-nft-image {
+        display: flex;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .kg-nft-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .kg-nft-header h4.kg-nft-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin: 0;
+        color: #15212A;
+    }
+
+    .kg-nft-header amp-img {
+        max-width: 114px;
+        max-height: 26px;
+    }
+
+    .kg-nft-opensea-logo {
+        margin-top: 2px;
+        width: 100px;
+    }
+
+    .kg-nft-creator {
+        font-family: inherit;
+        color: #95A1AD;
+    }
+
+    .kg-nft-creator span {
+        font-weight: 500;
+        color: #15212A;
+    }
+
+    .kg-nft-card p.kg-nft-description {
+        font-size: 1.4rem;
+        line-height: 1.4em;
+        margin: 2.0rem 0 0;
+        color: #222;
+    }
+
+    .kg-button-card {
+        display: flex;
+        position: static;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kg-btn {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 2.0rem;
+        height: 4.0rem;
+        line-height: 4.0rem;
+        font-size: 1.65rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .kg-btn:hover {
+        opacity: 0.85;
+    }
+
+    .kg-btn-accent {
+        background-color: var(--ghost-accent-color, #1292EE);
+        color: #fff;
+    }
+
+    .kg-callout-card {
+        display: flex;
+        padding: 20px 28px;
+        border-radius: 3px;
+    }
+
+    .kg-callout-card-grey {
+        background: rgba(124, 139, 154, 0.13);
+    }
+
+    .kg-callout-card-white {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-callout-card-blue {
+        background: rgba(33, 172, 232, 0.12);
+    }
+
+    .kg-callout-card-green {
+        background: rgba(52, 183, 67, 0.12);
+    }
+
+    .kg-callout-card-yellow {
+        background: rgba(240, 165, 15, 0.13);
+    }
+
+    .kg-callout-card-red {
+        background: rgba(209, 46, 46, 0.11);
+    }
+
+    .kg-callout-card-pink {
+        background: rgba(225, 71, 174, 0.11);
+    }
+
+    .kg-callout-card-purple {
+        background: rgba(135, 85, 236, 0.12);
+    }
+
+    .kg-callout-card-accent {
+        background: var(--ghost-accent-color);
+        color: #fff;
+    }
+
+    .kg-callout-card-accent a {
+        color: #fff;
+    }
+
+    .kg-callout-emoji {
+        padding-right: 16px;
+        line-height: 1.3;
+        font-size: 1.25em;
+    }
+
+    .kg-header-card {
+        padding: 6em 3em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .kg-header-card.kg-size-small {
+        padding-top: 4em;
+        padding-bottom: 4em;
+    }
+
+    .kg-header-card.kg-size-large {
+        padding-top: 12em;
+        padding-bottom: 12em;
+    }
+
+    .kg-header-card.kg-width-full {
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+
+    .kg-header-card.kg-align-left {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .kg-header-card.kg-style-dark {
+        background: #15171a;
+        color: #ffffff;
+    }
+
+    .kg-header-card.kg-style-light {
+        color: #15171a;
+        border: 1px solid rgba(124, 139, 154, 0.25);
+        border-width: 1px 0;
+    }
+
+    .kg-header-card.kg-style-accent {
+        background-color: var(--ghost-accent-color);
+    }
+
+    .kg-header-card.kg-style-image {
+        background-color: #e7e7eb;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .kg-header-card h2 {
+        font-size: 4em;
+        font-weight: 700;
+        line-height: 1.1em;
+        margin: 0;
+    }
+
+    .kg-header-card h2 strong {
+        font-weight: 800;
+    }
+
+    .kg-header-card.kg-size-small h2 {
+        font-size: 3em;
+    }
+
+    .kg-header-card.kg-size-large h2 {
+        font-size: 5em;
+    }
+
+    .kg-header-card h3 {
+        font-size: 1.25em;
+        font-weight: 500;
+        line-height: 1.3em;
+        margin: 0;
+    }
+
+    .kg-header-card h3 strong {
+        font-weight: 600;
+    }
+
+    .kg-header-card.kg-size-small h3 {
+        font-size: 1em;
+    }
+
+    .kg-header-card.kg-size-large h3 {
+        font-size: 1.5em;
+    }
+
+    .kg-header-card:not(.kg-style-light) h2,
+    .kg-header-card:not(.kg-style-light) h3 {
+        color: #ffffff;
+    }
+
+    .kg-header-card a.kg-header-card-button {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 1.2em;
+        height: 2.4em;
+        line-height: 1em;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+        background-color: var(--ghost-accent-color);
+        color: #ffffff;
+        margin: 1.75em 0 0;
+    }
+
+    .kg-header-card a.kg-header-card-button:hover {
+        opacity: 0.85;
+    }
+
+    .kg-header-card.kg-size-large a.kg-header-card-button {
+        margin-top: 2em;
+    }
+
+    .kg-header-card.kg-size-small a.kg-header-card-button {
+        margin-top: 1.5em;
+    }
+
+    .kg-header-card.kg-style-image a.kg-header-card-button,
+    .kg-header-card.kg-style-dark a.kg-header-card-button {
+        background: #ffffff;
+        color: #15171a;
+    }
+
+    .kg-header-card.kg-style-accent a.kg-header-card-button {
+        background: #ffffff;
+        color: var(--ghost-accent-color);
+    }
+
+    .kg-audio-card {
+        display: flex;
+        width: 100%;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-audio-thumbnail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        min-width: 80px;
+        height: 80px;
+        background: transparent;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .kg-audio-thumbnail.placeholder {
+        background: var(--ghost-accent-color);
+    }
+
+    .kg-audio-thumbnail.placeholder svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+    }
+
+    .kg-audio-player-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        --seek-before-width: 0%;
+        --volume-before-width: 100%;
+        --buffered-width: 0%;
+    }
+
+    .kg-audio-title {
+        width: 100%;
+        padding: 8px 12px 0;
+        border: none;
+        font-family: inherit;
+        font-size: 1.1em;
+        font-weight: 700;
+        background: transparent;
+    }
+
+    .kg-audio-player {
+        display: none;
+    }
+
+    .kg-width-full.kg-card-hascaption {
+        display: grid;
+        grid-template-columns: inherit;
+    }
+
+    .post-content table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .post-content th {
+        padding: 0.5em 0.8em;
+        text-align: left;
+        font-size: .75em;
+        text-transform: uppercase;
+    }
+
+    .post-content td {
+        padding: 0.4em 0.7em;
+    }
+
+    .post-content tbody tr:nth-child(2n + 1) {
+        background-color: rgba(0,0,0,0.1);
+        padding: 1px;
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td:last-child {
+        box-shadow:
+            inset 1px 0 rgba(0,0,0,0.1),
+            inset -1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td {
+        box-shadow: inset 1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:last-child {
+        border-bottom: 1px solid rgba(0,0,0,.1);
+    }
+
+    .page-footer {
+        padding: 60px 5vmin;
+        margin: 60px auto 0;
+        text-align: center;
+        background-color: #f8f8f8;
+    }
+
+    .page-footer h3 {
+        margin: 0.5rem 0 0 0;
+    }
+
+    .page-footer p {
+        max-width: 500px;
+        margin: 1rem auto 1.5rem;
+        font-size: 1.7rem;
+        line-height: 1.5em;
+        color: rgba(0,0,0,0.6)
+    }
+
+    .powered {
+        display: inline-flex;
+        align-items: center;
+        margin: 30px 0 0;
+        padding: 6px 9px 6px 6px;
+        border: rgba(0,0,0,0.1) 1px solid;
+        font-size: 12px;
+        line-height: 12px;
+        letter-spacing: -0.2px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-weight: 500;
+        color: #222;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 6px;
+    }
+
+    .powered svg {
+        height: 16px;
+        width: 16px;
+        margin: 0 6px 0 0;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            font-size: 1.6rem;
+        }
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        h1 {
+            font-size: 2.6rem;
+            line-height: 1.15em;
+        }
+        h2 {
+            font-size: 2rem;
+            line-height: 1.2em;
+        }
+        h3 {
+            font-size: 1.7rem;
+        }
+    }
+
+    :root {--ghost-accent-color: #FF1A75;}
+    </style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+
+
+</head>
+
+<body class="amp-template">
+    <header class="page-header">
+        <a href="https://turkogluc.com">
+                <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        </a>
+    </header>
+
+    <main class="content" role="main">
+        <article class="post">
+
+            <header class="post-header">
+                <h1 class="post-title">Apache Kafka Advanced Consumers</h1>
+                <section class="post-meta">
+                    Cemal Turkoglu -
+                    <time class="post-date" datetime="2020-06-03">03 Jun 2020</time>
+                </section>
+            </header>
+            <figure class="post-image">
+                <amp-img src="https://turkogluc.com/content/images/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372-1.png" width="600" height="340" layout="responsive"
+                alt="Apache Kafka Advanced Consumers"
+                ></amp-img>
+            </figure>
+            <section class="post-content">
+
+                <p>In order to read data from the Kafka cluster, we use the generic <code>KafkaConsumer&lt;K, V&gt;</code> class that helps us to subscribe to a topic and receive messages from the topic.</p><p>Before getting into Kafka Consumer it is important to understand the basics of the Kafka and especially the consumer groups and partition rebalance concepts. See the <a href="https://turkogluc.com/apache-kafka-basics/">Apache Kafka Basics</a></p><p>I will start with showing the basic implementation of Kafka Consumer and then discuss the details of configurations.</p><h2 id="basic-kafka-consumer-implementation">Basic Kafka Consumer Implementation</h2><ul><li>Add <code>kafka-clients</code> Dependency:</li></ul><pre><code class="language-java">compile 'org.apache.kafka:kafka-clients:2.5.0'</code></pre><ul><li>Create Properties</li></ul><p><code>KafkaConsumer&lt;K, V&gt;</code> class needs a Properties object to be able to create a new instance. So we can create a Java Properties object and add the initial configuration properties.</p><pre><code class="language-java">Properties properties = new Properties();
+properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "myConsumerGroup-1");
+properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");</code></pre><p>Note that we added <code><a href="https://docs.confluent.io/current/installation/configuration/consumer-configs.html?ref=localhost#group.id">group.id</a></code> config to specify the consumer group, and also <code><a href="https://docs.confluent.io/current/installation/configuration/consumer-configs.html?ref=localhost#auto.offset.reset">auto.offset.reset</a></code> config to specify that initially we would like to start reading from earliest offset. Later on our consumer's last read offset will be saved and used.</p><ul><li>Create Consumer</li></ul><p>With using our properties we can initiate our consumer. We need to specify the types of Key and Value to the generic <code>KafkaConsumer</code> class. Simply we can use <code>String</code> keys and values if messages does not have a schema.</p><pre><code class="language-java">KafkaConsumer&lt;String, String&gt; consumer = new KafkaConsumer&lt;String, String&gt;(properties);</code></pre><ul><li>Subscribe to a topic</li></ul><pre><code class="language-java">consumer.subscribe(Collections.singletonList("topic"));</code></pre><p>Alternatively we can subscribe with a regex Pattern to all matching topics:</p><pre><code class="language-java">consumer.subscribe("location.*");</code></pre><ul><li>Read the records in a loop</li></ul><pre><code class="language-java">while (true) {
+	ConsumerRecords &lt;String, String&gt; records = consumer.poll(Duration.ofMillis(200));
+	records.forEach(record -&gt; System.out.println(record.toString()));
+}</code></pre><p>This step needs attention. There is an infinite loop for consumer to continually poll the records. Kafka client developers documented that only safe way to break this loop is using the <code>consumer.wakeup()</code> method. Method makes the consumer to throw <code>WakeupException</code> and it leaves the while loop. It is a checked exception and should be handled by the listener.</p><ul><li>Close consumer</li></ul><p>Remember closing the consumer gracefully when you no longer need or application exits. Failure to close the consumer will leak the resources that it is using.</p><pre><code class="language-java">consumer.close();</code></pre><h3 id="putting-pieces-together">Putting Pieces Together</h3><figure class="kg-card kg-code-card"><pre><code class="language-java">public class Consumer {
+
+    private final static Logger logger = LoggerFactory.getLogger(Consumer.class);
+
+    private final KafkaConsumer&lt;String, String&gt; consumer;
+    private final ExecutorService executor;
+    private final CountDownLatch latch;
+
+    public Consumer() {
+        consumer = new KafkaConsumer &lt;&gt;(getDefaultProperties());
+        latch = new CountDownLatch(1);
+        executor = Executors.newSingleThreadExecutor();
+    }
+
+    private Properties getDefaultProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "myConsumerGroup-0");
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        return properties;
+    }
+
+    public void startListening(String topic) {
+        logger.info("Starts Listen Task");
+        executor.submit(getListenTask(topic));
+    }
+
+    private Runnable getListenTask(String topic) {
+        return () -&gt; {
+            addShutDownHook();
+            consumer.subscribe(Collections.singletonList(topic));
+
+            try {
+                while (true) {
+                    pollRecords();
+                }
+            } catch (WakeupException ex) {
+                logger.error("Wake up received");
+            } finally {
+                consumer.close();
+                logger.info("consumer is closed");
+                latch.countDown();
+            }
+        };
+    }
+
+    private void pollRecords() {
+        logger.info("polling");
+        ConsumerRecords &lt;String, String&gt; records = consumer.poll(Duration.ofMillis(200));
+        records.forEach(record -&gt; logger.info(record.toString()));
+    }
+
+    private void addShutDownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -&gt; {
+            logger.info("Shutdown is caught");
+            stopConsumer();
+            closeExecutor();
+        }));
+    }
+
+    public void stopConsumer()  {
+        consumer.wakeup();
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            logger.error("Barrier wait is interrupted");
+        }
+    }
+
+    public void closeExecutor() {
+        executor.shutdownNow();
+        try {
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            logger.error("Could not shutdown executor");
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+}</code></pre><figcaption>Consumer.java</figcaption></figure><p>Note that with the shutdown hook that will be caught on exit, or implicitly by calling the <code>stopConsumer</code> method we introduce wakeup and WakeupException breaks the while loop.</p><p><strong>KafkaConsumer is not thread safe</strong> and you can’t have multiple threads safely using the same consumer unless you handle concurrency by yourself. <strong>One consumer per thread is the rule</strong>. To run multiple consumers in the same group in one application, it is better idea to run each in its own thread. That is why we are running it on a separate thread by executor service. Another point for our example is that it is not a good idea to block our main thread with infinite loop.</p><h2 id="consumer-delivery-semantics">Consumer Delivery Semantics</h2><p>Kafka consumers keep track of their position for the partitions. Each time <code>poll()</code> method is called, Kafka returns the records that has not been read yet, starting from the position of the consumer. </p><p>Consumers are responsible to commit their last read position. Consumers use a special Kafka topic for this purpose: <code>__consumer_offsets</code>. If consumer goes down and turn back or a new consumer joins to group, rebalancing occurs and partitions might be assigned to different consumer. In that case, consumer uses the last commit offset in order to know where to pick up the work. </p><p>Therefore, after some records received after polling, consumer has to commit its offset. It can be done in different ways:</p><p><code><strong>At most once</strong></code>: Offsets are committed as soon as the message is received. If the processing goes wrong, the <strong>message will be lost</strong>.</p><p><strong><code>At least once</code></strong>: Offsets are committed after the message is processed. If the processing goes wrong, the message will be read again. This results in <strong>duplicate processing</strong> of messages, if duplicate processing does not impact our system, it can be used. This is the <strong>default</strong> behaviour.</p><p><code><strong>Exactly once</strong></code>: Can be achieved for Kafka to Kafka workflows.</p><h3 id="auto-commit">Auto Commit</h3><p>KafkaConsumer has <code><a href="https://docs.confluent.io/current/installation/configuration/consumer-configs.html?ref=localhost#enable.auto.commit">enable.auto.commit</a></code> configuration that is by default set to <code>true</code>. Having this configuration consumer commits the largest offset every 5 seconds. This duration is specified by the configuration <code><a href="https://docs.confluent.io/current/installation/configuration/consumer-configs.html?ref=localhost#auto.commit.interval.ms">auto.commit.interval.ms</a></code>. Bear in mind that auto-commit is driven by poll method, on each invocation it checks if it is time to commit. </p><p>Automatic commits are convenient, and can be used if processing the same data multiple times does not impact our system. But they don’t give developers enough control to avoid duplicate messages. Another problem with auto committing is that if processing the received data is done asynchronously, then loop will immediately turn back to beginning and offsets will be committed already without know how the processing goes. So in this case it behaves as <code>at most once</code>, and our data will be lost if processing fails.</p><h3 id="manual-commits">Manual Commits</h3><p>Generally having the control over the commits is preferred way in order to eliminate duplicates or lost data. The consumer API exposes commit methods to let the developer decide committing offset at a point that makes sense, rather than making based on a timer.</p><p>By setting <code>auto.commit.offset=false</code>, offsets will be only committed when the application explicitly chooses to do so. We can commit by either sync or async methods:</p><pre><code class="language-java">public void commitSync();</code></pre><p>This method will commit the latest offset returned by poll() and return once the offset is committed, throwing an exception if commit fails for some reason. So we should use it after we are done with processing.</p><p>One of the advantage of <code><strong>commitSync</strong></code> method is that it retries committing automatically as long as there is no error that can’t be recovered. If there is an unrecoverable error happens, there is not much we can do except log an error.</p><pre><code class="language-java">while (true) {
+    logger.info("polling");
+    ConsumerRecords &lt;String, String&gt; records = consumer.poll(Duration.ofMillis(200));
+    records.forEach(record -&gt; logger.info(record.toString()));
+
+    try {
+        consumer.commitSync();
+    } catch (CommitFailedException ex) {
+        logger.error("Commit failed with exception: {}", ex);
+    }
+}</code></pre><p>Drawback of the synchronous committing is that our thread gets blocked until the commit operation is finished. This indeed decreases our throughput. Second option to commit manually is committing asynchronously.</p><pre><code class="language-java">public void commitAsync();
+
+// or with a callback
+public void commitAsync(OffsetCommitCallback callback);</code></pre><p>The drawback of async commits is that <strong>it does not retry to commit if some error occurs</strong>. It actually chooses to not retry committing because of a reason. If the problem is temporary, other poll invocations already commits higher offset numbers. So if our failed commit retries to push the offset then it overrides the already committed offsets. See the figure to understand such a behaviour:</p><figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>Async commit</figcaption></figure><p>When <code>Commit 1500</code> fails, it does not retry to commit, latest position remains unchanged. In the meantime <code>Commit 2000</code> succeeds and latest position becomes 2000. So if async commits were to retry failed commits it would override the latest committed one which is 2000 and position would become 1500 which is not correct and results in duplicate processing.</p><h3 id="combining-async-and-sync-commits">Combining Async and Sync Commits</h3><p>Async commits increases our throughput but on the other hand there might be cases that we need to guarantee that delivery is done successfully. For example before closing the application we would like to make sure that our last commit is delivered successfully. So for such cases we can use synchronous commits.</p><pre><code class="language-java">try {
+    while (true) {
+        logger.info("polling");
+        ConsumerRecords &lt;String, String&gt; records = consumer.poll(Duration.ofMillis(200));
+        records.forEach(record -&gt; logger.info(record.toString()));
+
+        consumer.commitAsync((offsets, exception) -&gt; {
+            if (exception != null) {
+                logger.error("Commit failed for offests: {} with the exception: {}",
+                        offsets.toString(), exception.getMessage());
+            }
+        });
+    }
+} catch (WakeupException ex) {
+    logger.error("Wake up received");
+} finally {
+    try {
+        consumer.commitSync();
+    } finally {
+        consumer.close();
+        logger.info("consumer is closed");
+        latch.countDown();
+    }
+}</code></pre><p>So for a normal usage we use async but when we are closing we want to make sure it will. be retried to commit until it is successfully saved.</p><h2 id="reprocessing-the-data">Reprocessing the Data</h2><p>Consumer API provides few useful methods that can be used to change the consumer's position for an earlier offset and repeat the processing.</p><ul><li><code><strong>Position Method</strong></code></li></ul><pre><code class="language-java">public long position(TopicPartition partition);</code></pre><p>Get the offset of the <em>next record</em> that will be fetched.</p><ul><li><code><strong>Seek Methods</strong></code></li></ul><pre><code class="language-java">// Overrides the fetch offsets that the consumer will use on the next poll
+public void seek(TopicPartition partition, long offset);
+
+// Seek to the first offset for each of the given partitions.
+public void seekToBeginning(java.util.Collection&lt;TopicPartition&gt; partitions);
+
+// Seek to the last offset for each of the given partitions.
+public void seekToEnd(java.util.Collection&lt;TopicPartition&gt; partitions);</code></pre><ul><li> <code><strong>Assign Methods</strong></code></li></ul><pre><code class="language-java">// Manually assign a list of partitions to this consumer
+public void assign(java.util.Collection&lt;TopicPartition&gt; partitions)</code></pre><p>Note that manual partition assignments should be done carefully. Manual topic assignment through this method does not use the consumer's group management functionality. As such, there will be no rebalance operation triggered when group membership or cluster and topic metadata change. So in case of a simple reprocessing we can unset group id, which assigns a random group id and we can process. By this way we will not affect the group coordination.</p><h2 id="rebalance-listener">Rebalance Listener</h2><p>When consumer group members are changed, for instance a new consumer joins or one consumer goes down, group coordinator makes a partition rebalancing. The consumer API provides the ability to listen rebalance events. So we can run do some cleanup, for example committing the offsets closing I/O connections before partition is removed from a consumer, or we can run some init task when a new consumer gets a partition assigned. In order to add partition listener, we need create an instance of <code>ConsumerRebalanceListener</code> class. It has following 2 methods to override:</p><pre><code class="language-java">public void onPartitionsAssigned(Collection&lt;TopicPartition&gt; partitions);
+public void onPartitionsRevoked(Collection&lt;TopicPartition&gt; partitions);</code></pre><p>The following example explains storing the commit offsets in extarnal store such as database:</p><pre><code class="language-java">public class SaveOffsetsOnRebalance implements ConsumerRebalanceListener {
+       private Consumer&lt;?,?&gt; consumer;
+
+       public SaveOffsetsOnRebalance(Consumer&lt;?,?&gt; consumer) {
+           this.consumer = consumer;
+       }
+
+       public void onPartitionsRevoked(Collection&lt;TopicPartition&gt; partitions) {
+           // save the offsets in an external store using some custom code not described here
+           for(TopicPartition partition: partitions)
+              saveOffsetInExternalStore(consumer.position(partition));
+       }
+
+       public void onPartitionsAssigned(Collection&lt;TopicPartition&gt; partitions) {
+           // read the offsets from an external store using some custom code not described here
+           for(TopicPartition partition: partitions)
+              consumer.seek(partition, readOffsetFromExternalStore(partition));
+       }
+   }</code></pre><h3 id="references">References</h3><ol><li>Narkhede, N., Shapira, G., &amp; Palino, T. (2017). <em>Kafka: The definitive guide: Real-time data and stream processing at scale</em>. Sebastopol, CA: O'Reilly Media.</li></ol>
+
+            </section>
+
+        </article>
+    </main>
+    <footer class="page-footer">
+            <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        <h3>Cemal Turkoglu</h3>
+            <p>Thoughts, stories and ideas.</p>
+        <p><a href="https://turkogluc.com">Read more posts →</a></p>
+        <a class="powered" href="https://ghost.org" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156"><g fill="none" fill-rule="evenodd"><rect fill="#15212B" width="156" height="156" rx="27"/><g transform="translate(36 36)" fill="#F6F8FA"><path d="M0 71.007A4.004 4.004 0 014 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0130 84H4a4 4 0 01-4-4.007v-8.986zM50 71.007A4.004 4.004 0 0154 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0180 84H54a4 4 0 01-4-4.007v-8.986z"/><rect y="34" width="84" height="17" rx="4"/><path d="M0 4.007A4.007 4.007 0 014.007 0h41.986A4.003 4.003 0 0150 4.007v8.986A4.007 4.007 0 0145.993 17H4.007A4.003 4.003 0 010 12.993V4.007z"/><rect x="67" width="17" height="17" rx="4"/></g></g></svg> Published with Ghost</a>
+    </footer>
+
+</body>
+</html>

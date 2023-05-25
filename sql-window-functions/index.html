@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>SQL Window Functions Introduction</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" href="/assets/css/app.css?v=b36b0218e7" as="style" />
+    <link rel="preload" href="/assets/js/manifest.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor/content-api.min.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/app.js?v=b36b0218e7" as="script" />
+
+      <link rel="preload" href="/assets/css/post.css?v=b36b0218e7" as="style" />
+  <link rel="preload" href="/assets/js/post.js?v=b36b0218e7" as="script" />
+
+
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7");
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7#iefix") format('embedded-opentype'),
+        url("/assets/fonts/icomoon/icomoon.ttf?101fc3?v=b36b0218e7") format('truetype'),
+        url("/assets/fonts/icomoon/icomoon.woff?101fc3?v=b36b0218e7") format('woff'),
+        url("/assets/fonts/icomoon/icomoon.svg?101fc3?v=b36b0218e7#icomoon") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/app.css?v=b36b0218e7" media="screen" />
+
+      <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=b36b0218e7" media="screen" />
+
+
+
+
+    <meta name="description" content="Understanding the window function in Postgres SQL. Introduction to partition by, order by, rank, first_value, last_value, and aggregate functions">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/sql-window-functions/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://turkogluc.com/sql-window-functions/amp/">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="SQL Window Functions Introduction">
+    <meta property="og:description" content="Understanding the window function in Postgres SQL. Introduction to partition by, order by, rank, first_value, last_value and aggregate functions">
+    <meta property="og:url" content="https://turkogluc.com/sql-window-functions/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000">
+    <meta property="article:published_time" content="2021-10-23T11:45:20.000Z">
+    <meta property="article:modified_time" content="2021-10-23T11:46:47.000Z">
+    <meta property="article:tag" content="PostgreSQL">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SQL Window Functions Introduction">
+    <meta name="twitter:description" content="Understanding the window function in Postgres SQL. Introduction to partition by, order by, rank, first_value, last_value and aggregate functions">
+    <meta name="twitter:url" content="https://turkogluc.com/sql-window-functions/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="PostgreSQL">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="2000">
+    <meta property="og:image:height" content="1208">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "SQL Window Functions Introduction",
+    "url": "https://turkogluc.com/sql-window-functions/",
+    "datePublished": "2021-10-23T11:45:20.000Z",
+    "dateModified": "2021-10-23T11:46:47.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&ixlib=rb-1.2.1&q=80&w=2000",
+        "width": 2000,
+        "height": 1208
+    },
+    "keywords": "PostgreSQL",
+    "description": "Understanding the window function in Postgres SQL. Introduction to partition by, order by, rank, first_value, last_value and aggregate functions",
+    "mainEntityOfPage": "https://turkogluc.com/sql-window-functions/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.32/umd/portal.min.js" data-i18n="false" data-ghost="https://turkogluc.com/" data-key="8aed1ac6d3b2be60cf4aedf769" data-api="https://turkogluc.com/ghost/api/content/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/sodo-search.min.js" data-key="8aed1ac6d3b2be60cf4aedf769" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/main.css" data-sodo-search="https://turkogluc.com/" crossorigin="anonymous"></script>
+
+    <link href="https://turkogluc.com/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=b36b0218e7"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=b36b0218e7">
+    <script defer src="/public/member-attribution.min.js?v=b36b0218e7"></script>
+    <!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/idea.min.css" integrity="sha512-jxbAYisMjIOokHq0YnYxWqTUfJRe8s1U2F1lp+se3vv0CS8floaFL3Mc3GEpG3HCG2s6lxHb3QvQdmUOT1ZzKw==" crossorigin="anonymous" />
+
+<style>
+   .l-post-content pre>code {
+    white-space:inherit
+  }
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+
+</style>
+
+<!-- prism.js -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-okaidia.min.css" />
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-tomorrow.min.css" />
+-->
+<style>
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+</style>
+
+
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+-->
+<style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+    <style>
+      :root {
+        --primary-subtle-color: var(--ghost-accent-color) !important;
+      }
+    </style>
+
+    <script>
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "https://turkogluc.com"
+      // @license-end
+    </script>
+
+  </head>
+  <body class="post-template tag-postgresql tag-hash-import-2023-05-25-09-05">
+
+
+
+
+
+<header class="m-header with-picture js-header">
+  <div class="m-mobile-topbar" data-aos="fade-down">
+    <button class="m-icon-button in-mobile-topbar js-open-menu" aria-label="Open menu">
+      <span class="icon-menu" aria-hidden="true"></span>
+    </button>
+      <a href="https://turkogluc.com" class="m-logo in-mobile-topbar">
+        <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+      </a>
+    <button class="m-icon-button in-mobile-topbar js-open-search" aria-label="Open search">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="m-menu js-menu">
+    <button class="m-icon-button outlined as-close-menu js-close-menu" aria-label="Close menu">
+      <span class="icon-close"></span>
+    </button>
+    <div class="m-menu__main" data-aos="fade-down">
+      <div class="l-wrapper">
+        <div class="m-nav js-main-nav">
+          <nav class="m-nav__left js-main-nav-left" role="navigation" aria-label="Main menu">
+            <ul>
+                <li class="only-desktop">
+                  <a href="https://turkogluc.com" class="m-logo">
+                    <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+                  </a>
+                </li>
+
+    <li class="nav-home">
+      <a href="https://turkogluc.com/">Home</a>
+    </li>
+    <li class="nav-spring">
+      <a href="https://turkogluc.com/tag/spring/">Spring</a>
+    </li>
+    <li class="nav-kafka">
+      <a href="https://turkogluc.com/tag/apache-kafka/">Kafka</a>
+    </li>
+    <li class="nav-java">
+      <a href="https://turkogluc.com/tag/java/">Java</a>
+    </li>
+    <li class="nav-jenkins">
+      <a href="https://turkogluc.com/tag/jenkins/">Jenkins</a>
+    </li>
+    <li class="nav-react">
+      <a href="https://turkogluc.com/tag/react/">React</a>
+    </li>
+
+              <li class="submenu-option js-submenu-option">
+                <button class="m-icon-button in-menu-main more js-toggle-submenu" aria-label="Open submenu">
+                  <span class="icon-more" aria-hidden="true"></span>
+                </button>
+                <div class="m-submenu js-submenu">
+                  <div class="l-wrapper in-submenu">
+                    <section class="m-recent-articles">
+                      <h3 class="m-submenu-title in-recent-articles">Recent articles</h3>
+                          <div class="swiper js-recent-slider">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                  <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Centralized Logging and Monitoring with Elastic Stack">
+                                      Centralized Logging and Monitoring with Elastic Stack
+                                    </h3>
+                                    <span class="m-recent-article__date">a year ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/sql-window-functions/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="SQL Window Functions Introduction">
+                                      SQL Window Functions Introduction
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Server Sent Events with Spring Boot and ReactJS">
+                                      Server Sent Events with Spring Boot and ReactJS
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/java-creating-pdf-reports-with-itext/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Creating PDF Reports with iText 7 in Java">
+                                      Creating PDF Reports with iText 7 in Java
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                            </div>
+                          </div>
+                    </section>
+                    <section class="m-tags">
+                      <h3 class="m-submenu-title">Tags</h3>
+                        <ul>
+                            <li>
+                              <a href="/tag/aop/">AOP</a>
+                            </li>
+                            <li>
+                              <a href="/tag/apache-kafka/">Apache Kafka</a>
+                            </li>
+                            <li>
+                              <a href="/tag/concurrency/">Concurrency</a>
+                            </li>
+                            <li>
+                              <a href="/tag/devops/">devops</a>
+                            </li>
+                            <li>
+                              <a href="/tag/docker/">docker</a>
+                            </li>
+                            <li>
+                              <a href="/tag/elasticsearch/">Elasticsearch</a>
+                            </li>
+                            <li>
+                              <a href="/tag/event-handling/">Event Handling</a>
+                            </li>
+                            <li>
+                              <a href="/tag/java/">Java</a>
+                            </li>
+                            <li>
+                              <a href="/tag/jenkins/">Jenkins</a>
+                            </li>
+                        </ul>
+                    </section>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div class="m-nav__right">
+            <button class="m-icon-button in-menu-main js-open-search" aria-label="Open search">
+              <span class="icon-search" aria-hidden="true"></span>
+            </button>
+            <div class="m-toggle-darkmode js-tooltip" data-tippy-content="Toggle light/dark mode" tabindex="0">
+              <label for="toggle-darkmode" class="sr-only">
+                Toggle light/dark mode
+              </label>
+              <input id="toggle-darkmode" type="checkbox" class="js-toggle-darkmode">
+              <div>
+                <span class="icon-moon moon" aria-hidden="true"></span>
+                <span class="icon-sunny sun" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<main class="main-wrap">
+
+  <section class="m-hero with-picture" data-aos="fade">
+    <div class="m-hero__picture in-post">
+      <img
+        srcset="
+          https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300 300w,
+          https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;600 600w,
+          https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;1000 1000w,
+          https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 2000w
+        "
+        sizes="(max-width: 600px) 600px, (max-width: 1000px) 1000px, 2000px"
+        src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;1000"
+        alt=""
+      />
+    </div>
+    </section>
+
+  <article>
+    <div class="l-content in-post">
+        <div class="l-wrapper in-post  js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">SQL Window Functions Introduction</h1>
+              <div class="m-heading__meta">
+                  <a href="https://turkogluc.com/tag/postgresql/" class="m-heading__meta__tag">PostgreSQL</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                <span class="m-heading__meta__time">Oct 23, 2021</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https://turkogluc.com/sql-window-functions/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text=SQL%20Window%20Functions%20Introduction&url=https://turkogluc.com/sql-window-functions/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="Scroll to top">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p>Window functions perform a calculation over a set of rows that are connected in some way to the current row. It can be compared with <code>GROUP BY</code> and aggregate functions. However with window functions, rows keep their separate identities in the output instead of being grouped into a single output row. The window function is able access more than just the current row of the query result under the hood. Window definition has the following syntax:</p><pre><code class="language-sql">WINDOW window_name AS
+(
+	[ PARTITION BY expression [, ...] ]
+	[ ORDER BY expression [ ASC | DESC ] [, ...] ]
+)</code></pre><p>The <strong>ORDER</strong> and <strong>PARTITION</strong> define what is called the "<strong>window</strong>", the ordered subset of data over which calculations are made.</p><h2 id="partition-by">PARTITION BY</h2><p>Let's focus on the partitioning concept. When we partition by a field, the table is divided to the partitions/groups and each row individually can access to the items from its own partition. For example:</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       AVG(salary) OVER w
+FROM emp_salary
+    WINDOW w AS (PARTITION BY department)</code></pre><p>The aggregate function <code>AVG</code> is used <code>OVER</code> the window <code>w</code> and the result occurs to be:</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-12.36.21.png" class="kg-image" alt loading="lazy" width="884" height="576" srcset="https://turkogluc.com/content/images/size/w600/2021/10/Screenshot-2021-10-23-at-12.36.21.png 600w, https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-12.36.21.png 884w" sizes="(min-width: 720px) 720px"><figcaption>partition by query result</figcaption></figure><p>Note that each color represents a partition.</p><p>The rows and the first 3 columns are the directly from the <code>emp_salary</code> table and we would see that exact part with <code>SELECT * FROM emp_salary</code> query, the last column comes with the aggregate function <code>AVG</code> that operates on the partition of the current row and calculates the average of salary of the partition.</p><blockquote>For each row, the window function is calculated over the rows that fall in the same partition as the current row.</blockquote><p>As you can see from the following explain analyse result, it is important to notice that the <code>PARTITION BY</code> statement first orders the table by the partitioned column:</p><pre><code>+--------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                          |
++--------------------------------------------------------------------------------------------------------------------+
+|WindowAgg  (cost=83.37..104.37 rows=1200 width=72) (actual time=0.589..0.879 rows=10 loops=1)                       |
+|  -&gt;  Sort  (cost=83.37..86.37 rows=1200 width=40) (actual time=0.371..0.477 rows=10 loops=1)                       |
+|        Sort Key: department                                                                                        |
+|        Sort Method: quicksort  Memory: 25kB                                                                        |
+|        -&gt;  Seq Scan on emp_salary  (cost=0.00..22.00 rows=1200 width=40) (actual time=0.037..0.129 rows=10 loops=1)|
+|Planning Time: 0.068 ms                                                                                             |
+|Execution Time: 1.053 ms                                                                                            |
++--------------------------------------------------------------------------------------------------------------------+
+</code></pre><h2 id="order-by">ORDER BY</h2><p><code>ORDER BY</code> statement can be omitted as it is optional, however there is another important concept to understand the behaviour of using it. For each row, there is a set of rows within its partition called its <strong>window frame</strong>. </p><ul><li>When the <code>ORDER BY</code> is supplied then the frame consists of all rows from the start of the partition up through the current row. </li><li>When <code>ORDER BY</code> is omitted the default frame consists of all rows in the partition. </li></ul><p>If we compare result of the following query with the previous one we can see the <code>AVG</code> is calculated within the frame, which means from start to the current row:</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       AVG(salary) OVER w
+FROM emp_salary
+    WINDOW w AS (PARTITION BY department ORDER BY salary)</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-12.48.51.png" class="kg-image" alt loading="lazy" width="1684" height="942" srcset="https://turkogluc.com/content/images/size/w600/2021/10/Screenshot-2021-10-23-at-12.48.51.png 600w, https://turkogluc.com/content/images/size/w1000/2021/10/Screenshot-2021-10-23-at-12.48.51.png 1000w, https://turkogluc.com/content/images/size/w1600/2021/10/Screenshot-2021-10-23-at-12.48.51.png 1600w, https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-12.48.51.png 1684w" sizes="(min-width: 720px) 720px"><figcaption>order by query result</figcaption></figure><p>As we can see in the example <code>emp#5</code> has the average of the first 4 rows.</p><hr><h2 id="usual-aggregates-sum-count-and-avg">Usual Aggregates: SUM, COUNT, and AVG</h2><p>We can use the aggregate  functions that are used normally without windows.</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       AVG(salary) OVER w,
+       SUM(salary) OVER w,
+       COUNT(salary) OVER w
+FROM emp_salary
+    WINDOW w AS (PARTITION BY department ORDER BY salary)</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.00.19.png" class="kg-image" alt loading="lazy" width="780" height="548" srcset="https://turkogluc.com/content/images/size/w600/2021/10/Screenshot-2021-10-23-at-13.00.19.png 600w, https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.00.19.png 780w" sizes="(min-width: 720px) 720px"><figcaption>sum, avg, count query result</figcaption></figure><p>Remember that the frame would be the whole partition if we did not use <code>ORDER BY</code> statement.</p><h2 id="rownumber">ROW_NUMBER</h2><p>As the name implies, it shows the number of the row within the partition, and it does not take any parameter.</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       ROW_NUMBER() over w
+FROM emp_salary
+    WINDOW w AS (PARTITION BY department ORDER BY salary)</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.05.38.png" class="kg-image" alt loading="lazy" width="600" height="556" srcset="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.05.38.png 600w"><figcaption>row_number query result</figcaption></figure><h2 id="rank-and-denserank">RANK and DENSE_RANK</h2><p><code>Rank</code> is similar to the <code>row_number</code> however when 2 fields are having the same order (based on the order by clause) their rank is considered as the same,  and the next rank is omitted, and +1 value is given for the upcoming row.  <code>dense_rank</code> function does not skip the next rank and assigns it to the upcoming row.</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       RANK() over w,
+       DENSE_RANK() over w
+FROM emp_salary
+    WINDOW w AS (PARTITION BY department ORDER BY salary)</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.13.30.png" class="kg-image" alt loading="lazy" width="764" height="554" srcset="https://turkogluc.com/content/images/size/w600/2021/10/Screenshot-2021-10-23-at-13.13.30.png 600w, https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.13.30.png 764w" sizes="(min-width: 720px) 720px"><figcaption>rank, dense_rank query result</figcaption></figure><h2 id="lag-and-lead">LAG and LEAD</h2><p>It can often be useful to compare rows with preceding or following rows, especially if you have the data in a meaningful order. <code>LAG</code> function can access data of the previous rows, and <code>LEAD</code> function can access the next rows relative to the current row. Both functions take offset as parameter to provide the number of rows to go backward of forward.</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       LAG(salary, 1) over w as preceding_salary,
+       LEAD(salary, 1) over w as following_salary
+FROM emp_salary
+    WINDOW w AS (PARTITION BY department ORDER BY salary ASC)</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.23.47.png" class="kg-image" alt loading="lazy" width="808" height="552" srcset="https://turkogluc.com/content/images/size/w600/2021/10/Screenshot-2021-10-23-at-13.23.47.png 600w, https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.23.47.png 808w" sizes="(min-width: 720px) 720px"><figcaption>lag and lead query result</figcaption></figure><h2 id="firstvalue-and-last-value">FIRST_VALUE and LAST VALUE</h2><p>These functions return the first or last value of the window frame.</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       first_value(salary) over w as smallest_salary,
+       last_value(salary) over w  as biggest_salary
+FROM emp_salary
+    WINDOW w AS (PARTITION BY department ORDER BY salary ASC)</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.23.47-1.png" class="kg-image" alt loading="lazy" width="808" height="552" srcset="https://turkogluc.com/content/images/size/w600/2021/10/Screenshot-2021-10-23-at-13.23.47-1.png 600w, https://turkogluc.com/content/images/2021/10/Screenshot-2021-10-23-at-13.23.47-1.png 808w" sizes="(min-width: 720px) 720px"><figcaption>first_value and last_value query result</figcaption></figure><hr><p>Please note as we can use the named windows, we could define it directly in the projection column as well:</p><pre><code class="language-sql">SELECT emp_no,
+       department,
+       salary,
+       first_value(salary) over (PARTITION BY department ORDER BY salary) as smallest_salary,
+       last_value(salary) over (PARTITION BY department ORDER BY salary)  as biggest_salary
+FROM emp_salary</code></pre><h2 id="references">References</h2><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://www.postgresql.org/docs/13/tutorial-window.html?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">3.5. Window Functions</div><div class="kg-bookmark-description">3.5.&amp;nbsp;Window Functions A window function performs a calculation across a set of table rows that are somehow related to the …</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="https://www.postgresql.org/favicon.ico" alt><span class="kg-bookmark-author">PostgreSQL Documentation</span></div></div><div class="kg-bookmark-thumbnail"><img src="https://www.postgresql.org/media/img/about/press/elephant.png" alt></div></a></figure><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://mode.com/sql-tutorial/sql-window-functions/?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">SQL Window Functions | Advanced SQL - Mode</div><div class="kg-bookmark-description">This lesson of the SQL tutorial for data analysis covers SQL windowing functions such as ROW_NUMBER(), NTILE, LAG, and LEAD.</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="https://mode.com/resources/icons/icon-512x512.png?v&#x3D;a44c4197f59d99da0fa553f91f81b9fd" alt><span class="kg-bookmark-author">Mode Resources</span></div></div><div class="kg-bookmark-thumbnail"><img src="https://mode.com/resources/images/og-images/sql-facebook.png" alt></div></a></figure>
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">Tags</h3>
+                  <ul>
+                      <li>
+                        <a href="/tag/postgresql/" title="PostgreSQL">PostgreSQL</a>
+                      </li>
+                  </ul>
+                </section>
+            </div>
+          </div>
+        </div>
+          <section class="m-subscribe-section js-newsletter">
+            <div class="l-wrapper in-post">
+              <div class="m-subscribe-section__content">
+                <div class="m-subscribe-section__text">
+                  <h4 class="m-subscribe-section__title">Subscribe to our newsletter</h4>
+                  <p class="m-subscribe-section__description">
+                    Get the latest posts delivered right to your inbox.
+                  </p>
+                </div>
+                <div class="m-subscribe-section__form">
+
+<div class="m-subscribe-section__form">
+  <form data-members-form="subscribe" id="newsletter-form" class="m-subscribe-section__container">
+    <div class="m-subscribe__form">
+      <div class="pos-relative">
+        <label for="newsletter-input" class="sr-only">Your email address</label>
+        <input data-members-email id="newsletter-input" class="m-input in-subscribe-section" type="email"
+          placeholder="Your email address" required />
+      </div>
+      <button id="newsletter-button" class="m-button primary block" type="submit">Subscribe</button>
+    </div>
+    <div class="m-subscribe__success">
+      <header class="m-heading no-margin">
+        <img src="/assets/images/success.png?v=b36b0218e7" alt="Success!" class="m-subscribe__success_icon">
+        <p class="m-heading__description in-newsletter-form">
+          Now check your inbox and click the link to confirm your subscription.
+        </p>
+      </header>
+    </div>
+    <p class="m-subscribe__invalid m-small-text">
+      Please enter a valid email address
+    </p>
+    <p class="m-subscribe__error m-small-text">
+      Oops! There was an error sending the email, please try later.
+    </p>
+  </form>
+</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="https://turkogluc.com/author/cemal/" class="m-author-picture" aria-label="Cemal Turkoglu">
+                  <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="https://turkogluc.com/author/cemal/">Cemal Turkoglu</a>
+              </h4>
+              <ul class="m-author-links">
+              </ul>
+            </div>
+          </div>
+        </section>
+            <section class="m-recommended">
+              <div class="l-wrapper in-recommended">
+                <h3 class="m-section-title in-recommended">Recommended for you</h3>
+                <div class="m-recommended-articles">
+                  <div class="m-recommended-slider swiper js-recommended-slider">
+                    <div class="swiper-wrapper">
+
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-spring tag-react tag-event-handling tag-java tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/spring/" class="m-article-card__tag">Spring</a>
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__info-link" aria-label="Server Sent Events with Spring Boot and ReactJS">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Server Sent Events with Spring Boot and ReactJS">
+            Server Sent Events with Spring Boot and ReactJS
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>2 years ago</span>
+          <span>&bull;</span>
+          <span>7 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-elasticsearch tag-java tag-devops tag-hash-import-2023-05-25-09-05 featured">
+    <div class="m-article-card__picture">
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+        <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__featured js-tooltip" data-tippy-content="Featured" aria-label="Featured">
+          <span class="icon-star" aria-hidden="true"></span>
+        </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/elasticsearch/" class="m-article-card__tag">Elasticsearch</a>
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__info-link" aria-label="Centralized Logging and Monitoring with Elastic Stack">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Centralized Logging and Monitoring with Elastic Stack">
+            Centralized Logging and Monitoring with Elastic Stack
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>a year ago</span>
+          <span>&bull;</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-docker tag-react tag-spring tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2020/09/docker-banner2.jpg" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/docker/" class="m-article-card__tag">docker</a>
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__info-link" aria-label="Running ReactJS + Spring Boot Application with Docker Compose">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Running ReactJS + Spring Boot Application with Docker Compose">
+            Running ReactJS + Spring Boot Application with Docker Compose
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>3 years ago</span>
+          <span>&bull;</span>
+          <span>2 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+                    </div>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-prev" aria-label="Previous">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-next" aria-label="Next">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+    </div>
+  </article>
+</main>
+
+
+
+
+<div class="m-search js-search" role="dialog" aria-modal="true" aria-label="Search">
+  <button class="m-icon-button outlined as-close-search js-close-search" aria-label="Close search">
+    <span class="icon-close" aria-hidden="true"></span>
+  </button>
+  <div class="m-search__content">
+    <form class="m-search__form">
+      <div class="pos-relative">
+        <span class="icon-search m-search-icon" aria-hidden="true"></span>
+        <label for="search-input" class="sr-only">
+          Type to search
+        </label>
+        <input id="search-input" type="text" class="m-input in-search js-input-search" placeholder="Type to search">
+      </div>
+    </form>
+    <div class="js-search-results hide"></div>
+    <p class="m-not-found align-center hide js-no-results">
+      No results for your search, please try with something else.
+    </p>
+  </div>
+</div>
+
+
+<footer class="m-footer">
+  <div class="m-footer__content">
+    <nav class="m-footer-social">
+        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+          <span class="icon-facebook" aria-hidden="true"></span>
+        </a>
+        <a href="https://twitter.com/turkoglu4c" target="_blank" rel="noopener" aria-label="Twitter">
+          <span class="icon-twitter" aria-hidden="true"></span>
+        </a>
+      <a href="https://turkogluc.com/rss" aria-label="RSS">
+        <span class="icon-rss" aria-hidden="true"></span>
+      </a>
+    </nav>
+    <p class="m-footer-copyright">
+      <span>Cemal Turkoglu &copy; 2023</span>
+      <span>&nbsp; &bull; &nbsp;</span>
+      <span>Published with <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></span>
+    </p>
+    <p class="m-footer-copyright jslicense">
+      <a href="/assets/html/javascript.html?v=b36b0218e7" rel="jslicense">JavaScript license information</a>
+    </p>
+  </div>
+</footer>
+
+    <script defer src="/assets/js/manifest.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor/content-api.min.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/app.js?v=b36b0218e7"></script>
+
+      <script defer src="/assets/js/post.js?v=b36b0218e7"></script>
+
+
+    <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/java.min.js" integrity="sha512-YVNh+JI3AZyDUu/aGDh2vLgstb4kYs5U/WsTge2QQhU5fTsQLPFgX64gVAE/6qDSPUfpMGtG8M74uT3Y1SUU/w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/javascript.min.js" integrity="sha512-QKMem5huKjrqi8ym4y9CvmmOvrimnBdRqEp269PoiENovcPr073iaXkoU8YPzGk+qJ4rNd4W/AatDTtB7uW52g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/yaml.min.js" integrity="sha512-Rd5FUDZGJkdJ4Z/pZTgK+6QMWl0ubeugVNnXMK/QhiDxw5IMuYYxJOoPcof66vzvkpg0XjumgSvdaLOftzR5uQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/groovy.min.js" integrity="sha512-+Pin3A2zbWHySvtjP3FIddvwD7Fl1fLZA+rwlrQOUWzQTdJ9ycbPpqqlJSgfnngME/WDlugENmeglfQilO/CgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/bash.min.js" integrity="sha512-VChHo3Iw9v3ZEvy8w2NFK62jJ27P7Y9N+uu94NwquvTSc/80oXBFnkK8Rk2z63rTwXHoJ9AiMbNbzLeB/BrryA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/json.min.js" integrity="sha512-FoN8JE+WWCdIGXAIT8KQXwpiavz0Mvjtfk7Rku3MDUNO0BDCiRMXAsSX+e+COFyZTcDb9HDgP+pM2RX12d4j+A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/dockerfile.min.js" integrity="sha512-PkYx44XPGihIBrIcdSUHi9gVPtedxVU4MiAxcdH3kG1B1ZA/2UZLLXg84gLWoFojIC2srDBjoOxNrJKGINwELw==" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-groovy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-sql.min.js"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166072389-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166072389-1');
+</script>
+  </body>
+</html>

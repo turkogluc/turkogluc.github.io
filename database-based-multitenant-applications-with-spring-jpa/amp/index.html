@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html ⚡>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <title>Database Based Multitenant Applications with Spring JPA</title>
+
+    <meta name="description" content="This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Database Based Multitenant Applications with Spring JPA">
+    <meta property="og:description" content="This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.">
+    <meta property="og:url" content="https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/05/architect.png">
+    <meta property="article:published_time" content="2020-05-11T13:37:35.000Z">
+    <meta property="article:modified_time" content="2020-05-16T23:03:40.000Z">
+    <meta property="article:tag" content="Spring">
+    <meta property="article:tag" content="JPA">
+    <meta property="article:tag" content="Multitenancy">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Database Based Multitenant Applications with Spring JPA">
+    <meta name="twitter:description" content="This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.">
+    <meta name="twitter:url" content="https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/05/architect.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Spring, JPA, Multitenancy">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1234">
+    <meta property="og:image:height" content="887">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Database Based Multitenant Applications with Spring JPA",
+    "url": "https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/",
+    "datePublished": "2020-05-11T13:37:35.000Z",
+    "dateModified": "2020-05-16T23:03:40.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/05/architect.png",
+        "width": 1234,
+        "height": 887
+    },
+    "keywords": "Spring, JPA, Multitenancy",
+    "description": "This post explains creating database based multitenant Spring application with JPA configuration and handling multiple database selection at runtime.",
+    "mainEntityOfPage": "https://turkogluc.com/database-based-multitenant-applications-with-spring-jpa/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+
+    <style amp-custom>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        font-size: 62.5%;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        color: #3a4145;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.7rem;
+        line-height: 1.55em;
+        font-weight: 400;
+        font-style: normal;
+        background: #fff;
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    p,
+    ul,
+    ol,
+    li,
+    dl,
+    dd,
+    hr,
+    pre,
+    form,
+    table,
+    video,
+    figure,
+    figcaption,
+    blockquote {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul[class],
+    ol[class] {
+        padding: 0;
+        list-style: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    input,
+    button,
+    select,
+    textarea {
+        font: inherit;
+        -webkit-appearance: none;
+    }
+
+    fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        font-weight: 700;
+    }
+
+    hr {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid currentcolor;
+        opacity: 0.1;
+    }
+
+    ::selection {
+        text-shadow: none;
+        background: #cbeafb;
+    }
+
+    mark {
+        background-color: #fdffb6;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+    sup {
+        top: -0.5em;
+    }
+    sub {
+        bottom: -0.25em;
+    }
+
+    ul li + li {
+        margin-top: 0.6em;
+    }
+
+    a {
+        color: var(--ghost-accent-color, #1292EE);
+        text-decoration-skip-ink: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        font-weight: 700;
+        color: #121212;
+        line-height: 1.4em;
+    }
+
+    h1 {
+        font-size: 3.4rem;
+        line-height: 1.1em;
+    }
+
+    h2 {
+        font-size: 2.4rem;
+        line-height: 1.2em;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+    }
+
+    h4 {
+        font-size: 1.7rem;
+    }
+
+    h5 {
+        font-size: 1.6rem;
+    }
+
+    h6 {
+        font-size: 1.6rem;
+    }
+
+    amp-img {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    amp-img img {
+        object-fit: cover;
+    }
+
+    amp-youtube {
+        height: calc(100vw / 1.78);
+        width: 100vw;
+        position: relative;
+    }
+
+    amp-youtube img {
+        position: absolute;
+    }
+
+    .page-header {
+        padding: 50px 5vmin 30px;
+        text-align: center;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .page-header a {
+        color: #121212;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.6rem;
+        letter-spacing: -0.1px;
+    }
+
+    .post {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .post-header {
+        margin: 0 5vmin 5vmin;
+        text-align: center;
+    }
+
+    .post-meta {
+        margin: 1rem 0 0 0;
+        text-transform: uppercase;
+        color: #738a94;
+        font-weight: 500;
+        font-size: 1.3rem;
+    }
+
+    .post-image {
+        margin: 0 0 5vmin;
+    }
+
+    .post-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .post-content {
+        padding: 0 5vmin;
+    }
+
+    .post-content > * + * {
+        margin-top: 1.5em;
+    }
+
+    .post-content [id]:not(:first-child) {
+        margin: 2em 0 0;
+    }
+
+    .post-content > [id] + * {
+        margin-top: 1rem;
+    }
+
+    .post-content [id] + .kg-card,
+    .post-content blockquote + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content > ul,
+    .post-content > ol,
+    .post-content > dl {
+        padding-left: 1.9em;
+    }
+
+    .post-content hr {
+        margin-top: 40px;
+    }
+
+    .post .post-content hr + * {
+        margin-top: 40px;
+    }
+
+    .post-content amp-img {
+        background-color: #f8f8f8;
+    }
+
+    .post-content blockquote {
+        position: relative;
+        font-style: italic;
+    }
+
+    .post-content blockquote::before {
+        content: "";
+        position: absolute;
+        left: -1.5em;
+        top: 0;
+        bottom: 0;
+        width: 0.3rem;
+        background: var(--ghost-accent-color, #1292EE);
+    }
+
+    .post-content blockquote.kg-blockquote-alt {
+        font-size: 1.2em;
+        font-style: italic;
+        line-height: 1.6em;
+        text-align: center;
+        color: #738a94;
+        padding: 0.75em 3em 1.25em;
+    }
+
+    .post-content blockquote.kg-blockquote-alt::before {
+        display: none;
+    }
+
+    .post-content :not(.kg-card):not([id]) + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content .kg-card + :not(.kg-card) {
+        margin-top: 40px;
+    }
+
+    .kg-card figcaption {
+        padding: 1.5rem 1.5rem 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.4em;
+        opacity: 0.6;
+    }
+
+    .kg-card figcaption strong {
+        color: rgba(0,0,0,0.8);
+    }
+
+    .post-content :not(pre) code {
+        vertical-align: middle;
+        padding: 0.15em 0.4em 0.15em;
+        border: #e1eaef 1px solid;
+        font-weight: 400;
+        font-size: 0.9em;
+        line-height: 1em;
+        color: #15171a;
+        background: #f0f6f9;
+        border-radius: 0.25em;
+    }
+
+    .post-content > pre {
+        overflow: scroll;
+        padding: 16px 20px;
+        color: #fff;
+        background: #1F2428;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px -2px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+    }
+
+    .kg-embed-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .kg-image-card img {
+        margin: auto;
+    }
+
+    .kg-gallery-card + .kg-gallery-card {
+        margin-top: 0.75em;
+    }
+
+    .kg-gallery-container {
+        position: relative;
+    }
+
+    .kg-gallery-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .kg-gallery-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .kg-gallery-row:not(:first-of-type) {
+        margin: 0.75em 0 0 0;
+    }
+
+    .kg-gallery-image:not(:first-of-type) {
+        margin: 0 0 0 0.75em;
+    }
+
+    .kg-bookmark-card,
+    .kg-bookmark-publisher {
+        position: relative;
+    }
+
+    .kg-bookmark-container,
+    .kg-bookmark-container:hover {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+        color: currentColor;
+        background: rgba(255,255,255,0.6);
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        text-decoration: none;
+        border-radius: 3px;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+    }
+
+    .kg-bookmark-content {
+        flex-basis: 0;
+        flex-grow: 999;
+        padding: 20px;
+        order: 1;
+    }
+
+    .kg-bookmark-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 1.3em;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        max-height: 45px;
+        margin: 0.5em 0 0 0;
+        font-size: 1.4rem;
+        line-height: 1.55em;
+        overflow: hidden;
+        opacity: 0.8;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .kg-bookmark-metadata {
+        margin-top: 20px;
+    }
+
+    .kg-bookmark-metadata {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.3em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-metadata amp-img {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
+        margin-right: 10px;
+    }
+
+    .kg-bookmark-thumbnail {
+        display: flex;
+        flex-basis: 20rem;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+
+    .kg-bookmark-thumbnail amp-img {
+        max-height: 200px;
+    }
+
+    .kg-bookmark-author {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-publisher::before {
+        content: "•";
+        margin: 0 .5em;
+    }
+
+    .kg-toggle-card-icon {
+        display: none;
+    }
+
+    .kg-toggle-content {
+        margin-top: 0.8rem;
+    }
+
+    .kg-product-card-container {
+        background: transparent;
+        padding: 20px;
+        width: 100%;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 1px rgb(124 139 154 / 25%);
+    }
+
+    .kg-product-card-description p {
+        margin-top: 1.5em;
+    }
+
+    .kg-product-card-description ul {
+        margin-left: 24px;
+    }
+
+    .kg-product-card-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+    }
+
+    .kg-product-card-rating-star {
+        height: 28px;
+        width: 20px;
+        margin-right: 2px;
+    }
+
+    .kg-product-card-rating-star svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.15;
+    }
+
+    .kg-product-card-rating-active.kg-product-card-rating-star svg {
+    opacity: 1;
+    }
+
+    .kg-nft-card-container {
+        position: relative;
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+        text-decoration: none;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        box-shadow: 0 2px 6px -2px rgb(0 0 0 / 10%), 0 0 1px rgb(0 0 0 / 40%);
+        width: 100%;
+        max-width: 512px;
+        color: #15212A;
+        background: #fff;
+        border-radius: 5px;
+        transition: none;
+        margin: 0 auto;
+    }
+
+    .kg-nft-metadata {
+        padding: 2.0rem;
+    }
+
+    .kg-nft-image-container {
+        position: relative;
+    }
+
+    .kg-nft-image {
+        display: flex;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .kg-nft-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .kg-nft-header h4.kg-nft-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin: 0;
+        color: #15212A;
+    }
+
+    .kg-nft-header amp-img {
+        max-width: 114px;
+        max-height: 26px;
+    }
+
+    .kg-nft-opensea-logo {
+        margin-top: 2px;
+        width: 100px;
+    }
+
+    .kg-nft-creator {
+        font-family: inherit;
+        color: #95A1AD;
+    }
+
+    .kg-nft-creator span {
+        font-weight: 500;
+        color: #15212A;
+    }
+
+    .kg-nft-card p.kg-nft-description {
+        font-size: 1.4rem;
+        line-height: 1.4em;
+        margin: 2.0rem 0 0;
+        color: #222;
+    }
+
+    .kg-button-card {
+        display: flex;
+        position: static;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kg-btn {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 2.0rem;
+        height: 4.0rem;
+        line-height: 4.0rem;
+        font-size: 1.65rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .kg-btn:hover {
+        opacity: 0.85;
+    }
+
+    .kg-btn-accent {
+        background-color: var(--ghost-accent-color, #1292EE);
+        color: #fff;
+    }
+
+    .kg-callout-card {
+        display: flex;
+        padding: 20px 28px;
+        border-radius: 3px;
+    }
+
+    .kg-callout-card-grey {
+        background: rgba(124, 139, 154, 0.13);
+    }
+
+    .kg-callout-card-white {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-callout-card-blue {
+        background: rgba(33, 172, 232, 0.12);
+    }
+
+    .kg-callout-card-green {
+        background: rgba(52, 183, 67, 0.12);
+    }
+
+    .kg-callout-card-yellow {
+        background: rgba(240, 165, 15, 0.13);
+    }
+
+    .kg-callout-card-red {
+        background: rgba(209, 46, 46, 0.11);
+    }
+
+    .kg-callout-card-pink {
+        background: rgba(225, 71, 174, 0.11);
+    }
+
+    .kg-callout-card-purple {
+        background: rgba(135, 85, 236, 0.12);
+    }
+
+    .kg-callout-card-accent {
+        background: var(--ghost-accent-color);
+        color: #fff;
+    }
+
+    .kg-callout-card-accent a {
+        color: #fff;
+    }
+
+    .kg-callout-emoji {
+        padding-right: 16px;
+        line-height: 1.3;
+        font-size: 1.25em;
+    }
+
+    .kg-header-card {
+        padding: 6em 3em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .kg-header-card.kg-size-small {
+        padding-top: 4em;
+        padding-bottom: 4em;
+    }
+
+    .kg-header-card.kg-size-large {
+        padding-top: 12em;
+        padding-bottom: 12em;
+    }
+
+    .kg-header-card.kg-width-full {
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+
+    .kg-header-card.kg-align-left {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .kg-header-card.kg-style-dark {
+        background: #15171a;
+        color: #ffffff;
+    }
+
+    .kg-header-card.kg-style-light {
+        color: #15171a;
+        border: 1px solid rgba(124, 139, 154, 0.25);
+        border-width: 1px 0;
+    }
+
+    .kg-header-card.kg-style-accent {
+        background-color: var(--ghost-accent-color);
+    }
+
+    .kg-header-card.kg-style-image {
+        background-color: #e7e7eb;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .kg-header-card h2 {
+        font-size: 4em;
+        font-weight: 700;
+        line-height: 1.1em;
+        margin: 0;
+    }
+
+    .kg-header-card h2 strong {
+        font-weight: 800;
+    }
+
+    .kg-header-card.kg-size-small h2 {
+        font-size: 3em;
+    }
+
+    .kg-header-card.kg-size-large h2 {
+        font-size: 5em;
+    }
+
+    .kg-header-card h3 {
+        font-size: 1.25em;
+        font-weight: 500;
+        line-height: 1.3em;
+        margin: 0;
+    }
+
+    .kg-header-card h3 strong {
+        font-weight: 600;
+    }
+
+    .kg-header-card.kg-size-small h3 {
+        font-size: 1em;
+    }
+
+    .kg-header-card.kg-size-large h3 {
+        font-size: 1.5em;
+    }
+
+    .kg-header-card:not(.kg-style-light) h2,
+    .kg-header-card:not(.kg-style-light) h3 {
+        color: #ffffff;
+    }
+
+    .kg-header-card a.kg-header-card-button {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 1.2em;
+        height: 2.4em;
+        line-height: 1em;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+        background-color: var(--ghost-accent-color);
+        color: #ffffff;
+        margin: 1.75em 0 0;
+    }
+
+    .kg-header-card a.kg-header-card-button:hover {
+        opacity: 0.85;
+    }
+
+    .kg-header-card.kg-size-large a.kg-header-card-button {
+        margin-top: 2em;
+    }
+
+    .kg-header-card.kg-size-small a.kg-header-card-button {
+        margin-top: 1.5em;
+    }
+
+    .kg-header-card.kg-style-image a.kg-header-card-button,
+    .kg-header-card.kg-style-dark a.kg-header-card-button {
+        background: #ffffff;
+        color: #15171a;
+    }
+
+    .kg-header-card.kg-style-accent a.kg-header-card-button {
+        background: #ffffff;
+        color: var(--ghost-accent-color);
+    }
+
+    .kg-audio-card {
+        display: flex;
+        width: 100%;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-audio-thumbnail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        min-width: 80px;
+        height: 80px;
+        background: transparent;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .kg-audio-thumbnail.placeholder {
+        background: var(--ghost-accent-color);
+    }
+
+    .kg-audio-thumbnail.placeholder svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+    }
+
+    .kg-audio-player-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        --seek-before-width: 0%;
+        --volume-before-width: 100%;
+        --buffered-width: 0%;
+    }
+
+    .kg-audio-title {
+        width: 100%;
+        padding: 8px 12px 0;
+        border: none;
+        font-family: inherit;
+        font-size: 1.1em;
+        font-weight: 700;
+        background: transparent;
+    }
+
+    .kg-audio-player {
+        display: none;
+    }
+
+    .kg-width-full.kg-card-hascaption {
+        display: grid;
+        grid-template-columns: inherit;
+    }
+
+    .post-content table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .post-content th {
+        padding: 0.5em 0.8em;
+        text-align: left;
+        font-size: .75em;
+        text-transform: uppercase;
+    }
+
+    .post-content td {
+        padding: 0.4em 0.7em;
+    }
+
+    .post-content tbody tr:nth-child(2n + 1) {
+        background-color: rgba(0,0,0,0.1);
+        padding: 1px;
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td:last-child {
+        box-shadow:
+            inset 1px 0 rgba(0,0,0,0.1),
+            inset -1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td {
+        box-shadow: inset 1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:last-child {
+        border-bottom: 1px solid rgba(0,0,0,.1);
+    }
+
+    .page-footer {
+        padding: 60px 5vmin;
+        margin: 60px auto 0;
+        text-align: center;
+        background-color: #f8f8f8;
+    }
+
+    .page-footer h3 {
+        margin: 0.5rem 0 0 0;
+    }
+
+    .page-footer p {
+        max-width: 500px;
+        margin: 1rem auto 1.5rem;
+        font-size: 1.7rem;
+        line-height: 1.5em;
+        color: rgba(0,0,0,0.6)
+    }
+
+    .powered {
+        display: inline-flex;
+        align-items: center;
+        margin: 30px 0 0;
+        padding: 6px 9px 6px 6px;
+        border: rgba(0,0,0,0.1) 1px solid;
+        font-size: 12px;
+        line-height: 12px;
+        letter-spacing: -0.2px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-weight: 500;
+        color: #222;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 6px;
+    }
+
+    .powered svg {
+        height: 16px;
+        width: 16px;
+        margin: 0 6px 0 0;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            font-size: 1.6rem;
+        }
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        h1 {
+            font-size: 2.6rem;
+            line-height: 1.15em;
+        }
+        h2 {
+            font-size: 2rem;
+            line-height: 1.2em;
+        }
+        h3 {
+            font-size: 1.7rem;
+        }
+    }
+
+    :root {--ghost-accent-color: #FF1A75;}
+    </style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+
+
+</head>
+
+<body class="amp-template">
+    <header class="page-header">
+        <a href="https://turkogluc.com">
+                <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        </a>
+    </header>
+
+    <main class="content" role="main">
+        <article class="post">
+
+            <header class="post-header">
+                <h1 class="post-title">Database Based Multitenant Applications with Spring JPA</h1>
+                <section class="post-meta">
+                    Cemal Turkoglu -
+                    <time class="post-date" datetime="2020-05-11">11 May 2020</time>
+                </section>
+            </header>
+            <figure class="post-image">
+                <amp-img src="https://turkogluc.com/content/images/2020/05/architect.png" width="600" height="340" layout="responsive"
+                alt="Database Based Multitenant Applications with Spring JPA"
+                ></amp-img>
+            </figure>
+            <section class="post-content">
+
+                <p>Imagine that you deployed your application which consists of a frontend, a backend, and a database and you are providing a service to a customer. Once you get new clients you should implement a distribution mechanism to give service to all of your clients but also provide isolation among clients such that each client uses the same application without seeing each other's data.</p><p>Multitenancy as a term refers to deploying a single instance of the application to a server and providing services to multiple clients. The following approaches are used for a multitenant application. We implement the database per tenant application in this post.</p><ul><li>Database per tenant</li><li>Schema per tenant</li><li>Tenant identifier column to every table</li></ul><h2 id="provisioning-a-new-client">Provisioning a new client</h2><ol><li>A new database should be created for the new client. PostgreSQL creates the default schema <code>public</code> during database creation, this schema will be used.</li></ol><figure class="kg-card kg-image-card"></figure><p>2. Database access details should be added to the Spring’s <code>application.yml</code> file. </p><figure class="kg-card kg-code-card"><pre><code class="language-yaml">tenants:
+  datasources:
+    client1:
+      jdbcUrl: jdbc:postgresql://localhost:5432/client1
+      username: postgres
+      password: root
+
+    client2:
+      jdbcUrl: jdbc:postgresql://localhost:5432/client2
+      username: postgres
+      password: root</code></pre><figcaption>application.yml</figcaption></figure><h2 id="user-story">User Story</h2><ol><li>A tenant identifier is needed per client to distinguish clients from each other. When a user logs in for the first time, the client sends the username, password , and tenant identifier. The Frontend can add the tenant identifier to the API call from the subdomain name. For example when a user logs in to <code>client1.service.com</code> the Frontend should add the <code>client1</code> as the tenant identifier to the login call. </li><li>The Backend application handles the login request by checking credentials from the database of the given tenant.</li><li>In a successful authentication, Backend creates the JWT token to be given to the Frontend and adds the tenant identifier to the JWT token as a claim.</li><li>At the subsequent calls, the tenant identifier is retrieved from the JWT token and used to select the relevant database to be queried.</li></ol><h2 id="implementation">Implementation</h2><p>In a Spring application following 2 approaches could be the possible ways to configure multitenant systems:</p><ul><li>Spring JPA configuration with <strong>AbstractRoutingDataSource</strong></li><li>Hibernate configuration with <strong>MultiTenantConnectionProvider</strong></li></ul><p>I decided to use <code>AbstractRoutingDataSource</code> as it is a neater and simpler way to configure.</p><p>So we need to configure the JPA to select the relevant datasource per each request according to the tenant who makes the request. Tenant Identifier can be retrieved from the JWT token but note that login operation is exceptional because there is no token assigned to the client yet. So the client should specify the tenantId in the login call.</p><h3 id="1-startup-configuration">1.Startup configuration</h3><p>We should prevent the Spring to auto-configure the datasource at startup as there is supposed be no datasource selected at startup but rather it will be selected at runtime according to the tenant.</p><figure class="kg-card kg-code-card"><pre><code class="language-yml">spring:
+  jpa:
+    open-in-view: false        # Get Rid of OIV Warning
+    show-sql: true
+    database: postgresql       # Do not Auto-Detect the Database
+    hibernate:
+      ddl-auto: none   		   # Prevent Hibernate from Automatic Changes to the DDL Schema
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    initialization-mode: never  # Prevent JPA from trying to Initialize</code></pre><figcaption>application.yml</figcaption></figure><h3 id="2-storing-the-tenant-identifier">2.Storing the tenant identifier</h3><p>Tenant identifier will be retrieved from JWT token on each request and it will be assigned to ThreadLocal variable (as it will be accessible by the same thread during the request handling)</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class ThreadLocalStorage {
+
+    private static ThreadLocal&lt;String&gt; tenant = new ThreadLocal&lt;&gt;();
+
+    public static void setTenantName(String tenantName) {
+        tenant.set(tenantName);
+    }
+
+    public static String getTenantName() {
+        return tenant.get();
+    }
+}</code></pre><figcaption>ThreadLocalStorage.java</figcaption></figure><p>Please note that if you would like to share the ThreadLocal with the child thread, in case the service thread may create other threads while proceeding, you should use the <code>InheritableThreadLocal</code>. InheritableThreadLocal will pass the same variable to child threads and they will be aware of the tenant datasource.</p><h3 id="3-implementing-the-datasource-routing">3. Implementing the datasource routing</h3><p>Datasource selection is made at runtime based on the tenant identifier. This selection is made by <code>AbstractRoutingDataSource</code>. It is configured as follows</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class TenantAwareRoutingDataSource extends AbstractRoutingDataSource {
+
+    @Override
+    protected Object determineCurrentLookupKey() {
+        return ThreadLocalStorage.getTenantName();
+    }
+}</code></pre><figcaption>TenantAwareRoutingDataSource.java</figcaption></figure><h3 id="4-datasource-configuration">4. DataSource Configuration</h3><p>Datasource properties are retrieved by the following class from the <code>application.yml</code></p><figure class="kg-card kg-code-card"><pre><code class="language-java">@Component
+@ConfigurationProperties(prefix = "tenants")
+public class DataSourceProperties {
+
+    private Map &lt;Object, Object&gt; datasources = new LinkedHashMap &lt;&gt;();
+
+    public Map&lt;Object, Object&gt; getDatasources() {
+        return datasources;
+    }
+
+    public void setDatasources(Map&lt;String, Map&lt;String, String&gt;&gt; datasources) {
+        datasources
+                .forEach((key, value) -&gt; this.datasources.put(key, convert(value)));
+    }
+
+    private DataSource convert(Map &lt;String, String&gt; source) {
+        return DataSourceBuilder.create()
+                .url(source.get("jdbcUrl"))
+                .driverClassName(source.get("driverClassName"))
+                .username(source.get("username"))
+                .password(source.get("password"))
+                .build();
+    }
+}</code></pre><figcaption>DataSourceProperties.java</figcaption></figure><p>Datasource configuration is implemented as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@Configuration
+public class DataSourceConfig {
+
+    private final DataSourceProperties dataSourceProperties;
+
+    public DataSourceConfig(DataSourceProperties dataSourceProperties) {
+        this.dataSourceProperties = dataSourceProperties;
+    }
+
+    @Bean
+    public DataSource getDataSource() {
+        TenantAwareRoutingDataSource tenantAwareRoutingDataSource = new TenantAwareRoutingDataSource();
+        tenantAwareRoutingDataSource.setTargetDataSources(dataSourceProperties.getDatasources());
+        tenantAwareRoutingDataSource.afterPropertiesSet();
+        return tenantAwareRoutingDataSource;
+    }
+}</code></pre><figcaption>DataSourceConfig.java</figcaption></figure><p>So an AbstractRoutingDataSource will be used at runtime as the datasource.</p><h3 id="5-extracting-the-tenant-identifier-from-the-request">5. Extracting the tenant identifier from the request</h3><p>A spring security filter is created to extract the tenant id from each request:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class TenantIdentificationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(TenantIdentificationFilter.class);
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().startsWith("/login");
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String token = request.getHeader(HEADER_STRING);
+        if (token != null) {
+            // parse the token.
+            String tenant = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
+                    .build()
+                    .verify(token.replace(TOKEN_PREFIX, ""))
+                    .getClaim("tenant").asString();
+
+            // set the tenant identifier
+            ThreadLocalStorage.setTenantName(tenant);
+            logger.debug("Tenant found in the request: {}", tenant);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}</code></pre><figcaption>TenantIdentificationFilter.java</figcaption></figure><p>Note that this filter is not applied to <code>/login</code> request as there is no JWT token assigned to the client before a successful login. This filter is added to the <code>WebSecurityConfigurerAdapter</code> as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@EnableWebSecurity
+public class WebSecurity extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().
+                csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                // add tenant filter
+                .addFilterBefore(new TenantIdentificationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    // ...
+}</code></pre><figcaption>WebSecurity.class</figcaption></figure><p>Note that TenantIdentificationFilter is added before the authentication and authorization filters. Because before the authentication filter queries the database to check the user credentials, relevant datasource should be selected.</p><h3 id="6-login-operation">6. Login Operation</h3><p>The previous step adds the extracting the tenant from JWT and storing it in ThreadLocal. In case the user does not have a session, there will not be a JWT token assigned to request. So that's why this filter is not applied to login call. But we still need to select the datasource before checking user authentication.</p><p>In order to handle login calls we should implement the following steps:</p><h4 id="6-1-selecting-datasource-to-check-the-user-credentials">6.1. Selecting datasource to check the user credentials</h4><p>The client application should send the <code>Username</code>, <code>Password</code>, and <code>TenantId</code>. At the Frontend call, we can add the TenantId according to the subdomain name (<strong>client-name</strong>.domain.com)</p><p>In the <code>attemptAuthentication</code> method of the <code>UsernamePasswordAuthenticationFilter</code> we should populate the ThreadLocalStorage with the received tenantId as follows:</p><pre><code class="language-java">ThreadLocalStorage.setTenantName(user.getTenant());</code></pre><h4 id="6-2-add-the-tenant-id-to-the-issued-token">6.2. Add the tenant id to the issued token</h4><p>In the <code>successfulAuthentication</code> method of the <code>UsernamePasswordAuthenticationFilter</code>, the tenant identifier is added to the token as follows:</p><pre><code class="language-java">JWT.create().withClaim("tenant",ThreadLocalStorage.getTenantName())</code></pre><p>So after the steps 6.1 and 6.2, final <code>UsernamePasswordAuthenticationFilter</code> is as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private AuthenticationManager authenticationManager;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest req,
+                                                HttpServletResponse res) throws AuthenticationException {
+        try {
+            ApplicationUser user = new ObjectMapper()
+                    .readValue(req.getInputStream(), ApplicationUser.class);
+			// set tenant name
+            ThreadLocalStorage.setTenantName(user.getTenant());
+            return authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            user.getUsername(),
+                            user.getPassword(),
+                            new ArrayList &lt;&gt;())
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
+                                            FilterChain chain,
+                                            Authentication auth) throws IOException, ServletException {
+		// add tenant claim to the token
+        try {
+            String token = JWT.create()
+                    .withSubject(((User) auth.getPrincipal()).getUsername())
+                    .withClaim("tenant", ThreadLocalStorage.getTenantName())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                    .sign(HMAC256(SECRET.getBytes()));
+            res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        } catch (JWTDecodeException ex) {
+            logger.error("Token could not be parsed");
+        }
+    }
+}</code></pre><figcaption>JWTAuthenticationFilter.java</figcaption></figure><p>So we are done configuring multitancy. Now our spring application will start with an AbstractRoutingDataSource. List of datasources for customers will be provided from application.yml. JPA will select the database to query at run time based on the tenant identifier. The tenant identifier will be retrieved from JWT Token. If a user without session tries to log in, the Frontend should specify the tenant identifier to check username and password from relevant datasource.</p><h2 id="schema-migration">Schema Migration</h2><p>Having a single data source, JPA is able to track the schema changes based on the <code>@Entity</code> classes. With the following configuration any column, type, reference, etc changes of the entity are reflected in the related table.</p><figure class="kg-card kg-code-card"><pre><code class="language-java">spring:
+  jpa:
+    hibernate:
+      ddl-auto: update</code></pre><figcaption>application.yml</figcaption></figure><p>However, with multiple data sources, this is not an option. Because JPA does this operation at the startup and in the case of having multiple data sources there is no selected data source when the application starts. So we set this configuration as <code>never</code> to not let the JPA try to reflect the DDL changes.</p><p>So we need to keep consistency for each customer database. Handling it manually is not very wise option. If we change columns of a table we need to go and update databases of all customers. It is also error-prone.</p><p>As a result, <a href="https://flywaydb.org/?ref=localhost"><strong>Flyway</strong></a> comes into play as the schema migration tool to keep track of the changes in the schema and reflect all data sources. It is pretty easy to configure and use. </p><p>If you would like to get an overview of the configuration please see <a href="https://turkogluc.com/flyway/">Spring Database Migration with Flyway</a></p><h2 id="cache-collision-problem">Cache Collision Problem</h2><p>As it is mentioned at the beginning there are 2 ways to configure multitenancy in a Spring application, and in this post, we are experimenting with the former solution which is Spring JPA configuration with <strong>AbstractRoutingDataSource</strong>. This solution works like a charm until we start using 2nd level caching for entities (<strong>@Cacheable</strong>).</p><p>In this solution, hibernate in fact, is not aware of multi-tenancy, but data source connection is provided by JPA. As a result, collusion occurs in the cache as the same cache will be populated from different databases with the same key. So if caching is used in the project, then either the second approach should be chosen or handling key generation for caching is needed.</p><p>So to solve this we can implement a custom key generator and let the cache manager use it. </p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class CustomKeyGenerator extends SimpleKeyGenerator {
+
+    @Override
+    public Object generate(Object target, Method method, Object... params) {
+
+        return ThreadLocalStorage.getTenantName() + "_" + generateKey(params);
+    }
+}</code></pre><figcaption>CustomKeyGenerator.java</figcaption></figure><p>It uses the same key generation as before but with the addition of <strong><code>&lt;tenantName&gt;_</code> </strong>prefix.  So every key will have tenant identifier prefix and it prevents having collision on the caches for different databases.</p>
+
+            </section>
+
+        </article>
+    </main>
+    <footer class="page-footer">
+            <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        <h3>Cemal Turkoglu</h3>
+            <p>Thoughts, stories and ideas.</p>
+        <p><a href="https://turkogluc.com">Read more posts →</a></p>
+        <a class="powered" href="https://ghost.org" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156"><g fill="none" fill-rule="evenodd"><rect fill="#15212B" width="156" height="156" rx="27"/><g transform="translate(36 36)" fill="#F6F8FA"><path d="M0 71.007A4.004 4.004 0 014 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0130 84H4a4 4 0 01-4-4.007v-8.986zM50 71.007A4.004 4.004 0 0154 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0180 84H54a4 4 0 01-4-4.007v-8.986z"/><rect y="34" width="84" height="17" rx="4"/><path d="M0 4.007A4.007 4.007 0 014.007 0h41.986A4.003 4.003 0 0150 4.007v8.986A4.007 4.007 0 0145.993 17H4.007A4.003 4.003 0 010 12.993V4.007z"/><rect x="67" width="17" height="17" rx="4"/></g></g></svg> Published with Ghost</a>
+    </footer>
+
+</body>
+</html>

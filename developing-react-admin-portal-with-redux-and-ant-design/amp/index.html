@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html ⚡>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <title>Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)</title>
+
+    <meta name="description" content="Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, creating layout.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)">
+    <meta property="og:description" content="Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, Creating layout, React Routing">
+    <meta property="og:url" content="https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/10/reactjs-thumb.jpg">
+    <meta property="article:published_time" content="2020-10-18T09:30:05.000Z">
+    <meta property="article:modified_time" content="2020-10-18T10:51:51.000Z">
+    <meta property="article:tag" content="React">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)">
+    <meta name="twitter:description" content="Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, Creating layout, React Routing">
+    <meta name="twitter:url" content="https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/10/reactjs-thumb.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="React">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="960">
+    <meta property="og:image:height" content="540">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)",
+    "url": "https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/",
+    "datePublished": "2020-10-18T09:30:05.000Z",
+    "dateModified": "2020-10-18T10:51:51.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/10/reactjs-thumb.jpg",
+        "width": 960,
+        "height": 540
+    },
+    "keywords": "React",
+    "description": "Developing a Modern Admin Portal with React, Redux, and Ant Design, step by step guide, using custom reusable hooks. Installing Ant Design, Creating layout, React Routing",
+    "mainEntityOfPage": "https://turkogluc.com/developing-react-admin-portal-with-redux-and-ant-design/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+
+    <style amp-custom>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        font-size: 62.5%;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        color: #3a4145;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.7rem;
+        line-height: 1.55em;
+        font-weight: 400;
+        font-style: normal;
+        background: #fff;
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    p,
+    ul,
+    ol,
+    li,
+    dl,
+    dd,
+    hr,
+    pre,
+    form,
+    table,
+    video,
+    figure,
+    figcaption,
+    blockquote {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul[class],
+    ol[class] {
+        padding: 0;
+        list-style: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    input,
+    button,
+    select,
+    textarea {
+        font: inherit;
+        -webkit-appearance: none;
+    }
+
+    fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        font-weight: 700;
+    }
+
+    hr {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid currentcolor;
+        opacity: 0.1;
+    }
+
+    ::selection {
+        text-shadow: none;
+        background: #cbeafb;
+    }
+
+    mark {
+        background-color: #fdffb6;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+    sup {
+        top: -0.5em;
+    }
+    sub {
+        bottom: -0.25em;
+    }
+
+    ul li + li {
+        margin-top: 0.6em;
+    }
+
+    a {
+        color: var(--ghost-accent-color, #1292EE);
+        text-decoration-skip-ink: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        font-weight: 700;
+        color: #121212;
+        line-height: 1.4em;
+    }
+
+    h1 {
+        font-size: 3.4rem;
+        line-height: 1.1em;
+    }
+
+    h2 {
+        font-size: 2.4rem;
+        line-height: 1.2em;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+    }
+
+    h4 {
+        font-size: 1.7rem;
+    }
+
+    h5 {
+        font-size: 1.6rem;
+    }
+
+    h6 {
+        font-size: 1.6rem;
+    }
+
+    amp-img {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    amp-img img {
+        object-fit: cover;
+    }
+
+    amp-youtube {
+        height: calc(100vw / 1.78);
+        width: 100vw;
+        position: relative;
+    }
+
+    amp-youtube img {
+        position: absolute;
+    }
+
+    .page-header {
+        padding: 50px 5vmin 30px;
+        text-align: center;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .page-header a {
+        color: #121212;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.6rem;
+        letter-spacing: -0.1px;
+    }
+
+    .post {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .post-header {
+        margin: 0 5vmin 5vmin;
+        text-align: center;
+    }
+
+    .post-meta {
+        margin: 1rem 0 0 0;
+        text-transform: uppercase;
+        color: #738a94;
+        font-weight: 500;
+        font-size: 1.3rem;
+    }
+
+    .post-image {
+        margin: 0 0 5vmin;
+    }
+
+    .post-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .post-content {
+        padding: 0 5vmin;
+    }
+
+    .post-content > * + * {
+        margin-top: 1.5em;
+    }
+
+    .post-content [id]:not(:first-child) {
+        margin: 2em 0 0;
+    }
+
+    .post-content > [id] + * {
+        margin-top: 1rem;
+    }
+
+    .post-content [id] + .kg-card,
+    .post-content blockquote + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content > ul,
+    .post-content > ol,
+    .post-content > dl {
+        padding-left: 1.9em;
+    }
+
+    .post-content hr {
+        margin-top: 40px;
+    }
+
+    .post .post-content hr + * {
+        margin-top: 40px;
+    }
+
+    .post-content amp-img {
+        background-color: #f8f8f8;
+    }
+
+    .post-content blockquote {
+        position: relative;
+        font-style: italic;
+    }
+
+    .post-content blockquote::before {
+        content: "";
+        position: absolute;
+        left: -1.5em;
+        top: 0;
+        bottom: 0;
+        width: 0.3rem;
+        background: var(--ghost-accent-color, #1292EE);
+    }
+
+    .post-content blockquote.kg-blockquote-alt {
+        font-size: 1.2em;
+        font-style: italic;
+        line-height: 1.6em;
+        text-align: center;
+        color: #738a94;
+        padding: 0.75em 3em 1.25em;
+    }
+
+    .post-content blockquote.kg-blockquote-alt::before {
+        display: none;
+    }
+
+    .post-content :not(.kg-card):not([id]) + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content .kg-card + :not(.kg-card) {
+        margin-top: 40px;
+    }
+
+    .kg-card figcaption {
+        padding: 1.5rem 1.5rem 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.4em;
+        opacity: 0.6;
+    }
+
+    .kg-card figcaption strong {
+        color: rgba(0,0,0,0.8);
+    }
+
+    .post-content :not(pre) code {
+        vertical-align: middle;
+        padding: 0.15em 0.4em 0.15em;
+        border: #e1eaef 1px solid;
+        font-weight: 400;
+        font-size: 0.9em;
+        line-height: 1em;
+        color: #15171a;
+        background: #f0f6f9;
+        border-radius: 0.25em;
+    }
+
+    .post-content > pre {
+        overflow: scroll;
+        padding: 16px 20px;
+        color: #fff;
+        background: #1F2428;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px -2px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+    }
+
+    .kg-embed-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .kg-image-card img {
+        margin: auto;
+    }
+
+    .kg-gallery-card + .kg-gallery-card {
+        margin-top: 0.75em;
+    }
+
+    .kg-gallery-container {
+        position: relative;
+    }
+
+    .kg-gallery-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .kg-gallery-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .kg-gallery-row:not(:first-of-type) {
+        margin: 0.75em 0 0 0;
+    }
+
+    .kg-gallery-image:not(:first-of-type) {
+        margin: 0 0 0 0.75em;
+    }
+
+    .kg-bookmark-card,
+    .kg-bookmark-publisher {
+        position: relative;
+    }
+
+    .kg-bookmark-container,
+    .kg-bookmark-container:hover {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+        color: currentColor;
+        background: rgba(255,255,255,0.6);
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        text-decoration: none;
+        border-radius: 3px;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+    }
+
+    .kg-bookmark-content {
+        flex-basis: 0;
+        flex-grow: 999;
+        padding: 20px;
+        order: 1;
+    }
+
+    .kg-bookmark-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 1.3em;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        max-height: 45px;
+        margin: 0.5em 0 0 0;
+        font-size: 1.4rem;
+        line-height: 1.55em;
+        overflow: hidden;
+        opacity: 0.8;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .kg-bookmark-metadata {
+        margin-top: 20px;
+    }
+
+    .kg-bookmark-metadata {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.3em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-metadata amp-img {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
+        margin-right: 10px;
+    }
+
+    .kg-bookmark-thumbnail {
+        display: flex;
+        flex-basis: 20rem;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+
+    .kg-bookmark-thumbnail amp-img {
+        max-height: 200px;
+    }
+
+    .kg-bookmark-author {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-publisher::before {
+        content: "•";
+        margin: 0 .5em;
+    }
+
+    .kg-toggle-card-icon {
+        display: none;
+    }
+
+    .kg-toggle-content {
+        margin-top: 0.8rem;
+    }
+
+    .kg-product-card-container {
+        background: transparent;
+        padding: 20px;
+        width: 100%;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 1px rgb(124 139 154 / 25%);
+    }
+
+    .kg-product-card-description p {
+        margin-top: 1.5em;
+    }
+
+    .kg-product-card-description ul {
+        margin-left: 24px;
+    }
+
+    .kg-product-card-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+    }
+
+    .kg-product-card-rating-star {
+        height: 28px;
+        width: 20px;
+        margin-right: 2px;
+    }
+
+    .kg-product-card-rating-star svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.15;
+    }
+
+    .kg-product-card-rating-active.kg-product-card-rating-star svg {
+    opacity: 1;
+    }
+
+    .kg-nft-card-container {
+        position: relative;
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+        text-decoration: none;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        box-shadow: 0 2px 6px -2px rgb(0 0 0 / 10%), 0 0 1px rgb(0 0 0 / 40%);
+        width: 100%;
+        max-width: 512px;
+        color: #15212A;
+        background: #fff;
+        border-radius: 5px;
+        transition: none;
+        margin: 0 auto;
+    }
+
+    .kg-nft-metadata {
+        padding: 2.0rem;
+    }
+
+    .kg-nft-image-container {
+        position: relative;
+    }
+
+    .kg-nft-image {
+        display: flex;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .kg-nft-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .kg-nft-header h4.kg-nft-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin: 0;
+        color: #15212A;
+    }
+
+    .kg-nft-header amp-img {
+        max-width: 114px;
+        max-height: 26px;
+    }
+
+    .kg-nft-opensea-logo {
+        margin-top: 2px;
+        width: 100px;
+    }
+
+    .kg-nft-creator {
+        font-family: inherit;
+        color: #95A1AD;
+    }
+
+    .kg-nft-creator span {
+        font-weight: 500;
+        color: #15212A;
+    }
+
+    .kg-nft-card p.kg-nft-description {
+        font-size: 1.4rem;
+        line-height: 1.4em;
+        margin: 2.0rem 0 0;
+        color: #222;
+    }
+
+    .kg-button-card {
+        display: flex;
+        position: static;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kg-btn {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 2.0rem;
+        height: 4.0rem;
+        line-height: 4.0rem;
+        font-size: 1.65rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .kg-btn:hover {
+        opacity: 0.85;
+    }
+
+    .kg-btn-accent {
+        background-color: var(--ghost-accent-color, #1292EE);
+        color: #fff;
+    }
+
+    .kg-callout-card {
+        display: flex;
+        padding: 20px 28px;
+        border-radius: 3px;
+    }
+
+    .kg-callout-card-grey {
+        background: rgba(124, 139, 154, 0.13);
+    }
+
+    .kg-callout-card-white {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-callout-card-blue {
+        background: rgba(33, 172, 232, 0.12);
+    }
+
+    .kg-callout-card-green {
+        background: rgba(52, 183, 67, 0.12);
+    }
+
+    .kg-callout-card-yellow {
+        background: rgba(240, 165, 15, 0.13);
+    }
+
+    .kg-callout-card-red {
+        background: rgba(209, 46, 46, 0.11);
+    }
+
+    .kg-callout-card-pink {
+        background: rgba(225, 71, 174, 0.11);
+    }
+
+    .kg-callout-card-purple {
+        background: rgba(135, 85, 236, 0.12);
+    }
+
+    .kg-callout-card-accent {
+        background: var(--ghost-accent-color);
+        color: #fff;
+    }
+
+    .kg-callout-card-accent a {
+        color: #fff;
+    }
+
+    .kg-callout-emoji {
+        padding-right: 16px;
+        line-height: 1.3;
+        font-size: 1.25em;
+    }
+
+    .kg-header-card {
+        padding: 6em 3em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .kg-header-card.kg-size-small {
+        padding-top: 4em;
+        padding-bottom: 4em;
+    }
+
+    .kg-header-card.kg-size-large {
+        padding-top: 12em;
+        padding-bottom: 12em;
+    }
+
+    .kg-header-card.kg-width-full {
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+
+    .kg-header-card.kg-align-left {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .kg-header-card.kg-style-dark {
+        background: #15171a;
+        color: #ffffff;
+    }
+
+    .kg-header-card.kg-style-light {
+        color: #15171a;
+        border: 1px solid rgba(124, 139, 154, 0.25);
+        border-width: 1px 0;
+    }
+
+    .kg-header-card.kg-style-accent {
+        background-color: var(--ghost-accent-color);
+    }
+
+    .kg-header-card.kg-style-image {
+        background-color: #e7e7eb;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .kg-header-card h2 {
+        font-size: 4em;
+        font-weight: 700;
+        line-height: 1.1em;
+        margin: 0;
+    }
+
+    .kg-header-card h2 strong {
+        font-weight: 800;
+    }
+
+    .kg-header-card.kg-size-small h2 {
+        font-size: 3em;
+    }
+
+    .kg-header-card.kg-size-large h2 {
+        font-size: 5em;
+    }
+
+    .kg-header-card h3 {
+        font-size: 1.25em;
+        font-weight: 500;
+        line-height: 1.3em;
+        margin: 0;
+    }
+
+    .kg-header-card h3 strong {
+        font-weight: 600;
+    }
+
+    .kg-header-card.kg-size-small h3 {
+        font-size: 1em;
+    }
+
+    .kg-header-card.kg-size-large h3 {
+        font-size: 1.5em;
+    }
+
+    .kg-header-card:not(.kg-style-light) h2,
+    .kg-header-card:not(.kg-style-light) h3 {
+        color: #ffffff;
+    }
+
+    .kg-header-card a.kg-header-card-button {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 1.2em;
+        height: 2.4em;
+        line-height: 1em;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+        background-color: var(--ghost-accent-color);
+        color: #ffffff;
+        margin: 1.75em 0 0;
+    }
+
+    .kg-header-card a.kg-header-card-button:hover {
+        opacity: 0.85;
+    }
+
+    .kg-header-card.kg-size-large a.kg-header-card-button {
+        margin-top: 2em;
+    }
+
+    .kg-header-card.kg-size-small a.kg-header-card-button {
+        margin-top: 1.5em;
+    }
+
+    .kg-header-card.kg-style-image a.kg-header-card-button,
+    .kg-header-card.kg-style-dark a.kg-header-card-button {
+        background: #ffffff;
+        color: #15171a;
+    }
+
+    .kg-header-card.kg-style-accent a.kg-header-card-button {
+        background: #ffffff;
+        color: var(--ghost-accent-color);
+    }
+
+    .kg-audio-card {
+        display: flex;
+        width: 100%;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-audio-thumbnail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        min-width: 80px;
+        height: 80px;
+        background: transparent;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .kg-audio-thumbnail.placeholder {
+        background: var(--ghost-accent-color);
+    }
+
+    .kg-audio-thumbnail.placeholder svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+    }
+
+    .kg-audio-player-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        --seek-before-width: 0%;
+        --volume-before-width: 100%;
+        --buffered-width: 0%;
+    }
+
+    .kg-audio-title {
+        width: 100%;
+        padding: 8px 12px 0;
+        border: none;
+        font-family: inherit;
+        font-size: 1.1em;
+        font-weight: 700;
+        background: transparent;
+    }
+
+    .kg-audio-player {
+        display: none;
+    }
+
+    .kg-width-full.kg-card-hascaption {
+        display: grid;
+        grid-template-columns: inherit;
+    }
+
+    .post-content table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .post-content th {
+        padding: 0.5em 0.8em;
+        text-align: left;
+        font-size: .75em;
+        text-transform: uppercase;
+    }
+
+    .post-content td {
+        padding: 0.4em 0.7em;
+    }
+
+    .post-content tbody tr:nth-child(2n + 1) {
+        background-color: rgba(0,0,0,0.1);
+        padding: 1px;
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td:last-child {
+        box-shadow:
+            inset 1px 0 rgba(0,0,0,0.1),
+            inset -1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td {
+        box-shadow: inset 1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:last-child {
+        border-bottom: 1px solid rgba(0,0,0,.1);
+    }
+
+    .page-footer {
+        padding: 60px 5vmin;
+        margin: 60px auto 0;
+        text-align: center;
+        background-color: #f8f8f8;
+    }
+
+    .page-footer h3 {
+        margin: 0.5rem 0 0 0;
+    }
+
+    .page-footer p {
+        max-width: 500px;
+        margin: 1rem auto 1.5rem;
+        font-size: 1.7rem;
+        line-height: 1.5em;
+        color: rgba(0,0,0,0.6)
+    }
+
+    .powered {
+        display: inline-flex;
+        align-items: center;
+        margin: 30px 0 0;
+        padding: 6px 9px 6px 6px;
+        border: rgba(0,0,0,0.1) 1px solid;
+        font-size: 12px;
+        line-height: 12px;
+        letter-spacing: -0.2px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-weight: 500;
+        color: #222;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 6px;
+    }
+
+    .powered svg {
+        height: 16px;
+        width: 16px;
+        margin: 0 6px 0 0;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            font-size: 1.6rem;
+        }
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        h1 {
+            font-size: 2.6rem;
+            line-height: 1.15em;
+        }
+        h2 {
+            font-size: 2rem;
+            line-height: 1.2em;
+        }
+        h3 {
+            font-size: 1.7rem;
+        }
+    }
+
+    :root {--ghost-accent-color: #FF1A75;}
+    </style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+
+
+</head>
+
+<body class="amp-template">
+    <header class="page-header">
+        <a href="https://turkogluc.com">
+                <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        </a>
+    </header>
+
+    <main class="content" role="main">
+        <article class="post">
+
+            <header class="post-header">
+                <h1 class="post-title">Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)</h1>
+                <section class="post-meta">
+                    Cemal Turkoglu -
+                    <time class="post-date" datetime="2020-10-18">18 Oct 2020</time>
+                </section>
+            </header>
+            <figure class="post-image">
+                <amp-img src="https://turkogluc.com/content/images/2020/10/reactjs-thumb.jpg" width="600" height="340" layout="responsive"
+                alt="Developing a Modern Admin Portal with React, Redux, and Ant Design (Part-1)"
+                ></amp-img>
+            </figure>
+            <section class="post-content">
+
+                <h2 id="getting-started">Getting Started</h2><p>In this series I would like to share a step by step guide for developing high quality admin portals with <code>React</code> and <code>Ant Design</code>. I will share reusable generic components that will fasten the ground up development. In order to focus on the certain aspects, I divided it to multiple parts.</p><p>In this part I present the steps for preparing React and necessary modules, and then, gradually show the implementation of each separate component to build up the Admin Portal. If you like to see the complete code I committed in the following public repository:</p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://github.com/turkogluc/react-admin-portal?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">turkogluc/react-admin-portal</div><div class="kg-bookmark-description">Contribute to turkogluc/react-admin-portal development by creating an account on GitHub.</div><div class="kg-bookmark-metadata"><amp-img class="kg-bookmark-icon" src="https://github.githubassets.com/favicons/favicon.svg" alt width="32" height="32" layout="fixed"></amp-img><span class="kg-bookmark-author">GitHub</span><span class="kg-bookmark-publisher">turkogluc</span></div></div><div class="kg-bookmark-thumbnail"><amp-img src="https://avatars3.githubusercontent.com/u/15093288?s=400&amp;v=4" alt width="420" height="420" layout="responsive"></amp-img></div></a></figure><p>I use the <code><a href="https://ant.design/?ref=localhost">Ant Design</a></code> as the user interface design framework as it contains a set of high quality components and ready to use demos for building rich, interactive user interfaces. The list of Ant Design react components can be found in the following link:</p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://ant.design/components/overview/?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">Components Overview - Ant Design</div><div class="kg-bookmark-description">antd provides plenty of UI components to enrich your web applications, and we will improve components experience consistently. We also recommand some great Third-Party Libraries additionally.</div><div class="kg-bookmark-metadata"><amp-img class="kg-bookmark-icon" src="https://gw.alipayobjects.com/zos/rmsportal/rlpTLlbMzTNYuZGGCVYM.png" alt width="200" height="200" layout="fixed"></amp-img><span class="kg-bookmark-author">Ant Design</span></div></div><div class="kg-bookmark-thumbnail"><amp-img src="https://gw.alipayobjects.com/zos/rmsportal/rlpTLlbMzTNYuZGGCVYM.png" alt width="200" height="200" layout="fixed"></amp-img></div></a></figure><h3 id="initializing-the-react-project">Initializing the React project</h3><p>We can use the following boilerplate code as it already contains <code>React 16</code>, <code>Webpack 4</code> with <code>babel 7</code>, the <code>webpack-dev-server</code>, <code>react-hot-loader</code> and <code>CSS-Modules</code>:</p><ul><li><a href="https://github.com/HashemKhalifa/webpack-react-boilerplate?ref=localhost">webpack-react-boilerplate </a></li></ul><pre><code class="language-bash">git clone https://github.com/HashemKhalifa/webpack-react-boilerplate.git
+mv webpack-react-boilerplate react-admin-portal
+cd react-admin-portal
+yarn install
+yarn start</code></pre><p>This repository is maintained continuously and the dependencies are upgraded. So it is good starting point as the most of the environment is already prepared and the technologies are up to date. </p><p>The web application starts at <code>http://localhost:8080</code> address.</p><h3 id="installing-ant-design">Installing Ant Design</h3><pre><code>yarn add antd
+yarn add babel-plugin-import
+yarn add less-loader
+yarn add less</code></pre><p>While using <code>antd</code>, we can either import the complete style file in our root file, or add styling only for the used components which is better in terms of performance. That's why we added <code>babel-plugin-import</code> module and we will update the <code>webpack</code> configuration to import <code>less</code> styles as follows:</p><p>Add <code>antd</code> library option in <code>babel-loader</code>  rule in <code>webpack-common.js</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-json">{
+  test: /\.(js|jsx)$/,
+  loader: 'babel-loader',
+  exclude: /(node_modules)/,
+  options: {
+    presets: ['@babel/react'],
+    plugins: [['import', { libraryName: 'antd', style: true }]],
+  },
+},</code></pre><figcaption>webpack-common.js</figcaption></figure><p>In the same file add also <code>.less</code> to the extensions:</p><pre><code>extensions: ['*', '.js', '.jsx', '.css', '.scss', '.less'],</code></pre><p>Add <code>less-loader</code> to the <code>webpack-dev.js</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-json">{
+	test: /\.less$/,
+	use: [
+		'style-loader',
+		'css-loader',
+		'sass-loader',
+		{
+            loader: 'less-loader',
+            options: {
+              lessOptions: {
+                javascriptEnabled: true,
+              },
+            },
+		},
+	],
+},</code></pre><figcaption>webpack-dev.js</figcaption></figure><p>You can find these changes in the commit <a href="https://github.com/turkogluc/react-admin-portal/commit/6f0001f3db28392e10ffdcdbaf085fee05d079f5?ref=localhost"><strong>6f0001f</strong></a>.</p><h3 id="installing-redux">Installing Redux</h3><pre><code>yarn add @reduxjs/toolkit
+yarn add react-redux
+yarn add redux-logger</code></pre><p>Let's create our first reducer just as an example:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">const INITIAL_STATE = {};
+
+export default (state = INITIAL_STATE, action) =&gt; {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};</code></pre><figcaption>initReducer.js</figcaption></figure><p>And add this reducer to global reducers list:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import { combineReducers } from 'redux';
+import initReducer from './initReducer';
+
+export default combineReducers({
+  initReducer,
+});</code></pre><figcaption>reducer/index.js</figcaption></figure><p>Now we can create our <code>store</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import { createLogger } from 'redux-logger';
+import { applyMiddleware, createStore } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import reducer from './reducer';
+
+const loggerMiddleware = createLogger();
+
+export const store = createStore(
+  reducer,
+  applyMiddleware(thunkMiddleware, loggerMiddleware)
+);</code></pre><figcaption>store.js</figcaption></figure><p>And wrap the <code>App</code> component with <code>Provider</code>:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">function App() {
+  return (
+    &lt;Provider store={store}&gt;
+      Hello world
+    &lt;/Provider&gt;
+  );
+}</code></pre><figcaption>App.js</figcaption></figure><p>See the commit for changes: <a href="https://github.com/turkogluc/react-admin-portal/commit/98dd23bb90f8d2c14bdf2e408982747a41f489dc?ref=localhost"><strong>98dd23b</strong></a>.</p><h3 id="installing-react-router">Installing React Router</h3><pre><code class="language-javascript">yarn add react-router-dom</code></pre><p>Let's create browser history:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import { createBrowserHistory } from 'history';
+
+export default createBrowserHistory();</code></pre><figcaption>history.js</figcaption></figure><p>We can create an empty <code>dashboard</code> page as the initial page in the routing list.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+
+function Dashboard() {
+  return &lt;div&gt;Dashboard Page&lt;/div&gt;;
+}
+
+export default Dashboard;</code></pre><figcaption>Dashboard.js</figcaption></figure><p>Now we can create Routing list that will contain the path and the component mapping. <code>routes</code> variable contains the list of path component mapping. Dashboard Page is be added as the first path and the root path (<code>/</code>). </p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { Route } from 'react-router-dom';
+import Dashboard from '../page/dashboard/Dashboard';
+
+const routes = [
+  {
+    path: '/',
+    component: Dashboard,
+    key: '/',
+  },
+];
+
+function RoutingList() {
+  return routes.map(item =&gt; {
+    if (item.path.split('/').length === 2) {
+      return (
+        &lt;Route
+          exact
+          path={item.path}
+          component={item.component}
+          key={item.key}
+        /&gt;
+      );
+    }
+    return &lt;Route path={item.path} component={item.component} key={item.key} /&gt;;
+  });
+}
+
+export default RoutingList;</code></pre><figcaption>RoutingList.js</figcaption></figure><p>And we can wrap the <code>App</code> component with <code>BrowserRouter</code>. So the App component becomes as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { hot } from 'react-hot-loader/root';
+import { Provider } from 'react-redux';
+import { BrowserRouter, Switch } from 'react-router-dom';
+import { store } from './redux/store';
+import history from './router/history';
+import MainLayout from './page/layout/MainLayout';
+
+function App() {
+  return (
+    &lt;Provider store={store}&gt;
+      &lt;BrowserRouter history={history}&gt;
+        &lt;Switch&gt;
+          &lt;MainLayout /&gt;
+        &lt;/Switch&gt;
+      &lt;/BrowserRouter&gt;
+    &lt;/Provider&gt;
+  );
+}
+export default hot(App);</code></pre><figcaption>App.js</figcaption></figure><p>I have added another empty component which is <code>MainLayout</code>. It is the component that will contain the structure of the layout.</p><p>See the commit for changes: <strong><a href="https://github.com/turkogluc/react-admin-portal/commit/7afcd0c28ab9d4f0307d2806212b4c2ad5aa235b?ref=localhost">7afcd0c</a></strong>.</p><hr></hr><h2 id="designing-the-layout">Designing the Layout</h2><p><code>MainLayout</code> component contains sider menu on the left header at the top and the content in the middle. Content part will be controller by the Router. We will place <code>&lt;RoutingList /&gt;</code> component in the content place so that we can to change the content by routing different paths. See the structures of the mentioned components in the next picture.</p><figure class="kg-card kg-image-card"></figure><p>Let's see the implementation of each component in details.</p><h3 id="user-avatar-component">User Avatar Component</h3><p>I use Ant Design <code><a href="https://ant.design/components/avatar/?ref=localhost">Avatar</a></code> component in order to represent User Avatar based on the users first name. </p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { Avatar } from 'antd';
+
+function getColor(username) {
+  const colors = [
+    '#ffa38a',
+    '#a9a7e0',
+    '#D686D4',
+    '#96CE56',
+    '#4A90E2',
+    '#62b3d0',
+    '#ef7676',
+  ];
+  const firstChar = username.charCodeAt(0);
+  const secondChar = username.charCodeAt(1);
+  const thirdChar = username.charCodeAt(2);
+
+  return colors[(firstChar + secondChar + thirdChar) % 7];
+}
+
+export const getUsernameAvatar = (username, size = 'large') =&gt; {
+  return (
+    &lt;div&gt;
+      &lt;Avatar
+        style={{
+          backgroundColor: getColor(username),
+          verticalAlign: 'middle',
+        }}
+        size={size}
+      &gt;
+        {username ? username.charAt(0).toUpperCase() : ''}
+      &lt;/Avatar&gt;
+    &lt;/div&gt;
+  );
+};</code></pre><figcaption>UserAvatar.js</figcaption></figure><p>It looks as follows:</p><figure class="kg-card kg-image-card"></figure><h3 id="layout-banner-component">Layout Banner Component</h3><p>It is the header component in the layout that contains  some horizontal <code><a href="https://ant.design/components/menu/?ref=localhost">menu</a></code>s from Ant Design such as user menu, language switcher etc.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import {
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  QuestionCircleOutlined,
+  GlobalOutlined,
+  BellOutlined,
+  UserOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
+import { Layout, Menu, Badge } from 'antd';
+import './Style.less';
+import { getUsernameAvatar } from '../../component/UserAvatar';
+
+const { Header } = Layout;
+const { SubMenu } = Menu;
+
+function LayoutBanner({ collapsed, handleOnCollapse }) {
+  const getCollapseIcon = () =&gt; {
+    if (collapsed) {
+      return (
+        &lt;MenuUnfoldOutlined onClick={handleOnCollapse} className="trigger" /&gt;
+      );
+    }
+    return &lt;MenuFoldOutlined onClick={handleOnCollapse} className="trigger" /&gt;;
+  };
+
+  const handleLanguageMenuClick = () =&gt; {};
+  const handleSettingMenuClick = () =&gt; {};
+  const handleLogout = () =&gt; {};
+
+  return (
+    &lt;Header className="header" style={{ background: '#fff', padding: 0 }}&gt;
+      &lt;div
+        style={{
+          float: 'left',
+          width: '100%',
+          alignSelf: 'center',
+          display: 'flex',
+        }}
+      &gt;
+        {window.innerWidth &gt; 992 &amp;&amp; getCollapseIcon()}
+      &lt;/div&gt;
+      &lt;Menu
+        // onClick={this.handleLanguageMenuClick}
+        mode="horizontal"
+        className="menu"
+      &gt;
+        &lt;SubMenu title={&lt;QuestionCircleOutlined /&gt;} /&gt;
+      &lt;/Menu&gt;
+      &lt;Menu
+        // onClick={this.handleLanguageMenuClick}
+        mode="horizontal"
+        className="menu"
+      &gt;
+        &lt;SubMenu
+          title={
+            &lt;Badge dot&gt;
+              &lt;BellOutlined /&gt;
+            &lt;/Badge&gt;
+          }
+        /&gt;
+      &lt;/Menu&gt;
+      &lt;Menu
+        onClick={handleLanguageMenuClick}
+        mode="horizontal"
+        className="menu"
+      &gt;
+        &lt;SubMenu title={&lt;GlobalOutlined /&gt;}&gt;
+          &lt;Menu.Item key="en"&gt;
+            &lt;span role="img" aria-label="English"&gt;
+              🇺🇸 English
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="it"&gt;
+            &lt;span role="img" aria-label="Italian"&gt;
+              🇮🇹 Italian
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+      &lt;/Menu&gt;
+      &lt;Menu onClick={handleSettingMenuClick} mode="horizontal" className="menu"&gt;
+        &lt;SubMenu title={getUsernameAvatar('Cemal')}&gt;
+          &lt;Menu.Item key="setting:1"&gt;
+            &lt;span&gt;
+              &lt;UserOutlined /&gt;
+              Profile
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="setting:2"&gt;
+            &lt;span&gt;
+              &lt;LogoutOutlined onClick={handleLogout} /&gt;
+              Logout
+            &lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+      &lt;/Menu&gt;
+    &lt;/Header&gt;
+  );
+}
+
+export default LayoutBanner;
+</code></pre><figcaption>LayoutBanner.js</figcaption></figure><p>Adding styles:</p><figure class="kg-card kg-code-card"><pre><code class="language-css">.header {
+  display: flex;
+}
+
+.trigger {
+  margin-left: 16px;
+  margin-right: 16px;
+  align-self: center;
+
+}
+
+.menu {
+  .ant-menu-horizontal {
+    &amp; &gt; .ant-menu-submenu {
+      float: right;
+    }
+    border: none;
+  }
+  box-shadow: #e4ecef;
+  position: relative;
+  .ant-menu-submenu-title {
+    width: 64px;
+    height: 64px;
+    text-align: center;
+    padding-top: 8px;
+  }
+}</code></pre><figcaption>Sytle.less</figcaption></figure><p>So it looks as follows:</p><figure class="kg-card kg-image-card"></figure><h3 id="sider-menu-component">Sider Menu Component</h3><p>This component uses <code><a href="https://ant.design/components/layout/?ref=localhost#components-layout-demo-side">Sider</a></code>, <code><a href="https://ant.design/components/menu/?ref=localhost">Menu</a></code>, <code><a href="https://ant.design/components/icon/?ref=localhost">Icon</a></code> components of <a href="https://ant.design/components/overview/?ref=localhost">Ant Design</a>.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React from 'react';
+import { Layout, Menu } from 'antd';
+import { useHistory } from 'react-router-dom';
+import {
+  DashboardOutlined,
+  FundProjectionScreenOutlined,
+  PartitionOutlined,
+  SettingOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
+import './Style.less';
+
+const { SubMenu } = Menu;
+
+const { Sider } = Layout;
+
+function SiderMenu({ handleOnCollapse, collapsed }) {
+  const theme = 'light';
+
+  const history = useHistory();
+
+  const handleSiderMenuClick = action =&gt; {
+    console.log('menu:', action);
+    switch (action.key) {
+      case 'dashboard':
+        history.push('/');
+        break;
+      case 'showProducts':
+        history.push('/products');
+        break;
+      case 'addProduct':
+        history.push('/add-product');
+        break;
+      case 'showCustomers':
+        history.push('/customers');
+        break;
+      case 'addCustomer':
+        history.push('/add-customer');
+        break;
+      default:
+        history.push('/');
+    }
+  };
+
+  return (
+    &lt;Sider
+      breakpoint="lg"
+      collapsedWidth="80"
+      onCollapse={handleOnCollapse}
+      collapsed={collapsed}
+      width="256"
+      theme={theme}
+    &gt;
+      &lt;a&gt;
+        &lt;div className="menu-logo" /&gt;
+      &lt;/a&gt;
+      &lt;Menu mode="inline" theme={theme} onClick={handleSiderMenuClick}&gt;
+        &lt;Menu.Item key="dashboard"&gt;
+          &lt;DashboardOutlined /&gt;
+          &lt;span className="nav-text"&gt;Dashboard&lt;/span&gt;
+        &lt;/Menu.Item&gt;
+        &lt;SubMenu
+          key="products"
+          title={
+            &lt;span&gt;
+              &lt;PartitionOutlined /&gt;
+              &lt;span&gt;Products&lt;/span&gt;
+            &lt;/span&gt;
+          }
+        &gt;
+          &lt;Menu.Item key="showProducts"&gt;
+            &lt;span className="nav-text"&gt;Show Products&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="addProduct"&gt;
+            &lt;span className="nav-text"&gt;Add Product&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+        &lt;SubMenu
+          key="customers"
+          title={
+            &lt;span&gt;
+              &lt;TeamOutlined /&gt;
+              &lt;span&gt;Customers&lt;/span&gt;
+            &lt;/span&gt;
+          }
+        &gt;
+          &lt;Menu.Item key="showCustomers"&gt;
+            &lt;span className="nav-text"&gt;Show Customers&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+          &lt;Menu.Item key="addCustomer"&gt;
+            &lt;span className="nav-text"&gt;Add Customer&lt;/span&gt;
+          &lt;/Menu.Item&gt;
+        &lt;/SubMenu&gt;
+        &lt;Menu.Item key="settings"&gt;
+          &lt;SettingOutlined /&gt;
+          &lt;span className="nav-text"&gt;Settings&lt;/span&gt;
+        &lt;/Menu.Item&gt;
+        &lt;Menu.Item key="reports"&gt;
+          &lt;FundProjectionScreenOutlined /&gt;
+          &lt;span className="nav-text"&gt;Reports&lt;/span&gt;
+        &lt;/Menu.Item&gt;
+      &lt;/Menu&gt;
+    &lt;/Sider&gt;
+  );
+}
+
+export default SiderMenu;</code></pre><figcaption>SiderMenu.js</figcaption></figure><p>We can add a logo above the sider menu, within the less style file.</p><figure class="kg-card kg-code-card"><pre><code class="language-css">.menu-logo {
+  background-image: url('../../../public/icon.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 35px;
+  background-size: 100%;
+  margin: 20px;
+  color: #ffffff;
+}</code></pre><figcaption>Sytle.less</figcaption></figure><h3 id="main-layout-component">Main Layout Component</h3><p>Main Layout component contains the <code><a href="https://ant.design/components/layout/?ref=localhost">Layout</a></code> and <code><a href="https://ant.design/components/layout/?ref=localhost#components-layout-demo-top">Content</a></code> of Ant Design. Layout wraps the entire body, our custom <code>SiderMenu</code> is placed on the left and <code>LayoutBanner</code> stands above the content. <code>RoutingList</code> component is added within the <code>Content</code>. React Router will render the route at this place.</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">import React, { useState } from 'react';
+import { Layout } from 'antd';
+import SiderMenu from './SiderMenu';
+import LayoutBanner from './LayoutBanner';
+import './Style.less';
+import RoutingList from '../../router/RoutingList';
+
+const { Content } = Layout;
+
+function MainLayout() {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const handleOnCollapse = () =&gt; {
+    setCollapsed(prevState =&gt; !prevState);
+  };
+
+  return (
+    &lt;Layout style={{ minHeight: '100vh' }}&gt;
+      &lt;SiderMenu collapsed={collapsed} handleOnCollapse={handleOnCollapse} /&gt;
+      &lt;Layout&gt;
+        &lt;LayoutBanner
+          collapsed={collapsed}
+          handleOnCollapse={handleOnCollapse}
+        /&gt;
+        &lt;Content style={{ margin: '24px 16px 0' }}&gt;
+          &lt;div style={{ padding: 24, background: '#fff', minHeight: 20 }}&gt;
+            &lt;RoutingList /&gt;
+          &lt;/div&gt;
+        &lt;/Content&gt;
+      &lt;/Layout&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export default MainLayout;</code></pre><figcaption>MainLayout.js</figcaption></figure><p>See the commit for changes: <strong><a href="https://github.com/turkogluc/react-admin-portal/commit/229b7762a78a8d222240186330d8f93d9189ce39?ref=localhost">229b776</a></strong>.</p><hr></hr><h2 id="adding-new-pages-routes">Adding New Pages/Routes</h2><p>We create new components, with a simple content:</p><pre><code class="language-javascript">function ShowCustomers() {
+  return &lt;div&gt;Customer Page&lt;/div&gt;;
+}
+
+function ShowProducts() {
+  return &lt;div&gt;Product Page&lt;/div&gt;;
+}</code></pre><p>And we can add new routes to the <code>RoutingList</code> component as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">const routes = [
+  {
+    path: '/',
+    component: Dashboard,
+    key: '/',
+  },
+  {
+    path: '/customers',
+    component: ShowCustomers,
+    key: '/customers',
+  },
+  {
+    path: '/products',
+    component: ShowProducts,
+    key: '/products',
+  },
+];</code></pre><figcaption>RoutingList.js</figcaption></figure><p>In the <code>SiderMenu</code> click action sends these paths for the clicked keys:</p><figure class="kg-card kg-code-card"><pre><code class="language-javascript">case 'showProducts':
+	history.push('/products');
+	break;
+
+case 'showCustomers':
+    history.push('/customers');
+    break;</code></pre><figcaption>SiderMenu.js</figcaption></figure><p>Now clicking <code>Show Products</code> renders the <code>ShowProducts</code> component within the content area.</p><figure class="kg-card kg-image-card"></figure><p>See the commit for changes: <strong><a href="https://github.com/turkogluc/react-admin-portal/commit/4c52d5b901a5c34c0779fb0ea92fc8dc5c94e97d?ref=localhost">4c52d5b</a></strong>.</p><h3 id="what-is-next">What is Next?</h3><ul><li><a href="https://turkogluc.com/developing-admin-portal-with-react-redux-and-ant-design-part-2/">Developing Admin Portal with React, Redux, and Ant Design (Part-2)</a></li><li><a href="https://turkogluc.com/developing-admin-portal-with-react-redux-and-ant-design-part-3/">Developing Admin Portal with React, Redux, and Ant Design (Part-3)</a></li></ul>
+
+            </section>
+
+        </article>
+    </main>
+    <footer class="page-footer">
+            <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        <h3>Cemal Turkoglu</h3>
+            <p>Thoughts, stories and ideas.</p>
+        <p><a href="https://turkogluc.com">Read more posts →</a></p>
+        <a class="powered" href="https://ghost.org" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156"><g fill="none" fill-rule="evenodd"><rect fill="#15212B" width="156" height="156" rx="27"/><g transform="translate(36 36)" fill="#F6F8FA"><path d="M0 71.007A4.004 4.004 0 014 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0130 84H4a4 4 0 01-4-4.007v-8.986zM50 71.007A4.004 4.004 0 0154 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0180 84H54a4 4 0 01-4-4.007v-8.986z"/><rect y="34" width="84" height="17" rx="4"/><path d="M0 4.007A4.007 4.007 0 014.007 0h41.986A4.003 4.003 0 0150 4.007v8.986A4.007 4.007 0 0145.993 17H4.007A4.003 4.003 0 010 12.993V4.007z"/><rect x="67" width="17" height="17" rx="4"/></g></g></svg> Published with Ghost</a>
+    </footer>
+
+</body>
+</html>

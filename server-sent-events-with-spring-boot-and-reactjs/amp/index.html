@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html ⚡>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <title>Server Sent Events with Spring Boot and ReactJS</title>
+
+    <meta name="description" content="Basics of the Server Sent Events.
+Implementation examples for SSE with Spring boot MVC and ReactJs client.
+Differences of Server-Sent Events vs. WebSockets">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/server-sent-events-with-spring-boot-and-reactjs/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Server Sent Events with Spring Boot and ReactJS">
+    <meta property="og:description" content="Basics of the Server Sent Events.
+Implementation examples for SSE with Spring boot MVC and ReactJs client.
+Differences of Server-Sent Events vs. WebSockets">
+    <meta property="og:url" content="https://turkogluc.com/server-sent-events-with-spring-boot-and-reactjs/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2021/01/Blank-diagram--1--1.png">
+    <meta property="article:published_time" content="2021-01-16T14:43:57.000Z">
+    <meta property="article:modified_time" content="2021-01-16T14:53:59.000Z">
+    <meta property="article:tag" content="Spring">
+    <meta property="article:tag" content="React">
+    <meta property="article:tag" content="Event Handling">
+    <meta property="article:tag" content="Java">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Server Sent Events with Spring Boot and ReactJS">
+    <meta name="twitter:description" content="Basics of the Server Sent Events.
+Implementation examples for SSE with Spring boot MVC and ReactJs client.
+Differences of Server-Sent Events vs. WebSockets">
+    <meta name="twitter:url" content="https://turkogluc.com/server-sent-events-with-spring-boot-and-reactjs/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2021/01/Blank-diagram--1--1.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Spring, React, Event Handling, Java">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1325">
+    <meta property="og:image:height" content="815">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Server Sent Events with Spring Boot and ReactJS",
+    "url": "https://turkogluc.com/server-sent-events-with-spring-boot-and-reactjs/",
+    "datePublished": "2021-01-16T14:43:57.000Z",
+    "dateModified": "2021-01-16T14:53:59.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2021/01/Blank-diagram--1--1.png",
+        "width": 1325,
+        "height": 815
+    },
+    "keywords": "Spring, React, Event Handling, Java",
+    "description": "Basics of the Server Sent Events. \nImplementation examples for SSE with Spring boot MVC and ReactJs client.\nDifferences of Server-Sent Events vs. WebSockets",
+    "mainEntityOfPage": "https://turkogluc.com/server-sent-events-with-spring-boot-and-reactjs/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+
+    <style amp-custom>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        font-size: 62.5%;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        color: #3a4145;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.7rem;
+        line-height: 1.55em;
+        font-weight: 400;
+        font-style: normal;
+        background: #fff;
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    p,
+    ul,
+    ol,
+    li,
+    dl,
+    dd,
+    hr,
+    pre,
+    form,
+    table,
+    video,
+    figure,
+    figcaption,
+    blockquote {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul[class],
+    ol[class] {
+        padding: 0;
+        list-style: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    input,
+    button,
+    select,
+    textarea {
+        font: inherit;
+        -webkit-appearance: none;
+    }
+
+    fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        font-weight: 700;
+    }
+
+    hr {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid currentcolor;
+        opacity: 0.1;
+    }
+
+    ::selection {
+        text-shadow: none;
+        background: #cbeafb;
+    }
+
+    mark {
+        background-color: #fdffb6;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+    sup {
+        top: -0.5em;
+    }
+    sub {
+        bottom: -0.25em;
+    }
+
+    ul li + li {
+        margin-top: 0.6em;
+    }
+
+    a {
+        color: var(--ghost-accent-color, #1292EE);
+        text-decoration-skip-ink: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        font-weight: 700;
+        color: #121212;
+        line-height: 1.4em;
+    }
+
+    h1 {
+        font-size: 3.4rem;
+        line-height: 1.1em;
+    }
+
+    h2 {
+        font-size: 2.4rem;
+        line-height: 1.2em;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+    }
+
+    h4 {
+        font-size: 1.7rem;
+    }
+
+    h5 {
+        font-size: 1.6rem;
+    }
+
+    h6 {
+        font-size: 1.6rem;
+    }
+
+    amp-img {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    amp-img img {
+        object-fit: cover;
+    }
+
+    amp-youtube {
+        height: calc(100vw / 1.78);
+        width: 100vw;
+        position: relative;
+    }
+
+    amp-youtube img {
+        position: absolute;
+    }
+
+    .page-header {
+        padding: 50px 5vmin 30px;
+        text-align: center;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .page-header a {
+        color: #121212;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.6rem;
+        letter-spacing: -0.1px;
+    }
+
+    .post {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .post-header {
+        margin: 0 5vmin 5vmin;
+        text-align: center;
+    }
+
+    .post-meta {
+        margin: 1rem 0 0 0;
+        text-transform: uppercase;
+        color: #738a94;
+        font-weight: 500;
+        font-size: 1.3rem;
+    }
+
+    .post-image {
+        margin: 0 0 5vmin;
+    }
+
+    .post-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .post-content {
+        padding: 0 5vmin;
+    }
+
+    .post-content > * + * {
+        margin-top: 1.5em;
+    }
+
+    .post-content [id]:not(:first-child) {
+        margin: 2em 0 0;
+    }
+
+    .post-content > [id] + * {
+        margin-top: 1rem;
+    }
+
+    .post-content [id] + .kg-card,
+    .post-content blockquote + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content > ul,
+    .post-content > ol,
+    .post-content > dl {
+        padding-left: 1.9em;
+    }
+
+    .post-content hr {
+        margin-top: 40px;
+    }
+
+    .post .post-content hr + * {
+        margin-top: 40px;
+    }
+
+    .post-content amp-img {
+        background-color: #f8f8f8;
+    }
+
+    .post-content blockquote {
+        position: relative;
+        font-style: italic;
+    }
+
+    .post-content blockquote::before {
+        content: "";
+        position: absolute;
+        left: -1.5em;
+        top: 0;
+        bottom: 0;
+        width: 0.3rem;
+        background: var(--ghost-accent-color, #1292EE);
+    }
+
+    .post-content blockquote.kg-blockquote-alt {
+        font-size: 1.2em;
+        font-style: italic;
+        line-height: 1.6em;
+        text-align: center;
+        color: #738a94;
+        padding: 0.75em 3em 1.25em;
+    }
+
+    .post-content blockquote.kg-blockquote-alt::before {
+        display: none;
+    }
+
+    .post-content :not(.kg-card):not([id]) + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content .kg-card + :not(.kg-card) {
+        margin-top: 40px;
+    }
+
+    .kg-card figcaption {
+        padding: 1.5rem 1.5rem 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.4em;
+        opacity: 0.6;
+    }
+
+    .kg-card figcaption strong {
+        color: rgba(0,0,0,0.8);
+    }
+
+    .post-content :not(pre) code {
+        vertical-align: middle;
+        padding: 0.15em 0.4em 0.15em;
+        border: #e1eaef 1px solid;
+        font-weight: 400;
+        font-size: 0.9em;
+        line-height: 1em;
+        color: #15171a;
+        background: #f0f6f9;
+        border-radius: 0.25em;
+    }
+
+    .post-content > pre {
+        overflow: scroll;
+        padding: 16px 20px;
+        color: #fff;
+        background: #1F2428;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px -2px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+    }
+
+    .kg-embed-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .kg-image-card img {
+        margin: auto;
+    }
+
+    .kg-gallery-card + .kg-gallery-card {
+        margin-top: 0.75em;
+    }
+
+    .kg-gallery-container {
+        position: relative;
+    }
+
+    .kg-gallery-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .kg-gallery-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .kg-gallery-row:not(:first-of-type) {
+        margin: 0.75em 0 0 0;
+    }
+
+    .kg-gallery-image:not(:first-of-type) {
+        margin: 0 0 0 0.75em;
+    }
+
+    .kg-bookmark-card,
+    .kg-bookmark-publisher {
+        position: relative;
+    }
+
+    .kg-bookmark-container,
+    .kg-bookmark-container:hover {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+        color: currentColor;
+        background: rgba(255,255,255,0.6);
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        text-decoration: none;
+        border-radius: 3px;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+    }
+
+    .kg-bookmark-content {
+        flex-basis: 0;
+        flex-grow: 999;
+        padding: 20px;
+        order: 1;
+    }
+
+    .kg-bookmark-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 1.3em;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        max-height: 45px;
+        margin: 0.5em 0 0 0;
+        font-size: 1.4rem;
+        line-height: 1.55em;
+        overflow: hidden;
+        opacity: 0.8;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .kg-bookmark-metadata {
+        margin-top: 20px;
+    }
+
+    .kg-bookmark-metadata {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.3em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-metadata amp-img {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
+        margin-right: 10px;
+    }
+
+    .kg-bookmark-thumbnail {
+        display: flex;
+        flex-basis: 20rem;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+
+    .kg-bookmark-thumbnail amp-img {
+        max-height: 200px;
+    }
+
+    .kg-bookmark-author {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-publisher::before {
+        content: "•";
+        margin: 0 .5em;
+    }
+
+    .kg-toggle-card-icon {
+        display: none;
+    }
+
+    .kg-toggle-content {
+        margin-top: 0.8rem;
+    }
+
+    .kg-product-card-container {
+        background: transparent;
+        padding: 20px;
+        width: 100%;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 1px rgb(124 139 154 / 25%);
+    }
+
+    .kg-product-card-description p {
+        margin-top: 1.5em;
+    }
+
+    .kg-product-card-description ul {
+        margin-left: 24px;
+    }
+
+    .kg-product-card-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+    }
+
+    .kg-product-card-rating-star {
+        height: 28px;
+        width: 20px;
+        margin-right: 2px;
+    }
+
+    .kg-product-card-rating-star svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.15;
+    }
+
+    .kg-product-card-rating-active.kg-product-card-rating-star svg {
+    opacity: 1;
+    }
+
+    .kg-nft-card-container {
+        position: relative;
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+        text-decoration: none;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        box-shadow: 0 2px 6px -2px rgb(0 0 0 / 10%), 0 0 1px rgb(0 0 0 / 40%);
+        width: 100%;
+        max-width: 512px;
+        color: #15212A;
+        background: #fff;
+        border-radius: 5px;
+        transition: none;
+        margin: 0 auto;
+    }
+
+    .kg-nft-metadata {
+        padding: 2.0rem;
+    }
+
+    .kg-nft-image-container {
+        position: relative;
+    }
+
+    .kg-nft-image {
+        display: flex;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .kg-nft-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .kg-nft-header h4.kg-nft-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin: 0;
+        color: #15212A;
+    }
+
+    .kg-nft-header amp-img {
+        max-width: 114px;
+        max-height: 26px;
+    }
+
+    .kg-nft-opensea-logo {
+        margin-top: 2px;
+        width: 100px;
+    }
+
+    .kg-nft-creator {
+        font-family: inherit;
+        color: #95A1AD;
+    }
+
+    .kg-nft-creator span {
+        font-weight: 500;
+        color: #15212A;
+    }
+
+    .kg-nft-card p.kg-nft-description {
+        font-size: 1.4rem;
+        line-height: 1.4em;
+        margin: 2.0rem 0 0;
+        color: #222;
+    }
+
+    .kg-button-card {
+        display: flex;
+        position: static;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kg-btn {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 2.0rem;
+        height: 4.0rem;
+        line-height: 4.0rem;
+        font-size: 1.65rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .kg-btn:hover {
+        opacity: 0.85;
+    }
+
+    .kg-btn-accent {
+        background-color: var(--ghost-accent-color, #1292EE);
+        color: #fff;
+    }
+
+    .kg-callout-card {
+        display: flex;
+        padding: 20px 28px;
+        border-radius: 3px;
+    }
+
+    .kg-callout-card-grey {
+        background: rgba(124, 139, 154, 0.13);
+    }
+
+    .kg-callout-card-white {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-callout-card-blue {
+        background: rgba(33, 172, 232, 0.12);
+    }
+
+    .kg-callout-card-green {
+        background: rgba(52, 183, 67, 0.12);
+    }
+
+    .kg-callout-card-yellow {
+        background: rgba(240, 165, 15, 0.13);
+    }
+
+    .kg-callout-card-red {
+        background: rgba(209, 46, 46, 0.11);
+    }
+
+    .kg-callout-card-pink {
+        background: rgba(225, 71, 174, 0.11);
+    }
+
+    .kg-callout-card-purple {
+        background: rgba(135, 85, 236, 0.12);
+    }
+
+    .kg-callout-card-accent {
+        background: var(--ghost-accent-color);
+        color: #fff;
+    }
+
+    .kg-callout-card-accent a {
+        color: #fff;
+    }
+
+    .kg-callout-emoji {
+        padding-right: 16px;
+        line-height: 1.3;
+        font-size: 1.25em;
+    }
+
+    .kg-header-card {
+        padding: 6em 3em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .kg-header-card.kg-size-small {
+        padding-top: 4em;
+        padding-bottom: 4em;
+    }
+
+    .kg-header-card.kg-size-large {
+        padding-top: 12em;
+        padding-bottom: 12em;
+    }
+
+    .kg-header-card.kg-width-full {
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+
+    .kg-header-card.kg-align-left {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .kg-header-card.kg-style-dark {
+        background: #15171a;
+        color: #ffffff;
+    }
+
+    .kg-header-card.kg-style-light {
+        color: #15171a;
+        border: 1px solid rgba(124, 139, 154, 0.25);
+        border-width: 1px 0;
+    }
+
+    .kg-header-card.kg-style-accent {
+        background-color: var(--ghost-accent-color);
+    }
+
+    .kg-header-card.kg-style-image {
+        background-color: #e7e7eb;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .kg-header-card h2 {
+        font-size: 4em;
+        font-weight: 700;
+        line-height: 1.1em;
+        margin: 0;
+    }
+
+    .kg-header-card h2 strong {
+        font-weight: 800;
+    }
+
+    .kg-header-card.kg-size-small h2 {
+        font-size: 3em;
+    }
+
+    .kg-header-card.kg-size-large h2 {
+        font-size: 5em;
+    }
+
+    .kg-header-card h3 {
+        font-size: 1.25em;
+        font-weight: 500;
+        line-height: 1.3em;
+        margin: 0;
+    }
+
+    .kg-header-card h3 strong {
+        font-weight: 600;
+    }
+
+    .kg-header-card.kg-size-small h3 {
+        font-size: 1em;
+    }
+
+    .kg-header-card.kg-size-large h3 {
+        font-size: 1.5em;
+    }
+
+    .kg-header-card:not(.kg-style-light) h2,
+    .kg-header-card:not(.kg-style-light) h3 {
+        color: #ffffff;
+    }
+
+    .kg-header-card a.kg-header-card-button {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 1.2em;
+        height: 2.4em;
+        line-height: 1em;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+        background-color: var(--ghost-accent-color);
+        color: #ffffff;
+        margin: 1.75em 0 0;
+    }
+
+    .kg-header-card a.kg-header-card-button:hover {
+        opacity: 0.85;
+    }
+
+    .kg-header-card.kg-size-large a.kg-header-card-button {
+        margin-top: 2em;
+    }
+
+    .kg-header-card.kg-size-small a.kg-header-card-button {
+        margin-top: 1.5em;
+    }
+
+    .kg-header-card.kg-style-image a.kg-header-card-button,
+    .kg-header-card.kg-style-dark a.kg-header-card-button {
+        background: #ffffff;
+        color: #15171a;
+    }
+
+    .kg-header-card.kg-style-accent a.kg-header-card-button {
+        background: #ffffff;
+        color: var(--ghost-accent-color);
+    }
+
+    .kg-audio-card {
+        display: flex;
+        width: 100%;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-audio-thumbnail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        min-width: 80px;
+        height: 80px;
+        background: transparent;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .kg-audio-thumbnail.placeholder {
+        background: var(--ghost-accent-color);
+    }
+
+    .kg-audio-thumbnail.placeholder svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+    }
+
+    .kg-audio-player-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        --seek-before-width: 0%;
+        --volume-before-width: 100%;
+        --buffered-width: 0%;
+    }
+
+    .kg-audio-title {
+        width: 100%;
+        padding: 8px 12px 0;
+        border: none;
+        font-family: inherit;
+        font-size: 1.1em;
+        font-weight: 700;
+        background: transparent;
+    }
+
+    .kg-audio-player {
+        display: none;
+    }
+
+    .kg-width-full.kg-card-hascaption {
+        display: grid;
+        grid-template-columns: inherit;
+    }
+
+    .post-content table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .post-content th {
+        padding: 0.5em 0.8em;
+        text-align: left;
+        font-size: .75em;
+        text-transform: uppercase;
+    }
+
+    .post-content td {
+        padding: 0.4em 0.7em;
+    }
+
+    .post-content tbody tr:nth-child(2n + 1) {
+        background-color: rgba(0,0,0,0.1);
+        padding: 1px;
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td:last-child {
+        box-shadow:
+            inset 1px 0 rgba(0,0,0,0.1),
+            inset -1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td {
+        box-shadow: inset 1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:last-child {
+        border-bottom: 1px solid rgba(0,0,0,.1);
+    }
+
+    .page-footer {
+        padding: 60px 5vmin;
+        margin: 60px auto 0;
+        text-align: center;
+        background-color: #f8f8f8;
+    }
+
+    .page-footer h3 {
+        margin: 0.5rem 0 0 0;
+    }
+
+    .page-footer p {
+        max-width: 500px;
+        margin: 1rem auto 1.5rem;
+        font-size: 1.7rem;
+        line-height: 1.5em;
+        color: rgba(0,0,0,0.6)
+    }
+
+    .powered {
+        display: inline-flex;
+        align-items: center;
+        margin: 30px 0 0;
+        padding: 6px 9px 6px 6px;
+        border: rgba(0,0,0,0.1) 1px solid;
+        font-size: 12px;
+        line-height: 12px;
+        letter-spacing: -0.2px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-weight: 500;
+        color: #222;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 6px;
+    }
+
+    .powered svg {
+        height: 16px;
+        width: 16px;
+        margin: 0 6px 0 0;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            font-size: 1.6rem;
+        }
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        h1 {
+            font-size: 2.6rem;
+            line-height: 1.15em;
+        }
+        h2 {
+            font-size: 2rem;
+            line-height: 1.2em;
+        }
+        h3 {
+            font-size: 1.7rem;
+        }
+    }
+
+    :root {--ghost-accent-color: #FF1A75;}
+    </style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+    <script async custom-element="amp-anim" src="https://cdn.ampproject.org/v0/amp-anim-0.1.js"></script>
+
+</head>
+
+<body class="amp-template">
+    <header class="page-header">
+        <a href="https://turkogluc.com">
+                <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        </a>
+    </header>
+
+    <main class="content" role="main">
+        <article class="post">
+
+            <header class="post-header">
+                <h1 class="post-title">Server Sent Events with Spring Boot and ReactJS</h1>
+                <section class="post-meta">
+                    Cemal Turkoglu -
+                    <time class="post-date" datetime="2021-01-16">16 Jan 2021</time>
+                </section>
+            </header>
+            <figure class="post-image">
+                <amp-img src="https://turkogluc.com/content/images/2021/01/Blank-diagram--1--1.png" width="600" height="340" layout="responsive"
+                alt="Server Sent Events with Spring Boot and ReactJS"
+                ></amp-img>
+            </figure>
+            <section class="post-content">
+
+                <p>Server Sent Events (<strong>SSE</strong>) is an HTTP standart that provides the capability to servers to push streaming data to client. The flow is unidirectional from server to client and client receives updates when the server pushes some data. </p><figure class="kg-card kg-image-card"></figure><p>SSE has an <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html?ref=localhost#eventsource">EventSource</a> interface with a straightforward API in the client side:</p><pre><code class="language-javascript">var source = new EventSource('sse-endpoint-address');
+source.onmessage = function (event) {
+  console.log(event.data);
+};</code></pre><p>The data sent is always decoded as UTF-8. The server sends the events in the <code><a href="https://html.spec.whatwg.org/multipage/iana.html?ref=localhost#text/event-stream">text/event-stream</a></code> MIME type, and the default event type is a <code>message</code> event. <code>onmessage</code> event handler captures these default messages:</p><figure class="kg-card kg-image-card"></figure><p>The client API has 3 predefined event handlers:</p><ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource/onopen?ref=localhost"><strong><code>EventSource.onopen</code></strong></a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource/onmessage?ref=localhost"><strong><code>EventSource.onmessage</code></strong></a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource/onerror?ref=localhost"><strong><code>EventSource.onerror</code></strong></a></li></ul><p>The server can also send custom event types and in that case client should register event listener for that event:</p><pre><code>event: add
+data: 73857293
+
+event: remove
+data: 2153
+
+event: add
+data: 113411</code></pre><pre><code class="language-javascript">source.addEventListener('add', addHandler, false);
+source.addEventListener('remove', removeHandler, false);</code></pre><h3 id="spring-mvc-server-sent-events">Spring MVC Server Sent Events</h3><p>Spring Boot provides a way to implement SSE by using Flux which is a reactive representation of a stream of events, however in this post I use Spring MVC which provides 3 important classes:</p><ul><li>ResponseBodyEmitter</li><li>SseEmitter</li><li>StreamingResponseBody</li></ul><p><code>ResponseBodyEmitter</code> is a parent class which handles async responses, and <code>SseEmitter</code> is a<strong><strong> </strong></strong>subclass of <code>ResponseBodyEmitter</code> and provides additional support for Server-Sent Events. Let us see some example implementations with <code>SseEmiter</code> in action.</p><h3 id="pushing-time-as-a-simple-message-event">Pushing Time As a Simple Message Event</h3><p>We can create a <strong>controller</strong> in the backend side as follows:</p><pre><code class="language-java">@RestController
+public class Controller {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Controller.class);
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    @PostConstruct
+    public void init() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -&gt; {
+            executor.shutdown();
+            try {
+                executor.awaitTermination(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                LOGGER.error(e.toString());
+            }
+        }));
+    }
+
+    @GetMapping("/time")
+    @CrossOrigin
+    public SseEmitter streamDateTime() {
+
+        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+
+        sseEmitter.onCompletion(() -&gt; LOGGER.info("SseEmitter is completed"));
+
+        sseEmitter.onTimeout(() -&gt; LOGGER.info("SseEmitter is timed out"));
+
+        sseEmitter.onError((ex) -&gt; LOGGER.info("SseEmitter got error:", ex));
+
+        executor.execute(() -&gt; {
+            for (int i = 0; i &lt; 15; i++) {
+                try {
+                    sseEmitter.send(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")));
+                    sleep(1, sseEmitter);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    sseEmitter.completeWithError(e);
+                }
+            }
+            sseEmitter.complete();
+        });
+
+        LOGGER.info("Controller exits");
+        return sseEmitter;
+    }
+
+    private void sleep(int seconds, SseEmitter sseEmitter) {
+        try {
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            sseEmitter.completeWithError(e);
+        }
+    }
+}</code></pre><p>Note that <code>SseEmitter</code> instance is created and given to the thread pool to be used in async tasks, and also it is returned as the response to the REST call. Async task uses the <code>send</code> method to push data, and since only the data is being provided to the method, it pushes as default <code>message</code> event. So REST call immediately  returns the emitter and the "<strong>Controller exits</strong>", and whenever something is ready to push executor thread will do that.</p><p>At the client side, we can simply create a react project with <code>create-react-app</code> and use the <code>EventSource</code> interface to subscribe to an endpoint as follows:</p><pre><code class="language-javascript">function App() {
+
+  const [listening, setListening] = useState(false);
+  const [data, setData] = useState([]);
+  let eventSource = undefined;
+
+  useEffect(() =&gt; {
+    if (!listening) {
+      eventSource = new EventSource("http://localhost:8080/time");
+
+      eventSource.onopen = (event) =&gt; {
+        console.log("connection opened")
+      }
+
+      eventSource.onmessage = (event) =&gt; {
+        console.log("result", event.data);
+        setData(old =&gt; [...old, event.data])
+      }
+
+      eventSource.onerror = (event) =&gt; {
+        console.log(event.target.readyState)
+        if (event.target.readyState === EventSource.CLOSED) {
+          console.log('eventsource closed (' + event.target.readyState + ')')
+        }
+        eventSource.close();
+      }
+
+      setListening(true);
+    }
+
+    return () =&gt; {
+      eventSource.close();
+      console.log("eventsource closed")
+    }
+
+  }, [])
+
+  return (
+    &lt;div className="App"&gt;
+      &lt;header className="App-header"&gt;
+        Received Data
+        {data.map(d =&gt;
+          &lt;span key={d}&gt;{d}&lt;/span&gt;
+        )}
+      &lt;/header&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre><p>So each received message is pushed to the data array and that array is displayed on the App page:</p><figure class="kg-card kg-image-card kg-width-wide"></figure><h3 id="pushing-custom-progress-event">Pushing Custom Progress Event</h3><p>This time we can use the <code>SseEventBuilder</code> to push a custom JSON data and give it an event name:</p><pre><code class="language-java">sseEmitter.send(SseEmitter.event().name("Progress").data(progress, MediaType.APPLICATION_JSON));</code></pre><p>We will push the instances of following class to represent the progress</p><pre><code class="language-java">@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class ObservableProgress {
+    private final int target;
+    private final AtomicInteger value = new AtomicInteger(0);
+
+    public ObservableProgress(int target) {
+        this.target = target;
+    }
+
+    public ObservableProgress increment(int v){
+        value.getAndAdd(v);
+        return this;
+    }
+
+    public int getTarget() {
+        return target;
+    }
+
+    public int getValue() {
+        return value.get();
+    }
+
+    @Override
+    public String toString() {
+        return "ObservableProgress{" +
+                "target=" + target +
+                ", value=" + value +
+                '}';
+    }
+}</code></pre><p>In the controller I want to simulate handling a job with multiple steps and each step is an I/O Blocking operation. Any time we complete a step we push back to the client some progress points. It's implementation is as follows:</p><pre><code class="language-java">@RestController
+public class Controller {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Controller.class);
+
+    @GetMapping("/run")
+    @CrossOrigin
+    public SseEmitter doTheJob() {
+
+        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+
+        sseEmitter.onCompletion(() -&gt; LOGGER.info("SseEmitter is completed"));
+
+        sseEmitter.onTimeout(() -&gt; LOGGER.info("SseEmitter is timed out"));
+
+        sseEmitter.onError((ex) -&gt; LOGGER.info("SseEmitter got error:", ex));
+
+        ObservableProgress progress = new ObservableProgress(100);
+
+        runAsync(() -&gt; {
+            sleep(1, sseEmitter);
+            pushProgress(sseEmitter, progress.increment(10));
+        })
+        .thenRunAsync(() -&gt; {
+            sleep(1, sseEmitter);
+            pushProgress(sseEmitter, progress.increment(20));
+        })
+        .thenRunAsync(() -&gt; {
+            sleep(1, sseEmitter);
+            pushProgress(sseEmitter, progress.increment(10));
+        })
+        .thenRunAsync(() -&gt; {
+            sleep(1, sseEmitter);
+            pushProgress(sseEmitter, progress.increment(20));
+        })
+        .thenRunAsync(() -&gt; {
+            sleep(1, sseEmitter);
+            pushProgress(sseEmitter, progress.increment(20));
+        })
+        .thenRunAsync(() -&gt; {
+            sleep(1, sseEmitter);
+            pushProgress(sseEmitter, progress.increment(20));
+        })
+        .thenRunAsync(sseEmitter::complete)
+        .exceptionally(ex -&gt; {
+            sseEmitter.completeWithError(ex);
+            throw (CompletionException) ex;
+        });
+
+        LOGGER.info("Controller exits");
+        return sseEmitter;
+    }
+
+    private void pushProgress(SseEmitter sseEmitter, ObservableProgress progress) {
+        try {
+            LOGGER.info("Pushing progress: {}", progress.toString());
+            sseEmitter.send(SseEmitter.event().name("Progress").data(progress, MediaType.APPLICATION_JSON));
+        } catch (IOException e) {
+            LOGGER.error("An error occurred while emitting progress.", e);
+        }
+    }
+
+    private void sleep(int seconds, SseEmitter sseEmitter) {
+        try {
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            sseEmitter.completeWithError(e);
+        }
+    }
+}</code></pre><p>Note that I use <code>CompletableFuture</code> to simulate the handling async tasks.</p><p>In the client side we need to register a listener for our new custom event type:</p><pre><code class="language-javascript">eventSource.addEventListener("Progress", (event) =&gt; {
+        const result = JSON.parse(event.data);
+        console.log("received:", result);
+        setData(result)
+});</code></pre><p>So the <code>App.js</code> becomes as follows:</p><pre><code class="language-javascript">import React, {useEffect, useState} from "react";
+import {Card, Progress, Row} from "antd";
+
+function App() {
+
+  const [listening, setListening] = useState(false);
+  const [data, setData] = useState({value: 0, target: 100});
+  let eventSource = undefined;
+
+  useEffect(() =&gt; {
+    if (!listening) {
+      eventSource = new EventSource("http://localhost:8080/run");
+
+      eventSource.addEventListener("Progress", (event) =&gt; {
+        const result = JSON.parse(event.data);
+        console.log("received:", result);
+        setData(result)
+      });
+
+      eventSource.onerror = (event) =&gt; {
+        console.log(event.target.readyState)
+        if (event.target.readyState === EventSource.CLOSED) {
+          console.log('SSE closed (' + event.target.readyState + ')')
+        }
+        eventSource.close();
+      }
+
+      eventSource.onopen = (event) =&gt; {
+        console.log("connection opened")
+      }
+      setListening(true);
+    }
+    return () =&gt; {
+      eventSource.close();
+      console.log("event closed")
+    }
+
+  }, [])
+
+  return (
+
+    &lt;&gt;
+      &lt;Card title="Progress Circle"&gt;
+        &lt;Row justify="center"&gt;
+          &lt;Progress type="circle" percent={data.value / data.target * 100}/&gt;
+        &lt;/Row&gt;
+      &lt;/Card&gt;
+      &lt;Card title="Progress Line"&gt;
+        &lt;Row justify="center"&gt;
+          &lt;Progress percent={data.value / data.target * 100} /&gt;
+        &lt;/Row&gt;
+      &lt;/Card&gt;
+    &lt;/&gt;
+
+
+  );
+}</code></pre><p> Note that I use <code>Ant Design</code> Progress component to visualise the progress. </p><figure class="kg-card kg-image-card kg-width-wide"></figure><h3 id="limitation-to-the-maximum-number-of-open-connections">Limitation to the maximum number of open connections</h3><p>Note that SSE has a drawback when <strong>not used over HTTP/2</strong>, a browser is not allowed to open more than 6 SSE connections for the same address (www.ex-adress.com). So in chrome and firefox we can maximum open 6 tabs to the same address which opens sse connection. When we are using over HTTP/2 there is no such low number limitation, by default up to 100 connections is allowed. </p><h3 id="server-sent-events-vs-websockets">Server-Sent Events vs. WebSockets</h3><p>Websockets and SSE (Server-Sent Events) are both capable of pushing data to browsers. </p><p>Websockets connections are bidirectional and can send data to the browser and receive data from the browser. The games, messaging apps, and the cases where you need near real-time updates in both directions are good examples for WebSocket usage.</p><p>SSE connections are unidirectional and can only push data to the browser. Stock tick data, pushing notifications, twitters updating timeline are good examples of an application that could benefit from SSE.</p><p>In practice since everything that can be done with SSE can also be done with Websockets and Websockets provides richer protocol. That's why WebSockets gets more attention and used more widely. However, it can be overkill for some types of applications, and the backend could be easier to implement with a protocol such as SSE.</p><p>References:</p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">Using server-sent events - Web APIs | MDN</div><div class="kg-bookmark-description">Developing a web application that uses server-sent events is straightforward. You’ll need a bit of code on the server to stream events to the front-end, but the client side code works almost identically to websockets in part of handling incoming events. This is one-way connection, so you can’t send …</div><div class="kg-bookmark-metadata"><amp-img class="kg-bookmark-icon" src="https://developer.mozilla.org/apple-touch-icon.png" alt width="192" height="192" layout="fixed"></amp-img><span class="kg-bookmark-author">MDN</span></div></div></a></figure><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://stackoverflow.com/questions/5195452/websockets-vs-server-sent-events-eventsource/5326159?ref=localhost#5326159"><div class="kg-bookmark-content"><div class="kg-bookmark-title">WebSockets vs. Server-Sent events/EventSource</div><div class="kg-bookmark-description">Both WebSockets and Server-Sent Events are capable of pushing data to browsers. To me they seem to be competing technologies. What is the difference between them? When would you choose one over the...</div><div class="kg-bookmark-metadata"><amp-img class="kg-bookmark-icon" src="https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png?v=c78bd457575a" alt width="158" height="158" layout="fixed"></amp-img><span class="kg-bookmark-author">Stack Overflow</span><span class="kg-bookmark-publisher">Mads Mobæk</span></div></div><div class="kg-bookmark-thumbnail"><amp-img src="https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon@2.png?v=73d79a89bded" alt width="316" height="316" layout="responsive"></amp-img></div></a></figure><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://www.html5rocks.com/en/tutorials/eventsource/basics/?ref=localhost"><div class="kg-bookmark-content"><div class="kg-bookmark-title">Stream Updates with Server-Sent Events - HTML5 Rocks</div><div class="kg-bookmark-description">The EventSource API is designed for receiving push notifications from a server, removing the need for client-size XHR polling.</div><div class="kg-bookmark-metadata"><amp-img class="kg-bookmark-icon" src="https://www.html5rocks.com/static/images/identity/HTML5_Badge_64.png" alt width="64" height="64" layout="fixed"></amp-img><span class="kg-bookmark-author">HTML5 Rocks - A resource for open web HTML5 developers</span><span class="kg-bookmark-publisher">Eric Bidelman</span></div></div><div class="kg-bookmark-thumbnail"><amp-img src="https://www.html5rocks.com/static/images/profiles/ericbidelman.png" alt width="96" height="96" layout="fixed"></amp-img></div></a></figure>
+
+            </section>
+
+        </article>
+    </main>
+    <footer class="page-footer">
+            <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        <h3>Cemal Turkoglu</h3>
+            <p>Thoughts, stories and ideas.</p>
+        <p><a href="https://turkogluc.com">Read more posts →</a></p>
+        <a class="powered" href="https://ghost.org" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156"><g fill="none" fill-rule="evenodd"><rect fill="#15212B" width="156" height="156" rx="27"/><g transform="translate(36 36)" fill="#F6F8FA"><path d="M0 71.007A4.004 4.004 0 014 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0130 84H4a4 4 0 01-4-4.007v-8.986zM50 71.007A4.004 4.004 0 0154 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0180 84H54a4 4 0 01-4-4.007v-8.986z"/><rect y="34" width="84" height="17" rx="4"/><path d="M0 4.007A4.007 4.007 0 014.007 0h41.986A4.003 4.003 0 0150 4.007v8.986A4.007 4.007 0 0145.993 17H4.007A4.003 4.003 0 010 12.993V4.007z"/><rect x="67" width="17" height="17" rx="4"/></g></g></svg> Published with Ghost</a>
+    </footer>
+
+</body>
+</html>

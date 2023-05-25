@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Apache Kafka Advanced Producers</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" href="/assets/css/app.css?v=b36b0218e7" as="style" />
+    <link rel="preload" href="/assets/js/manifest.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor/content-api.min.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/app.js?v=b36b0218e7" as="script" />
+
+      <link rel="preload" href="/assets/css/post.css?v=b36b0218e7" as="style" />
+  <link rel="preload" href="/assets/js/post.js?v=b36b0218e7" as="script" />
+
+
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7");
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7#iefix") format('embedded-opentype'),
+        url("/assets/fonts/icomoon/icomoon.ttf?101fc3?v=b36b0218e7") format('truetype'),
+        url("/assets/fonts/icomoon/icomoon.woff?101fc3?v=b36b0218e7") format('woff'),
+        url("/assets/fonts/icomoon/icomoon.svg?101fc3?v=b36b0218e7#icomoon") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/app.css?v=b36b0218e7" media="screen" />
+
+      <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=b36b0218e7" media="screen" />
+
+
+
+
+    <meta name="description" content="Understanding the details of Kafka Producer and its configurations. Implementing basic producer. Creating safe and high throughput producers.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/apache-kafka-producers/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://turkogluc.com/apache-kafka-producers/amp/">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Apache Kafka Advanced Producers">
+    <meta property="og:description" content="Understanding the details of Kafka Producer and its configurations. Implementing basic producer. Creating safe and high throughput producers.">
+    <meta property="og:url" content="https://turkogluc.com/apache-kafka-producers/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png">
+    <meta property="article:published_time" content="2020-06-01T21:19:44.000Z">
+    <meta property="article:modified_time" content="2020-06-01T21:32:25.000Z">
+    <meta property="article:tag" content="Apache Kafka">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Apache Kafka Advanced Producers">
+    <meta name="twitter:description" content="Understanding the details of Kafka Producer and its configurations. Implementing basic producer. Creating safe and high throughput producers.">
+    <meta name="twitter:url" content="https://turkogluc.com/apache-kafka-producers/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Apache Kafka">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="1200">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Apache Kafka Advanced Producers",
+    "url": "https://turkogluc.com/apache-kafka-producers/",
+    "datePublished": "2020-06-01T21:19:44.000Z",
+    "dateModified": "2020-06-01T21:32:25.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png",
+        "width": 1200,
+        "height": 1200
+    },
+    "keywords": "Apache Kafka",
+    "description": "Understanding the details of Kafka Producer and its configurations. Implementing basic producer. Creating safe and high throughput producers.",
+    "mainEntityOfPage": "https://turkogluc.com/apache-kafka-producers/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.32/umd/portal.min.js" data-i18n="false" data-ghost="https://turkogluc.com/" data-key="8aed1ac6d3b2be60cf4aedf769" data-api="https://turkogluc.com/ghost/api/content/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/sodo-search.min.js" data-key="8aed1ac6d3b2be60cf4aedf769" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/main.css" data-sodo-search="https://turkogluc.com/" crossorigin="anonymous"></script>
+
+    <link href="https://turkogluc.com/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=b36b0218e7"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=b36b0218e7">
+    <script defer src="/public/member-attribution.min.js?v=b36b0218e7"></script>
+    <!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/idea.min.css" integrity="sha512-jxbAYisMjIOokHq0YnYxWqTUfJRe8s1U2F1lp+se3vv0CS8floaFL3Mc3GEpG3HCG2s6lxHb3QvQdmUOT1ZzKw==" crossorigin="anonymous" />
+
+<style>
+   .l-post-content pre>code {
+    white-space:inherit
+  }
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+
+</style>
+
+<!-- prism.js -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-okaidia.min.css" />
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-tomorrow.min.css" />
+-->
+<style>
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+</style>
+
+
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+-->
+<style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+    <style>
+      :root {
+        --primary-subtle-color: var(--ghost-accent-color) !important;
+      }
+    </style>
+
+    <script>
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "https://turkogluc.com"
+      // @license-end
+    </script>
+
+  </head>
+  <body class="post-template tag-apache-kafka tag-hash-import-2023-05-25-09-05">
+
+
+
+
+
+<header class="m-header with-picture js-header">
+  <div class="m-mobile-topbar" data-aos="fade-down">
+    <button class="m-icon-button in-mobile-topbar js-open-menu" aria-label="Open menu">
+      <span class="icon-menu" aria-hidden="true"></span>
+    </button>
+      <a href="https://turkogluc.com" class="m-logo in-mobile-topbar">
+        <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+      </a>
+    <button class="m-icon-button in-mobile-topbar js-open-search" aria-label="Open search">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="m-menu js-menu">
+    <button class="m-icon-button outlined as-close-menu js-close-menu" aria-label="Close menu">
+      <span class="icon-close"></span>
+    </button>
+    <div class="m-menu__main" data-aos="fade-down">
+      <div class="l-wrapper">
+        <div class="m-nav js-main-nav">
+          <nav class="m-nav__left js-main-nav-left" role="navigation" aria-label="Main menu">
+            <ul>
+                <li class="only-desktop">
+                  <a href="https://turkogluc.com" class="m-logo">
+                    <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+                  </a>
+                </li>
+
+    <li class="nav-home">
+      <a href="https://turkogluc.com/">Home</a>
+    </li>
+    <li class="nav-spring">
+      <a href="https://turkogluc.com/tag/spring/">Spring</a>
+    </li>
+    <li class="nav-kafka">
+      <a href="https://turkogluc.com/tag/apache-kafka/">Kafka</a>
+    </li>
+    <li class="nav-java">
+      <a href="https://turkogluc.com/tag/java/">Java</a>
+    </li>
+    <li class="nav-jenkins">
+      <a href="https://turkogluc.com/tag/jenkins/">Jenkins</a>
+    </li>
+    <li class="nav-react">
+      <a href="https://turkogluc.com/tag/react/">React</a>
+    </li>
+
+              <li class="submenu-option js-submenu-option">
+                <button class="m-icon-button in-menu-main more js-toggle-submenu" aria-label="Open submenu">
+                  <span class="icon-more" aria-hidden="true"></span>
+                </button>
+                <div class="m-submenu js-submenu">
+                  <div class="l-wrapper in-submenu">
+                    <section class="m-recent-articles">
+                      <h3 class="m-submenu-title in-recent-articles">Recent articles</h3>
+                          <div class="swiper js-recent-slider">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                  <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Centralized Logging and Monitoring with Elastic Stack">
+                                      Centralized Logging and Monitoring with Elastic Stack
+                                    </h3>
+                                    <span class="m-recent-article__date">a year ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/sql-window-functions/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="SQL Window Functions Introduction">
+                                      SQL Window Functions Introduction
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Server Sent Events with Spring Boot and ReactJS">
+                                      Server Sent Events with Spring Boot and ReactJS
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/java-creating-pdf-reports-with-itext/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Creating PDF Reports with iText 7 in Java">
+                                      Creating PDF Reports with iText 7 in Java
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                            </div>
+                          </div>
+                    </section>
+                    <section class="m-tags">
+                      <h3 class="m-submenu-title">Tags</h3>
+                        <ul>
+                            <li>
+                              <a href="/tag/aop/">AOP</a>
+                            </li>
+                            <li>
+                              <a href="/tag/apache-kafka/">Apache Kafka</a>
+                            </li>
+                            <li>
+                              <a href="/tag/concurrency/">Concurrency</a>
+                            </li>
+                            <li>
+                              <a href="/tag/devops/">devops</a>
+                            </li>
+                            <li>
+                              <a href="/tag/docker/">docker</a>
+                            </li>
+                            <li>
+                              <a href="/tag/elasticsearch/">Elasticsearch</a>
+                            </li>
+                            <li>
+                              <a href="/tag/event-handling/">Event Handling</a>
+                            </li>
+                            <li>
+                              <a href="/tag/java/">Java</a>
+                            </li>
+                            <li>
+                              <a href="/tag/jenkins/">Jenkins</a>
+                            </li>
+                        </ul>
+                    </section>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div class="m-nav__right">
+            <button class="m-icon-button in-menu-main js-open-search" aria-label="Open search">
+              <span class="icon-search" aria-hidden="true"></span>
+            </button>
+            <div class="m-toggle-darkmode js-tooltip" data-tippy-content="Toggle light/dark mode" tabindex="0">
+              <label for="toggle-darkmode" class="sr-only">
+                Toggle light/dark mode
+              </label>
+              <input id="toggle-darkmode" type="checkbox" class="js-toggle-darkmode">
+              <div>
+                <span class="icon-moon moon" aria-hidden="true"></span>
+                <span class="icon-sunny sun" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<main class="main-wrap">
+
+  <section class="m-hero with-picture" data-aos="fade">
+    <div class="m-hero__picture in-post">
+      <img
+        srcset="
+          /content/images/size/w300/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png 300w,
+          /content/images/size/w600/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png 600w,
+          /content/images/size/w1000/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png 1000w,
+          /content/images/size/w2000/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png 2000w
+        "
+        sizes="(max-width: 600px) 600px, (max-width: 1000px) 1000px, 2000px"
+        src="/content/images/size/w1000/2020/06/4cff1d7bfcc6fe58267f8b8cccb6b372.png"
+        alt=""
+      />
+    </div>
+    </section>
+
+  <article>
+    <div class="l-content in-post">
+        <div class="l-wrapper in-post  js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">Apache Kafka Advanced Producers</h1>
+              <div class="m-heading__meta">
+                  <a href="https://turkogluc.com/tag/apache-kafka/" class="m-heading__meta__tag">Apache Kafka</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                <span class="m-heading__meta__time">Jun 1, 2020</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https://turkogluc.com/apache-kafka-producers/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text=Apache%20Kafka%20Advanced%20Producers&url=https://turkogluc.com/apache-kafka-producers/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="Scroll to top">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p>Apacke kafka has <code>kafka-clients</code> library which contains built-in client APIs that developers can use when developing applications that interact with Kafka. Library contains the consumer and producer APIs.</p><p>Our point of interest in this post is the generic <code>KafkaProducer&lt;K, V&gt;</code> class that publishes records to the Kafka cluster. I will show a basic implementation of a kafka producer and then discuss the details of configurations. If you would like to check Apache Kafka basics, refer to the post: <a href="https://turkogluc.com/apache-kafka-basics/">Apache Kafka Basics</a>.</p><h2 id="basic-kafka-producer-implementation">Basic Kafka Producer Implementation</h2><ul><li>Add <code>kafka-clients</code> Dependency:</li></ul><pre><code class="language-java">compile 'org.apache.kafka:kafka-clients:2.5.0'</code></pre><p></p><ul><li>Create Properties</li></ul><p><code>KafkaProducer&lt;K, V&gt;</code> class needs a Properties object to be able to create a new instance. So we can create a Java Properties object and add the obligatory configuration properties.</p><pre><code class="language-java">Properties properties = new Properties();
+properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  "localhost:9092");
+properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());</code></pre><p></p><ul><li>Create Producer</li></ul><p>With using our properties we can initiate our producer. We need to specify the types of Key and Value to the generic <code>KafkaProducer</code> class. Simply we can use <code>String</code> keys and values if messages does not have a schema.</p><pre><code class="language-java">KafkaProducer&lt;String, String&gt; producer = new KafkaProducer&lt;String, String&gt;(properties);</code></pre><p></p><ul><li>Create Producer Record</li></ul><p>Each message that we are going to send should be wrapped with <code>ProducerRecord&lt;K, V&gt;</code> instance. This generic class also needs us to specify the type of Key and Value.</p><pre><code class="language-java">ProducerRecord&lt;String, String&gt; record = new ProducerRecord&lt;String, String&gt;("topic", "key", "value");</code></pre><p></p><ul><li>Send Message</li></ul><p>send method has 2 implementations:</p><pre><code class="language-java">Future&lt;RecordMetadata&gt; send(ProducerRecord&lt;K, V&gt; record);
+Future&lt;RecordMetadata&gt; send(ProducerRecord&lt;K, V&gt; record, Callback callback);</code></pre><p>So we can either send the record directly:</p><pre><code class="language-java">producer.send(record);</code></pre><p>Or add a callback method:</p><pre><code class="language-java">producer.send(record, (metadata, exception) -&gt; {
+    if (exception == null) {
+        logger.info("Message sent: {}", metadata.toString());
+    } else {
+        logger.error("Message failed with exception: {}", exception.getMessage());
+    }
+});</code></pre><ul><li>Close the producer instance and flush data</li></ul><p>Remember closing the producer gracefully when you no longer need or application exits. Failure to close the producer will leak the resources that it is using.</p><pre><code class="language-java">producer.flush();
+producer.close();</code></pre><h3 id="putting-pieces-together">Putting pieces together</h3><p>So I can wrap all the steps with a custom singleton class that will accept <code>topic</code>, <code>key</code>, <code>value</code> to be sent.</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class Producer {
+
+    private static final Logger logger = LoggerFactory.getLogger(Producer.class);
+    private static Producer instance = null;
+    private static KafkaProducer&lt;String, String&gt; producer;
+
+    private Producer(Properties properties) {
+        producer = new KafkaProducer &lt;&gt;(properties);
+    }
+
+    public static Producer getInstance() {
+        if (instance == null) {
+            instance = new Producer(getDefaultProperties());
+        }
+        return instance;
+    }
+
+    private static Properties getDefaultProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        return properties;
+    }
+
+    public Future &lt;RecordMetadata&gt; sendRecord(String topic, String key, String value) {
+        ProducerRecord&lt;String, String&gt; record = new ProducerRecord &lt;&gt;(topic, key, value);
+        return producer.send(record, handleResult());
+
+    }
+
+    private Callback handleResult() {
+        return (metadata, exception) -&gt; {
+            if (exception == null) {
+                logger.info("Message sent: {}", metadata.toString());
+            } else {
+                logger.error("Message failed with exception: {}", exception.getMessage());
+            }
+        };
+    }
+
+    public void close() {
+        producer.flush();
+        producer.close();
+
+    }
+}</code></pre><figcaption>Producer.java</figcaption></figure><p>So we are able to send messages. But how the KafkaProducer works. Let see behind the scenes.</p><h2 id="overview-of-kafka-producer">Overview of Kafka Producer</h2><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2020/06/qhGRl.png" class="kg-image" alt loading="lazy"><figcaption><em>High-level overview of Kafka producer components [1]</em></figcaption></figure><ul><li>Kafka Producer is thread safe. Intended to be shared by multiple threads to publish faster and with higher throughput.</li><li>Messages are instance of <code>ProducerRecord</code> which contains the topic and the value of message.  (key is optional)</li><li><code>send()</code> method is asynchronous. It pushes the records to buffer and returns immediately with a <code>Future</code> object. So if we call the <code>get</code> method of future, it blocks the caller and send operation becomes synchronous. However generally it is not good idea to make synchronous calls in terms of efficiency.</li><li>When the send method is called producer serializes the key and value to <code>ByteArrays</code>, so that they can be sent over the network.</li><li>After serialization, partitioner calculates the partition to be sent according to provided key. If no key is provided it will select with round robin. Partitioner calculates a hash of the key by default using <code>MurmurHash</code> algorithm and uses the following formula to get the partition:</li></ul><pre><code class="language-java">Utils.abs(Utils.murmur2(record.key())) % numPartitions;</code></pre><p>So note that if number of partitions change later, the <code>same key -&gt; same partition</code> guarantee no longer holds for the previous calculations.</p><ul><li>Producer contains a pool of <code>buffer</code>. Records are first added to buffer. This is used to gather number of records and send as batch to increase the efficiency.</li><li>Producer has a separate thread that reads the records from buffer and sends to cluster.</li></ul><p>So these are the important features of the producers. By using more of configurations we can control the behaviour of a producer. Now I will list the important <strong>configurations of the producers</strong> that we can set at the properties object.</p><h3 id="producer-acks">Producer Acks</h3><p>Replication-factor species the total number of copies of a partition (Leader + In-Sync Replicas). When producer sends records to Kafka it sends records to only the leader of the partition and leader sends syncs to in-sync replicas. So <code>acks</code> configuration is about how many copies of partition should receive the data before producer can say that sending record is successfully done.</p><ul><li><code><strong>acks=0</strong></code>:   Producer will not wait for any acknowledgment from the server at all. If broker goes down or in case of any other problem we will end up <strong>losing the data</strong>. On the other hand we can achieve achieve <strong>very high throughput</strong>. We can use if we can tolarate the data loss.</li><li><code><strong>acks=1</strong></code>: Producer will only wait the Leader to write the data to its logs. This is the <strong>default</strong>. In this case if Leader goes down before sharing syncs to other replicas data will be lost.</li><li><code><strong>acks=all</strong></code> Producer will wait until all replicas receives the data. Leader will wait all replicas to send acknowledgment and then it will send ack to the producer. This adds <strong>safety</strong> but also <strong>latency</strong>. We can use if we can not tolarate the data loss. </li></ul><p>Note that all replicas is bounded by the broker or topic's <code>min</code>.<code>insync</code>.<code>replica</code> configuration. It can be configured in at Topic or Broker level not at the Producer level. For example if we have <code>replication.factor=3</code>, <code>min.insync.replica=2</code> and <code>acks=all</code> then Producer will wait 2 replicas to ack that they received the data.</p><h3 id="producer-retries">Producer Retries</h3><ul><li><code><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#retries"><strong>retries</strong></a></code> : if producer receives error after sending the data, for example an error related to acks then it can automatically retries to send the record. Therefore if <code>acks=0</code> retries config will not be effective. Default value is set to <code>Integer.MAX</code>. So it can retry many time.</li><li><code><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#retry.backoff.ms"><strong>retry.backoff.ms</strong></a></code>: config sets the time to wait before attempting another retry and by default it is set to <code>100 ms</code>. </li><li><code><strong><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#delivery.timeout.ms">delivery.timeout.ms</a></strong></code>: Producer won't retry forever. It's bounded by a timeout. Default value is <code>120 000 ms</code> == 2 mins.</li></ul><p>Note that when a retry occurs there is a chance that records will be out of order. <strong>If you rely on key based ordering this could be a problem</strong>. In order to guarantee that message ordering will remain the same, we can limit the number of parallel requests from producer with the following config. Of course decreasing this number impacts the throughput. </p><ul><li><code><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#max.in.flight.requests.per.connection"><strong>max.in.flight.requests.per.connection</strong></a></code>: The maximum number of unacknowledged requests the client will send on a single connection before blocking. Default value is <code>5</code>. Set to 1 if you need to ensure the ordering.</li></ul><p>Producer delivery semantics might be confusing, and they are case dependent. And there is also another problem regarding these configs, we may end up with duplicate data. To solve these problems there is an alternative and very nice solution: <code>Idomponent Producer</code>.</p><h3 id="idempotent-producer">Idempotent Producer</h3><p>Idempotent producers address the following <strong>problems</strong>:</p><ul><li>When a retry occurs (data is not saved correctly), the ordering of the batches may change because in the meantime there might possibly be parallel requests from Producer that is saving other data.</li></ul><figure class="kg-card kg-image-card kg-width-wide"><img src="https://turkogluc.com/content/images/2020/06/Producer-duplicate-data--1-.png" class="kg-image" alt loading="lazy"></figure><ul><li>When the data is saved but Ack is not received, then producer retries and it causes duplicate records.</li></ul><figure class="kg-card kg-image-card kg-width-wide"><img src="https://turkogluc.com/content/images/2020/06/Producer-duplicate-data.png" class="kg-image" alt loading="lazy"></figure><p>Idempotent producers provides us safe and stable pipelines with <strong>exactly once delivery semantic</strong>. They come automatically with the following configuration by default:</p><ul><li><code>acks</code>  = all</li><li><code>retries</code> = Integer.MAX</li><li><code>max.inflight.requests</code> = 5</li></ul><p>Parallel requests are allowed but ordering is guaranteed as well. So how to make a producer idempotent? Well it is so easy by setting the following configuration property:</p><p><code><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#enable.idempotence"><strong>enable.idempotence</strong></a> = true</code></p><p>Idempotence guarantees are added with introducing producer ID and sequence number for messages. These implementations are not exposed to users. For each message, the sequence number is incremented and this number is being tracked to provide the order and duplicate detection. If you would like to look into details of implementation see the <a href="https://issues.apache.org/jira/browse/KAFKA-5494?ref=localhost">Kafka-5494</a>.</p><h3 id="producer-compression">Producer Compression</h3><p>Compressing the batch messages provides smaller request size, faster transfer, better throughput so it increases efficiency but on the other hand it adds a small compression overhead. Compression should be enable at Consumer level and does not require any configuration at Broker or Consumer level.It is more effective if the when we have bigger batches. It can be set by the configuration property <code><strong><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#compression.type">compression.type</a></strong></code> :<code>none</code>, <code>gzip</code>, <code>lz4</code> or <code>snappy</code>. </p><h3 id="producer-batching">Producer Batching</h3><p>By default Kafka tries to send message asap. Message sending at the same time is bounded with. <code>max.inflight.requests</code>. If there is more than max allowed it is batched and send later. The following parameters can be used to configure batching behaviour of the producer:</p><p><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#linger.ms"><strong><code>linger.ms</code></strong></a>: Number of mili seconds the producer waits before sending a batch. Default value is zero. So it sends immediately. But setting this number to get a small delay creates a chance to batch the messages. For example we can set 10-20 ms.</p><p><code><strong><a href="https://docs.confluent.io/current/installation/configuration/producer-configs.html?ref=localhost#batch.size">batch.size</a></strong></code>: It is a size bound for a batch to be send. If batch size reaches this limit it is sent.</p><h2 id="safe-producer">Safe Producer</h2><p>Given the above configuration properties best way to achieve a safe producer seems to use an idempotent producer. Idempotent Producer automatically adds the configurations for acks, retries and max in-flight requests but it can be added to increase the readability of the code, and to give hint to the readers of your code.</p><pre><code class="language-java">Properties properties = new Properties();
+// obligatory
+properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+// idempotent
+properties.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+
+// automatically added for an idempotent producer
+properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
+properties.setProperty(ProducerConfig.RETRIES_CONFIG, String.valueOf(Integer.MAX_VALUE));
+properties.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "5");
+
+KafkaProducer &lt;String, String&gt; producer = new KafkaProducer &lt;&gt;(properties);</code></pre><h2 id="high-throughput-producer">High Throughput Producer</h2><p>To increase the throughput we can add <code>linger.ms</code> to increase the batching likelihood, enable batch compression with <code>compression.type</code>, and increase the <code>batch.size</code>.</p><pre><code class="language-java">properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
+properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(32*1024)); // 32 kb</code></pre><p></p><h3 id="references">References</h3><ol><li>Narkhede, N., Shapira, G., &amp; Palino, T. (2017). <em>Kafka: The definitive guide: Real-time data and stream processing at scale</em>. Sebastopol, CA: O'Reilly Media.</li></ol>
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">Tags</h3>
+                  <ul>
+                      <li>
+                        <a href="/tag/apache-kafka/" title="Apache Kafka">Apache Kafka</a>
+                      </li>
+                  </ul>
+                </section>
+            </div>
+          </div>
+        </div>
+          <section class="m-subscribe-section js-newsletter">
+            <div class="l-wrapper in-post">
+              <div class="m-subscribe-section__content">
+                <div class="m-subscribe-section__text">
+                  <h4 class="m-subscribe-section__title">Subscribe to our newsletter</h4>
+                  <p class="m-subscribe-section__description">
+                    Get the latest posts delivered right to your inbox.
+                  </p>
+                </div>
+                <div class="m-subscribe-section__form">
+
+<div class="m-subscribe-section__form">
+  <form data-members-form="subscribe" id="newsletter-form" class="m-subscribe-section__container">
+    <div class="m-subscribe__form">
+      <div class="pos-relative">
+        <label for="newsletter-input" class="sr-only">Your email address</label>
+        <input data-members-email id="newsletter-input" class="m-input in-subscribe-section" type="email"
+          placeholder="Your email address" required />
+      </div>
+      <button id="newsletter-button" class="m-button primary block" type="submit">Subscribe</button>
+    </div>
+    <div class="m-subscribe__success">
+      <header class="m-heading no-margin">
+        <img src="/assets/images/success.png?v=b36b0218e7" alt="Success!" class="m-subscribe__success_icon">
+        <p class="m-heading__description in-newsletter-form">
+          Now check your inbox and click the link to confirm your subscription.
+        </p>
+      </header>
+    </div>
+    <p class="m-subscribe__invalid m-small-text">
+      Please enter a valid email address
+    </p>
+    <p class="m-subscribe__error m-small-text">
+      Oops! There was an error sending the email, please try later.
+    </p>
+  </form>
+</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="https://turkogluc.com/author/cemal/" class="m-author-picture" aria-label="Cemal Turkoglu">
+                  <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="https://turkogluc.com/author/cemal/">Cemal Turkoglu</a>
+              </h4>
+              <ul class="m-author-links">
+              </ul>
+            </div>
+          </div>
+        </section>
+            <section class="m-recommended">
+              <div class="l-wrapper in-recommended">
+                <h3 class="m-section-title in-recommended">Recommended for you</h3>
+                <div class="m-recommended-articles">
+                  <div class="m-recommended-slider swiper js-recommended-slider">
+                    <div class="swiper-wrapper">
+
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-spring tag-react tag-event-handling tag-java tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/spring/" class="m-article-card__tag">Spring</a>
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__info-link" aria-label="Server Sent Events with Spring Boot and ReactJS">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Server Sent Events with Spring Boot and ReactJS">
+            Server Sent Events with Spring Boot and ReactJS
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>2 years ago</span>
+          <span>&bull;</span>
+          <span>7 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-elasticsearch tag-java tag-devops tag-hash-import-2023-05-25-09-05 featured">
+    <div class="m-article-card__picture">
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+        <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__featured js-tooltip" data-tippy-content="Featured" aria-label="Featured">
+          <span class="icon-star" aria-hidden="true"></span>
+        </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/elasticsearch/" class="m-article-card__tag">Elasticsearch</a>
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__info-link" aria-label="Centralized Logging and Monitoring with Elastic Stack">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Centralized Logging and Monitoring with Elastic Stack">
+            Centralized Logging and Monitoring with Elastic Stack
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>a year ago</span>
+          <span>&bull;</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-docker tag-react tag-spring tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2020/09/docker-banner2.jpg" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/docker/" class="m-article-card__tag">docker</a>
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__info-link" aria-label="Running ReactJS + Spring Boot Application with Docker Compose">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Running ReactJS + Spring Boot Application with Docker Compose">
+            Running ReactJS + Spring Boot Application with Docker Compose
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>3 years ago</span>
+          <span>&bull;</span>
+          <span>2 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+                    </div>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-prev" aria-label="Previous">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-next" aria-label="Next">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+    </div>
+  </article>
+</main>
+
+
+
+
+<div class="m-search js-search" role="dialog" aria-modal="true" aria-label="Search">
+  <button class="m-icon-button outlined as-close-search js-close-search" aria-label="Close search">
+    <span class="icon-close" aria-hidden="true"></span>
+  </button>
+  <div class="m-search__content">
+    <form class="m-search__form">
+      <div class="pos-relative">
+        <span class="icon-search m-search-icon" aria-hidden="true"></span>
+        <label for="search-input" class="sr-only">
+          Type to search
+        </label>
+        <input id="search-input" type="text" class="m-input in-search js-input-search" placeholder="Type to search">
+      </div>
+    </form>
+    <div class="js-search-results hide"></div>
+    <p class="m-not-found align-center hide js-no-results">
+      No results for your search, please try with something else.
+    </p>
+  </div>
+</div>
+
+
+<footer class="m-footer">
+  <div class="m-footer__content">
+    <nav class="m-footer-social">
+        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+          <span class="icon-facebook" aria-hidden="true"></span>
+        </a>
+        <a href="https://twitter.com/turkoglu4c" target="_blank" rel="noopener" aria-label="Twitter">
+          <span class="icon-twitter" aria-hidden="true"></span>
+        </a>
+      <a href="https://turkogluc.com/rss" aria-label="RSS">
+        <span class="icon-rss" aria-hidden="true"></span>
+      </a>
+    </nav>
+    <p class="m-footer-copyright">
+      <span>Cemal Turkoglu &copy; 2023</span>
+      <span>&nbsp; &bull; &nbsp;</span>
+      <span>Published with <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></span>
+    </p>
+    <p class="m-footer-copyright jslicense">
+      <a href="/assets/html/javascript.html?v=b36b0218e7" rel="jslicense">JavaScript license information</a>
+    </p>
+  </div>
+</footer>
+
+    <script defer src="/assets/js/manifest.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor/content-api.min.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/app.js?v=b36b0218e7"></script>
+
+      <script defer src="/assets/js/post.js?v=b36b0218e7"></script>
+
+
+    <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/java.min.js" integrity="sha512-YVNh+JI3AZyDUu/aGDh2vLgstb4kYs5U/WsTge2QQhU5fTsQLPFgX64gVAE/6qDSPUfpMGtG8M74uT3Y1SUU/w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/javascript.min.js" integrity="sha512-QKMem5huKjrqi8ym4y9CvmmOvrimnBdRqEp269PoiENovcPr073iaXkoU8YPzGk+qJ4rNd4W/AatDTtB7uW52g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/yaml.min.js" integrity="sha512-Rd5FUDZGJkdJ4Z/pZTgK+6QMWl0ubeugVNnXMK/QhiDxw5IMuYYxJOoPcof66vzvkpg0XjumgSvdaLOftzR5uQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/groovy.min.js" integrity="sha512-+Pin3A2zbWHySvtjP3FIddvwD7Fl1fLZA+rwlrQOUWzQTdJ9ycbPpqqlJSgfnngME/WDlugENmeglfQilO/CgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/bash.min.js" integrity="sha512-VChHo3Iw9v3ZEvy8w2NFK62jJ27P7Y9N+uu94NwquvTSc/80oXBFnkK8Rk2z63rTwXHoJ9AiMbNbzLeB/BrryA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/json.min.js" integrity="sha512-FoN8JE+WWCdIGXAIT8KQXwpiavz0Mvjtfk7Rku3MDUNO0BDCiRMXAsSX+e+COFyZTcDb9HDgP+pM2RX12d4j+A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/dockerfile.min.js" integrity="sha512-PkYx44XPGihIBrIcdSUHi9gVPtedxVU4MiAxcdH3kG1B1ZA/2UZLLXg84gLWoFojIC2srDBjoOxNrJKGINwELw==" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-groovy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-sql.min.js"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166072389-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166072389-1');
+</script>
+  </body>
+</html>

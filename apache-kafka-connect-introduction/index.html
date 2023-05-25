@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Understanding Apache Kafka Connect</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" href="/assets/css/app.css?v=b36b0218e7" as="style" />
+    <link rel="preload" href="/assets/js/manifest.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor/content-api.min.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/app.js?v=b36b0218e7" as="script" />
+
+      <link rel="preload" href="/assets/css/post.css?v=b36b0218e7" as="style" />
+  <link rel="preload" href="/assets/js/post.js?v=b36b0218e7" as="script" />
+
+
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7");
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7#iefix") format('embedded-opentype'),
+        url("/assets/fonts/icomoon/icomoon.ttf?101fc3?v=b36b0218e7") format('truetype'),
+        url("/assets/fonts/icomoon/icomoon.woff?101fc3?v=b36b0218e7") format('woff'),
+        url("/assets/fonts/icomoon/icomoon.svg?101fc3?v=b36b0218e7#icomoon") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/app.css?v=b36b0218e7" media="screen" />
+
+      <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=b36b0218e7" media="screen" />
+
+
+
+
+    <meta name="description" content="Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/apache-kafka-connect-introduction/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://turkogluc.com/apache-kafka-connect-introduction/amp/">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Understanding Apache Kafka Connect">
+    <meta property="og:description" content="Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.">
+    <meta property="og:url" content="https://turkogluc.com/apache-kafka-connect-introduction/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png">
+    <meta property="article:published_time" content="2020-09-14T12:53:17.000Z">
+    <meta property="article:modified_time" content="2020-09-21T16:58:30.000Z">
+    <meta property="article:tag" content="Apache Kafka">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Understanding Apache Kafka Connect">
+    <meta name="twitter:description" content="Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.">
+    <meta name="twitter:url" content="https://turkogluc.com/apache-kafka-connect-introduction/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Apache Kafka">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="1200">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Understanding Apache Kafka Connect",
+    "url": "https://turkogluc.com/apache-kafka-connect-introduction/",
+    "datePublished": "2020-09-14T12:53:17.000Z",
+    "dateModified": "2020-09-21T16:58:30.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png",
+        "width": 1200,
+        "height": 1200
+    },
+    "keywords": "Apache Kafka",
+    "description": "Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.",
+    "mainEntityOfPage": "https://turkogluc.com/apache-kafka-connect-introduction/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.32/umd/portal.min.js" data-i18n="false" data-ghost="https://turkogluc.com/" data-key="8aed1ac6d3b2be60cf4aedf769" data-api="https://turkogluc.com/ghost/api/content/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/sodo-search.min.js" data-key="8aed1ac6d3b2be60cf4aedf769" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/main.css" data-sodo-search="https://turkogluc.com/" crossorigin="anonymous"></script>
+
+    <link href="https://turkogluc.com/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=b36b0218e7"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=b36b0218e7">
+    <script defer src="/public/member-attribution.min.js?v=b36b0218e7"></script>
+    <!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/idea.min.css" integrity="sha512-jxbAYisMjIOokHq0YnYxWqTUfJRe8s1U2F1lp+se3vv0CS8floaFL3Mc3GEpG3HCG2s6lxHb3QvQdmUOT1ZzKw==" crossorigin="anonymous" />
+
+<style>
+   .l-post-content pre>code {
+    white-space:inherit
+  }
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+
+</style>
+
+<!-- prism.js -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-okaidia.min.css" />
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-tomorrow.min.css" />
+-->
+<style>
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+</style>
+
+
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+-->
+<style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+    <style>
+      :root {
+        --primary-subtle-color: var(--ghost-accent-color) !important;
+      }
+    </style>
+
+    <script>
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "https://turkogluc.com"
+      // @license-end
+    </script>
+
+  </head>
+  <body class="post-template tag-apache-kafka tag-hash-import-2023-05-25-09-05">
+
+
+
+
+
+<header class="m-header with-picture js-header">
+  <div class="m-mobile-topbar" data-aos="fade-down">
+    <button class="m-icon-button in-mobile-topbar js-open-menu" aria-label="Open menu">
+      <span class="icon-menu" aria-hidden="true"></span>
+    </button>
+      <a href="https://turkogluc.com" class="m-logo in-mobile-topbar">
+        <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+      </a>
+    <button class="m-icon-button in-mobile-topbar js-open-search" aria-label="Open search">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="m-menu js-menu">
+    <button class="m-icon-button outlined as-close-menu js-close-menu" aria-label="Close menu">
+      <span class="icon-close"></span>
+    </button>
+    <div class="m-menu__main" data-aos="fade-down">
+      <div class="l-wrapper">
+        <div class="m-nav js-main-nav">
+          <nav class="m-nav__left js-main-nav-left" role="navigation" aria-label="Main menu">
+            <ul>
+                <li class="only-desktop">
+                  <a href="https://turkogluc.com" class="m-logo">
+                    <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+                  </a>
+                </li>
+
+    <li class="nav-home">
+      <a href="https://turkogluc.com/">Home</a>
+    </li>
+    <li class="nav-spring">
+      <a href="https://turkogluc.com/tag/spring/">Spring</a>
+    </li>
+    <li class="nav-kafka">
+      <a href="https://turkogluc.com/tag/apache-kafka/">Kafka</a>
+    </li>
+    <li class="nav-java">
+      <a href="https://turkogluc.com/tag/java/">Java</a>
+    </li>
+    <li class="nav-jenkins">
+      <a href="https://turkogluc.com/tag/jenkins/">Jenkins</a>
+    </li>
+    <li class="nav-react">
+      <a href="https://turkogluc.com/tag/react/">React</a>
+    </li>
+
+              <li class="submenu-option js-submenu-option">
+                <button class="m-icon-button in-menu-main more js-toggle-submenu" aria-label="Open submenu">
+                  <span class="icon-more" aria-hidden="true"></span>
+                </button>
+                <div class="m-submenu js-submenu">
+                  <div class="l-wrapper in-submenu">
+                    <section class="m-recent-articles">
+                      <h3 class="m-submenu-title in-recent-articles">Recent articles</h3>
+                          <div class="swiper js-recent-slider">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                  <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Centralized Logging and Monitoring with Elastic Stack">
+                                      Centralized Logging and Monitoring with Elastic Stack
+                                    </h3>
+                                    <span class="m-recent-article__date">a year ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/sql-window-functions/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="SQL Window Functions Introduction">
+                                      SQL Window Functions Introduction
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Server Sent Events with Spring Boot and ReactJS">
+                                      Server Sent Events with Spring Boot and ReactJS
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/java-creating-pdf-reports-with-itext/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Creating PDF Reports with iText 7 in Java">
+                                      Creating PDF Reports with iText 7 in Java
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                            </div>
+                          </div>
+                    </section>
+                    <section class="m-tags">
+                      <h3 class="m-submenu-title">Tags</h3>
+                        <ul>
+                            <li>
+                              <a href="/tag/aop/">AOP</a>
+                            </li>
+                            <li>
+                              <a href="/tag/apache-kafka/">Apache Kafka</a>
+                            </li>
+                            <li>
+                              <a href="/tag/concurrency/">Concurrency</a>
+                            </li>
+                            <li>
+                              <a href="/tag/devops/">devops</a>
+                            </li>
+                            <li>
+                              <a href="/tag/docker/">docker</a>
+                            </li>
+                            <li>
+                              <a href="/tag/elasticsearch/">Elasticsearch</a>
+                            </li>
+                            <li>
+                              <a href="/tag/event-handling/">Event Handling</a>
+                            </li>
+                            <li>
+                              <a href="/tag/java/">Java</a>
+                            </li>
+                            <li>
+                              <a href="/tag/jenkins/">Jenkins</a>
+                            </li>
+                        </ul>
+                    </section>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div class="m-nav__right">
+            <button class="m-icon-button in-menu-main js-open-search" aria-label="Open search">
+              <span class="icon-search" aria-hidden="true"></span>
+            </button>
+            <div class="m-toggle-darkmode js-tooltip" data-tippy-content="Toggle light/dark mode" tabindex="0">
+              <label for="toggle-darkmode" class="sr-only">
+                Toggle light/dark mode
+              </label>
+              <input id="toggle-darkmode" type="checkbox" class="js-toggle-darkmode">
+              <div>
+                <span class="icon-moon moon" aria-hidden="true"></span>
+                <span class="icon-sunny sun" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<main class="main-wrap">
+
+  <section class="m-hero with-picture" data-aos="fade">
+    <div class="m-hero__picture in-post">
+      <img
+        srcset="
+          /content/images/size/w300/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png 300w,
+          /content/images/size/w600/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png 600w,
+          /content/images/size/w1000/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png 1000w,
+          /content/images/size/w2000/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png 2000w
+        "
+        sizes="(max-width: 600px) 600px, (max-width: 1000px) 1000px, 2000px"
+        src="/content/images/size/w1000/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png"
+        alt=""
+      />
+    </div>
+    </section>
+
+  <article>
+    <div class="l-content in-post">
+        <div class="l-wrapper in-post  js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">Kafka Connect Basics</h1>
+              <div class="m-heading__meta">
+                  <a href="https://turkogluc.com/tag/apache-kafka/" class="m-heading__meta__tag">Apache Kafka</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                <span class="m-heading__meta__time">Sep 14, 2020</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https://turkogluc.com/apache-kafka-connect-introduction/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text=Kafka%20Connect%20Basics&url=https://turkogluc.com/apache-kafka-connect-introduction/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="Scroll to top">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-12-at-15.35.45.png" class="kg-image" alt loading="lazy"></figure><p>Kafka Connect is an open source Apache Kafka component that helps to move the data <strong>IN</strong> or <strong>OUT</strong> of Kafka easily. It provides a scalable, reliable, and simpler way to move the data between Kafka and other data sources. According to direction of the data moved, the connector is classified as:</p><ul><li><code>Source Connector</code>: Reads data from a datasource and writes to Kafka topic.</li><li><code>Sink Connector</code>: Reads data from Kafka topic and writes to a datasource.</li></ul><p>Kafka Connect uses connector plugins that are community developed libraries to provide most common data movement cases. Mostly developers need to implement migration between same data sources, such as PostgreSQL, MySQL, Cassandra, MongoDB, Redis, JDBC, FTP, MQTT, Couchbase, REST API, S3, ElasticSearch. Kafka plugins provides the standardised implementation for moving the data from those datastores. Find all available Kafka Connectors on <a href="https://www.confluent.io/hub/?ref=localhost">Confluent Hub</a>.</p><p>So what Kafka Connect provides is that rather than writing our own Consumer or Producer code, we can use a Connector that takes care of all the implementation details such as fault tolerance, delivery semantics, ordering etc. and get the data moved. For example we can move all of the data from Postgres database to Kafka and from Kafka to ElasticSearch without writing code. It makes it easy for non-experienced developers to get the data in or out of Kafka reliably.</p><h2 id="concepts">Concepts</h2><p>Connector plugins implement the connector API that includes connectors and tasks.</p><ul><li><code>Connector</code>: is a job that manages and coordinates the tasks. It decides how to split the data-copying work between the tasks.</li><li><code>Task</code>: is piece of work that provides service to accomplish actual job. </li></ul><p>Connectors divide the actual job into smaller pieces as tasks in order to have the ability to scalability and fault tolerance. The state of the tasks is stored in special Kafka topics, and it is configured with <code>offset.storage.topic</code>, <code>config.storage.topic</code> and <code>status.storage.topic</code>. As the task does not keep its state it can be started, stopped and restarted at any time or nodes.</p><p>For example JDBC Connector is used to copy data from databases and it creates task per each table in the database.</p><ul><li><code>Worker</code>: is the node that is running the connector and its tasks.  </li></ul><p>Kafka Connect workers executes 2 types of working modes:</p><ul><li><code>Standalone mode</code>: All work is performed in a single worker as single process. It is easier to setup and configure and can be useful where using single worker makes sense. However it does not provide fault tolerance or scalability.</li><li><code>Distributed mode</code>: Multiple workers are in a cluster. Configured by REST API. Provides scalability and fault tolerance. When one connector dies, its tasks are redistributed by rebalance mechanism among other workers.</li></ul><h2 id="running-kafka-connect">Running Kafka Connect</h2><p>Kafka Connect ships with Apache Kafka binaries. So there is no need to install it separately, but in order to run it we need to <a href="https://kafka.apache.org/downloads?ref=localhost">download Kafka binaries</a>. The executables are in the bin directory and configurations are in the config directory.</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-13-at-16.13.47.png" class="kg-image" alt loading="lazy"></figure><p>I personally would prefer you to start practising with distributed mode as it is gets unnecessarily confusing if you work with the standalone and after switch to distributed mode. Also it is recommended to use distributed mode in production, and if we don't want to have a cluster we can run only 1 worker in distributed mode. </p><h3 id="1-running-kafka-cluster">1 - Running Kafka Cluster</h3><p>Let's start with getting a Kafka cluster up and running. We can set up a cluster with one zookepeer and one broker in docker environment with using the following docker compose file. </p><pre><code class="language-yaml">version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1</code></pre><p>Run the <code>docker-compose up -d</code> command to start the containers. One thing to pay attention here is that <code>KAFKA_ADVERTISED_LISTENERS</code> are set to be <code>localhost:29092</code> for outside of docker network, and <code>kafka:9092</code> for inside the docker network. So from out host machine we can access kafka instance with <code>localhost:29092</code>.</p><h3 id="2-running-kafka-connect">2 - Running Kafka Connect</h3><p>We can run the Kafka Connect with <code>connect-distributed.sh</code> script that is located inside the kafka <code>bin</code> directory. We need to provide a properties file while running this script for configuring the worker properties. </p><pre><code class="language-bash">connect-distributed.sh &lt;worker properties file&gt;</code></pre><p>We can create create <code>connect-distributed.properties</code> file to specify the worker properties as follows:</p><pre><code># A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.
+bootstrap.servers=localhost:29092
+
+# unique name for the cluster, used in forming the Connect cluster group. Note that this must not conflict with consumer group IDs
+group.id=connect-cluster
+
+# The converters specify the format of data in Kafka and how to translate it into Connect data.
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=true
+value.converter.schemas.enable=true
+
+# Topic to use for storing offsets. This topic should have many partitions and be replicated and compacted.
+offset.storage.topic=connect-offsets
+offset.storage.replication.factor=1
+
+# Topic to use for storing connector and task configurations; note that this should be a single partition, highly replicated,
+config.storage.topic=connect-configs
+config.storage.replication.factor=1
+
+# Topic to use for storing statuses. This topic can have multiple partitions and should be replicated and compacted.
+status.storage.topic=connect-status
+status.storage.replication.factor=1
+
+# Flush much faster than normal, which is useful for testing/debugging
+offset.flush.interval.ms=10000</code></pre><p><code>group.id</code> is one of the most important configuration in this file. Worker groups are created according to group id. So if we start multiple worker with same group id, they will be in the same worker cluster.</p><p><code>offset.storage.topic</code>, <code>config.storage.topic</code> and <code>status.storage.topic</code> configurations are also needed so that worker status will be stored in Kafka topics and new workers or restarted workers will be managed accordingly.</p><p>Now we can start Kafka connect with the following command:</p><pre><code class="language-bash">connect-distributed.sh /path-to-config/connect-distributed.properties</code></pre><h3 id="3-starting-connector">3 - Starting Connector</h3><p>Now we have Zookeeper, Kafka broker, and Kafka Connect running in distributed mode. As it is mentioned before, in distributed mode, connectors are manages by REST API. Our connector exposed REST API at <a href="http://localhost:8083/?ref=localhost">http://localhost:8083/</a>.</p><p>As an example, we can run a <code>FileStreamSource</code> connector that copies data from a file to Kafka topic. To start a connector we need to send a POST call to <a href="http://localhost:8083/connectors?ref=localhost">http://localhost:8083/connectors</a> endpoint with the configuration of the Connector that we want to run. Example configuration for Connector looks like as follows:</p><pre><code class="language-json">{
+  "name": "local-file-source",
+  "config": {
+    "connector.class": "FileStreamSource",
+    "tasks.max": 1,
+    "file": "/Users/cemalturkoglu/kafka/shared-folder/file.txt",
+    "topic": "file.content"
+  }
+}
+</code></pre><p>Every connector may have its own specific configurations, and these configurations can be found in the connector's Confluent Hub page.</p><ul><li><code>connector.class</code> specifies the connector plugin that we want to use. </li><li><code>file</code> is a specific config for <code>FileStreamSource</code> plugin, and it is used to point the file to be read.</li><li><code>topic</code> is the name of the topic that the data read from file will be written to.</li></ul><p>We need to send this json config in the content body of REST call. We can read this config from file for <code>curl</code> command as follows:</p><pre><code class="language-bash">curl -d @"connect-file-source.json" \
+-H "Content-Type: application/json" \
+-X POST http://localhost:8083/connectors</code></pre><p>After this call connector starts running, it reads data from the file and send to the kafka topic which is <code>file.content</code> in the example. If we start a consumer to this topic: </p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-14-at-13.41.00.png" class="kg-image" alt loading="lazy"></figure><p>We can see that every line in the file.txt is send to Kafka topic as a message. Note that <code>key.converter.schemas.enable</code> and <code>value.converter.schemas.enable</code> is set to be true for the worker at the beginning. So messages are wrapped with Json schema. </p><p>In order to scale up the worker cluster, you need to follow the same steps of running Kafka Connect and starting Connector on each worker (All workers should have same group id). The high level overview of the architecture looks like as follows:</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-14-at-14.49.33.png" class="kg-image" alt loading="lazy"><figcaption>Kafka Connect Overview</figcaption></figure><h2 id="running-kafka-connect-in-docker">Running Kafka Connect in Docker</h2><p>In the above example Kafka cluster was being run in Docker but we started the Kafka Connect in the host machine with Kafka binaries. If you wish to run Kafka Connect in Docker container as well, you need a linux image that has Java 8 installed and you can download the Kafka and use <code>connect-distribued.sh</code> script to run it. For a very simple example, you can use the following Dockerfile to run workers:</p><pre><code class="language-Dockerfile">FROM openjdk:8-jre-slim
+
+RUN apt-get update &amp;&amp; \
+    apt-get install wget -y
+
+COPY start.sh start.sh
+COPY connect-distributed.properties connect-distributed.properties
+
+RUN echo "Downloading Apache Kafka" &amp;&amp; \
+    wget "http://ftp.man.poznan.pl/apache/kafka/2.6.0/kafka_2.12-2.6.0.tgz" &amp;&amp;\
+    tar -xzvf kafka*.tgz &amp;&amp; \
+    rm kafka*.tgz &amp;&amp; \
+    mv kafka* kafka &amp;&amp; \
+    export PATH="$PATH:$(pwd)kafka/bin"
+
+
+CMD /kafka/bin/connect-distributed.sh connect-distributed.properties</code></pre><p>You can customise the Dockerfile according to your needs and improve it or you can use Confluent's Kafka Connect image by adding it to the docker-compose file as follows:</p><pre><code class="language-yml">connect:
+    image: confluentinc/cp-kafka-connect:latest
+    hostname: connect
+    container_name: connect
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./shared-folder:/shared-folder
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: compose-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONNECT_PLUGIN_PATH: /usr/share/java</code></pre>
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">Tags</h3>
+                  <ul>
+                      <li>
+                        <a href="/tag/apache-kafka/" title="Apache Kafka">Apache Kafka</a>
+                      </li>
+                  </ul>
+                </section>
+            </div>
+          </div>
+        </div>
+          <section class="m-subscribe-section js-newsletter">
+            <div class="l-wrapper in-post">
+              <div class="m-subscribe-section__content">
+                <div class="m-subscribe-section__text">
+                  <h4 class="m-subscribe-section__title">Subscribe to our newsletter</h4>
+                  <p class="m-subscribe-section__description">
+                    Get the latest posts delivered right to your inbox.
+                  </p>
+                </div>
+                <div class="m-subscribe-section__form">
+
+<div class="m-subscribe-section__form">
+  <form data-members-form="subscribe" id="newsletter-form" class="m-subscribe-section__container">
+    <div class="m-subscribe__form">
+      <div class="pos-relative">
+        <label for="newsletter-input" class="sr-only">Your email address</label>
+        <input data-members-email id="newsletter-input" class="m-input in-subscribe-section" type="email"
+          placeholder="Your email address" required />
+      </div>
+      <button id="newsletter-button" class="m-button primary block" type="submit">Subscribe</button>
+    </div>
+    <div class="m-subscribe__success">
+      <header class="m-heading no-margin">
+        <img src="/assets/images/success.png?v=b36b0218e7" alt="Success!" class="m-subscribe__success_icon">
+        <p class="m-heading__description in-newsletter-form">
+          Now check your inbox and click the link to confirm your subscription.
+        </p>
+      </header>
+    </div>
+    <p class="m-subscribe__invalid m-small-text">
+      Please enter a valid email address
+    </p>
+    <p class="m-subscribe__error m-small-text">
+      Oops! There was an error sending the email, please try later.
+    </p>
+  </form>
+</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="https://turkogluc.com/author/cemal/" class="m-author-picture" aria-label="Cemal Turkoglu">
+                  <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="https://turkogluc.com/author/cemal/">Cemal Turkoglu</a>
+              </h4>
+              <ul class="m-author-links">
+              </ul>
+            </div>
+          </div>
+        </section>
+            <section class="m-recommended">
+              <div class="l-wrapper in-recommended">
+                <h3 class="m-section-title in-recommended">Recommended for you</h3>
+                <div class="m-recommended-articles">
+                  <div class="m-recommended-slider swiper js-recommended-slider">
+                    <div class="swiper-wrapper">
+
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-spring tag-react tag-event-handling tag-java tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/spring/" class="m-article-card__tag">Spring</a>
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__info-link" aria-label="Server Sent Events with Spring Boot and ReactJS">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Server Sent Events with Spring Boot and ReactJS">
+            Server Sent Events with Spring Boot and ReactJS
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>2 years ago</span>
+          <span>&bull;</span>
+          <span>7 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-elasticsearch tag-java tag-devops tag-hash-import-2023-05-25-09-05 featured">
+    <div class="m-article-card__picture">
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+        <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__featured js-tooltip" data-tippy-content="Featured" aria-label="Featured">
+          <span class="icon-star" aria-hidden="true"></span>
+        </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/elasticsearch/" class="m-article-card__tag">Elasticsearch</a>
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__info-link" aria-label="Centralized Logging and Monitoring with Elastic Stack">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Centralized Logging and Monitoring with Elastic Stack">
+            Centralized Logging and Monitoring with Elastic Stack
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>a year ago</span>
+          <span>&bull;</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-docker tag-react tag-spring tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2020/09/docker-banner2.jpg" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/docker/" class="m-article-card__tag">docker</a>
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__info-link" aria-label="Running ReactJS + Spring Boot Application with Docker Compose">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Running ReactJS + Spring Boot Application with Docker Compose">
+            Running ReactJS + Spring Boot Application with Docker Compose
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>3 years ago</span>
+          <span>&bull;</span>
+          <span>2 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+                    </div>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-prev" aria-label="Previous">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-next" aria-label="Next">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+    </div>
+  </article>
+</main>
+
+
+
+
+<div class="m-search js-search" role="dialog" aria-modal="true" aria-label="Search">
+  <button class="m-icon-button outlined as-close-search js-close-search" aria-label="Close search">
+    <span class="icon-close" aria-hidden="true"></span>
+  </button>
+  <div class="m-search__content">
+    <form class="m-search__form">
+      <div class="pos-relative">
+        <span class="icon-search m-search-icon" aria-hidden="true"></span>
+        <label for="search-input" class="sr-only">
+          Type to search
+        </label>
+        <input id="search-input" type="text" class="m-input in-search js-input-search" placeholder="Type to search">
+      </div>
+    </form>
+    <div class="js-search-results hide"></div>
+    <p class="m-not-found align-center hide js-no-results">
+      No results for your search, please try with something else.
+    </p>
+  </div>
+</div>
+
+
+<footer class="m-footer">
+  <div class="m-footer__content">
+    <nav class="m-footer-social">
+        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+          <span class="icon-facebook" aria-hidden="true"></span>
+        </a>
+        <a href="https://twitter.com/turkoglu4c" target="_blank" rel="noopener" aria-label="Twitter">
+          <span class="icon-twitter" aria-hidden="true"></span>
+        </a>
+      <a href="https://turkogluc.com/rss" aria-label="RSS">
+        <span class="icon-rss" aria-hidden="true"></span>
+      </a>
+    </nav>
+    <p class="m-footer-copyright">
+      <span>Cemal Turkoglu &copy; 2023</span>
+      <span>&nbsp; &bull; &nbsp;</span>
+      <span>Published with <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></span>
+    </p>
+    <p class="m-footer-copyright jslicense">
+      <a href="/assets/html/javascript.html?v=b36b0218e7" rel="jslicense">JavaScript license information</a>
+    </p>
+  </div>
+</footer>
+
+    <script defer src="/assets/js/manifest.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor/content-api.min.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/app.js?v=b36b0218e7"></script>
+
+      <script defer src="/assets/js/post.js?v=b36b0218e7"></script>
+
+
+    <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/java.min.js" integrity="sha512-YVNh+JI3AZyDUu/aGDh2vLgstb4kYs5U/WsTge2QQhU5fTsQLPFgX64gVAE/6qDSPUfpMGtG8M74uT3Y1SUU/w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/javascript.min.js" integrity="sha512-QKMem5huKjrqi8ym4y9CvmmOvrimnBdRqEp269PoiENovcPr073iaXkoU8YPzGk+qJ4rNd4W/AatDTtB7uW52g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/yaml.min.js" integrity="sha512-Rd5FUDZGJkdJ4Z/pZTgK+6QMWl0ubeugVNnXMK/QhiDxw5IMuYYxJOoPcof66vzvkpg0XjumgSvdaLOftzR5uQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/groovy.min.js" integrity="sha512-+Pin3A2zbWHySvtjP3FIddvwD7Fl1fLZA+rwlrQOUWzQTdJ9ycbPpqqlJSgfnngME/WDlugENmeglfQilO/CgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/bash.min.js" integrity="sha512-VChHo3Iw9v3ZEvy8w2NFK62jJ27P7Y9N+uu94NwquvTSc/80oXBFnkK8Rk2z63rTwXHoJ9AiMbNbzLeB/BrryA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/json.min.js" integrity="sha512-FoN8JE+WWCdIGXAIT8KQXwpiavz0Mvjtfk7Rku3MDUNO0BDCiRMXAsSX+e+COFyZTcDb9HDgP+pM2RX12d4j+A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/dockerfile.min.js" integrity="sha512-PkYx44XPGihIBrIcdSUHi9gVPtedxVU4MiAxcdH3kG1B1ZA/2UZLLXg84gLWoFojIC2srDBjoOxNrJKGINwELw==" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-groovy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-sql.min.js"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166072389-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166072389-1');
+</script>
+  </body>
+</html>

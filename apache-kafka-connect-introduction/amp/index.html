@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html ⚡>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <title>Understanding Apache Kafka Connect</title>
+
+    <meta name="description" content="Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/apache-kafka-connect-introduction/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Understanding Apache Kafka Connect">
+    <meta property="og:description" content="Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.">
+    <meta property="og:url" content="https://turkogluc.com/apache-kafka-connect-introduction/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png">
+    <meta property="article:published_time" content="2020-09-14T12:53:17.000Z">
+    <meta property="article:modified_time" content="2020-09-21T16:58:30.000Z">
+    <meta property="article:tag" content="Apache Kafka">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Understanding Apache Kafka Connect">
+    <meta name="twitter:description" content="Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.">
+    <meta name="twitter:url" content="https://turkogluc.com/apache-kafka-connect-introduction/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Apache Kafka">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="1200">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Understanding Apache Kafka Connect",
+    "url": "https://turkogluc.com/apache-kafka-connect-introduction/",
+    "datePublished": "2020-09-14T12:53:17.000Z",
+    "dateModified": "2020-09-21T16:58:30.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png",
+        "width": 1200,
+        "height": 1200
+    },
+    "keywords": "Apache Kafka",
+    "description": "Getting started with Apache Kafka Connect. Understanding high Level Overview. Running Kafka Connect in Docker.",
+    "mainEntityOfPage": "https://turkogluc.com/apache-kafka-connect-introduction/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+
+    <style amp-custom>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        font-size: 62.5%;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        color: #3a4145;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.7rem;
+        line-height: 1.55em;
+        font-weight: 400;
+        font-style: normal;
+        background: #fff;
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    p,
+    ul,
+    ol,
+    li,
+    dl,
+    dd,
+    hr,
+    pre,
+    form,
+    table,
+    video,
+    figure,
+    figcaption,
+    blockquote {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul[class],
+    ol[class] {
+        padding: 0;
+        list-style: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    input,
+    button,
+    select,
+    textarea {
+        font: inherit;
+        -webkit-appearance: none;
+    }
+
+    fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        font-weight: 700;
+    }
+
+    hr {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid currentcolor;
+        opacity: 0.1;
+    }
+
+    ::selection {
+        text-shadow: none;
+        background: #cbeafb;
+    }
+
+    mark {
+        background-color: #fdffb6;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+    sup {
+        top: -0.5em;
+    }
+    sub {
+        bottom: -0.25em;
+    }
+
+    ul li + li {
+        margin-top: 0.6em;
+    }
+
+    a {
+        color: var(--ghost-accent-color, #1292EE);
+        text-decoration-skip-ink: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        font-weight: 700;
+        color: #121212;
+        line-height: 1.4em;
+    }
+
+    h1 {
+        font-size: 3.4rem;
+        line-height: 1.1em;
+    }
+
+    h2 {
+        font-size: 2.4rem;
+        line-height: 1.2em;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+    }
+
+    h4 {
+        font-size: 1.7rem;
+    }
+
+    h5 {
+        font-size: 1.6rem;
+    }
+
+    h6 {
+        font-size: 1.6rem;
+    }
+
+    amp-img {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    amp-img img {
+        object-fit: cover;
+    }
+
+    amp-youtube {
+        height: calc(100vw / 1.78);
+        width: 100vw;
+        position: relative;
+    }
+
+    amp-youtube img {
+        position: absolute;
+    }
+
+    .page-header {
+        padding: 50px 5vmin 30px;
+        text-align: center;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .page-header a {
+        color: #121212;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.6rem;
+        letter-spacing: -0.1px;
+    }
+
+    .post {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .post-header {
+        margin: 0 5vmin 5vmin;
+        text-align: center;
+    }
+
+    .post-meta {
+        margin: 1rem 0 0 0;
+        text-transform: uppercase;
+        color: #738a94;
+        font-weight: 500;
+        font-size: 1.3rem;
+    }
+
+    .post-image {
+        margin: 0 0 5vmin;
+    }
+
+    .post-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .post-content {
+        padding: 0 5vmin;
+    }
+
+    .post-content > * + * {
+        margin-top: 1.5em;
+    }
+
+    .post-content [id]:not(:first-child) {
+        margin: 2em 0 0;
+    }
+
+    .post-content > [id] + * {
+        margin-top: 1rem;
+    }
+
+    .post-content [id] + .kg-card,
+    .post-content blockquote + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content > ul,
+    .post-content > ol,
+    .post-content > dl {
+        padding-left: 1.9em;
+    }
+
+    .post-content hr {
+        margin-top: 40px;
+    }
+
+    .post .post-content hr + * {
+        margin-top: 40px;
+    }
+
+    .post-content amp-img {
+        background-color: #f8f8f8;
+    }
+
+    .post-content blockquote {
+        position: relative;
+        font-style: italic;
+    }
+
+    .post-content blockquote::before {
+        content: "";
+        position: absolute;
+        left: -1.5em;
+        top: 0;
+        bottom: 0;
+        width: 0.3rem;
+        background: var(--ghost-accent-color, #1292EE);
+    }
+
+    .post-content blockquote.kg-blockquote-alt {
+        font-size: 1.2em;
+        font-style: italic;
+        line-height: 1.6em;
+        text-align: center;
+        color: #738a94;
+        padding: 0.75em 3em 1.25em;
+    }
+
+    .post-content blockquote.kg-blockquote-alt::before {
+        display: none;
+    }
+
+    .post-content :not(.kg-card):not([id]) + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content .kg-card + :not(.kg-card) {
+        margin-top: 40px;
+    }
+
+    .kg-card figcaption {
+        padding: 1.5rem 1.5rem 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.4em;
+        opacity: 0.6;
+    }
+
+    .kg-card figcaption strong {
+        color: rgba(0,0,0,0.8);
+    }
+
+    .post-content :not(pre) code {
+        vertical-align: middle;
+        padding: 0.15em 0.4em 0.15em;
+        border: #e1eaef 1px solid;
+        font-weight: 400;
+        font-size: 0.9em;
+        line-height: 1em;
+        color: #15171a;
+        background: #f0f6f9;
+        border-radius: 0.25em;
+    }
+
+    .post-content > pre {
+        overflow: scroll;
+        padding: 16px 20px;
+        color: #fff;
+        background: #1F2428;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px -2px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+    }
+
+    .kg-embed-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .kg-image-card img {
+        margin: auto;
+    }
+
+    .kg-gallery-card + .kg-gallery-card {
+        margin-top: 0.75em;
+    }
+
+    .kg-gallery-container {
+        position: relative;
+    }
+
+    .kg-gallery-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .kg-gallery-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .kg-gallery-row:not(:first-of-type) {
+        margin: 0.75em 0 0 0;
+    }
+
+    .kg-gallery-image:not(:first-of-type) {
+        margin: 0 0 0 0.75em;
+    }
+
+    .kg-bookmark-card,
+    .kg-bookmark-publisher {
+        position: relative;
+    }
+
+    .kg-bookmark-container,
+    .kg-bookmark-container:hover {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+        color: currentColor;
+        background: rgba(255,255,255,0.6);
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        text-decoration: none;
+        border-radius: 3px;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+    }
+
+    .kg-bookmark-content {
+        flex-basis: 0;
+        flex-grow: 999;
+        padding: 20px;
+        order: 1;
+    }
+
+    .kg-bookmark-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 1.3em;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        max-height: 45px;
+        margin: 0.5em 0 0 0;
+        font-size: 1.4rem;
+        line-height: 1.55em;
+        overflow: hidden;
+        opacity: 0.8;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .kg-bookmark-metadata {
+        margin-top: 20px;
+    }
+
+    .kg-bookmark-metadata {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.3em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-metadata amp-img {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
+        margin-right: 10px;
+    }
+
+    .kg-bookmark-thumbnail {
+        display: flex;
+        flex-basis: 20rem;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+
+    .kg-bookmark-thumbnail amp-img {
+        max-height: 200px;
+    }
+
+    .kg-bookmark-author {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-publisher::before {
+        content: "•";
+        margin: 0 .5em;
+    }
+
+    .kg-toggle-card-icon {
+        display: none;
+    }
+
+    .kg-toggle-content {
+        margin-top: 0.8rem;
+    }
+
+    .kg-product-card-container {
+        background: transparent;
+        padding: 20px;
+        width: 100%;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 1px rgb(124 139 154 / 25%);
+    }
+
+    .kg-product-card-description p {
+        margin-top: 1.5em;
+    }
+
+    .kg-product-card-description ul {
+        margin-left: 24px;
+    }
+
+    .kg-product-card-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+    }
+
+    .kg-product-card-rating-star {
+        height: 28px;
+        width: 20px;
+        margin-right: 2px;
+    }
+
+    .kg-product-card-rating-star svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.15;
+    }
+
+    .kg-product-card-rating-active.kg-product-card-rating-star svg {
+    opacity: 1;
+    }
+
+    .kg-nft-card-container {
+        position: relative;
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+        text-decoration: none;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        box-shadow: 0 2px 6px -2px rgb(0 0 0 / 10%), 0 0 1px rgb(0 0 0 / 40%);
+        width: 100%;
+        max-width: 512px;
+        color: #15212A;
+        background: #fff;
+        border-radius: 5px;
+        transition: none;
+        margin: 0 auto;
+    }
+
+    .kg-nft-metadata {
+        padding: 2.0rem;
+    }
+
+    .kg-nft-image-container {
+        position: relative;
+    }
+
+    .kg-nft-image {
+        display: flex;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .kg-nft-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .kg-nft-header h4.kg-nft-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin: 0;
+        color: #15212A;
+    }
+
+    .kg-nft-header amp-img {
+        max-width: 114px;
+        max-height: 26px;
+    }
+
+    .kg-nft-opensea-logo {
+        margin-top: 2px;
+        width: 100px;
+    }
+
+    .kg-nft-creator {
+        font-family: inherit;
+        color: #95A1AD;
+    }
+
+    .kg-nft-creator span {
+        font-weight: 500;
+        color: #15212A;
+    }
+
+    .kg-nft-card p.kg-nft-description {
+        font-size: 1.4rem;
+        line-height: 1.4em;
+        margin: 2.0rem 0 0;
+        color: #222;
+    }
+
+    .kg-button-card {
+        display: flex;
+        position: static;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kg-btn {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 2.0rem;
+        height: 4.0rem;
+        line-height: 4.0rem;
+        font-size: 1.65rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .kg-btn:hover {
+        opacity: 0.85;
+    }
+
+    .kg-btn-accent {
+        background-color: var(--ghost-accent-color, #1292EE);
+        color: #fff;
+    }
+
+    .kg-callout-card {
+        display: flex;
+        padding: 20px 28px;
+        border-radius: 3px;
+    }
+
+    .kg-callout-card-grey {
+        background: rgba(124, 139, 154, 0.13);
+    }
+
+    .kg-callout-card-white {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-callout-card-blue {
+        background: rgba(33, 172, 232, 0.12);
+    }
+
+    .kg-callout-card-green {
+        background: rgba(52, 183, 67, 0.12);
+    }
+
+    .kg-callout-card-yellow {
+        background: rgba(240, 165, 15, 0.13);
+    }
+
+    .kg-callout-card-red {
+        background: rgba(209, 46, 46, 0.11);
+    }
+
+    .kg-callout-card-pink {
+        background: rgba(225, 71, 174, 0.11);
+    }
+
+    .kg-callout-card-purple {
+        background: rgba(135, 85, 236, 0.12);
+    }
+
+    .kg-callout-card-accent {
+        background: var(--ghost-accent-color);
+        color: #fff;
+    }
+
+    .kg-callout-card-accent a {
+        color: #fff;
+    }
+
+    .kg-callout-emoji {
+        padding-right: 16px;
+        line-height: 1.3;
+        font-size: 1.25em;
+    }
+
+    .kg-header-card {
+        padding: 6em 3em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .kg-header-card.kg-size-small {
+        padding-top: 4em;
+        padding-bottom: 4em;
+    }
+
+    .kg-header-card.kg-size-large {
+        padding-top: 12em;
+        padding-bottom: 12em;
+    }
+
+    .kg-header-card.kg-width-full {
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+
+    .kg-header-card.kg-align-left {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .kg-header-card.kg-style-dark {
+        background: #15171a;
+        color: #ffffff;
+    }
+
+    .kg-header-card.kg-style-light {
+        color: #15171a;
+        border: 1px solid rgba(124, 139, 154, 0.25);
+        border-width: 1px 0;
+    }
+
+    .kg-header-card.kg-style-accent {
+        background-color: var(--ghost-accent-color);
+    }
+
+    .kg-header-card.kg-style-image {
+        background-color: #e7e7eb;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .kg-header-card h2 {
+        font-size: 4em;
+        font-weight: 700;
+        line-height: 1.1em;
+        margin: 0;
+    }
+
+    .kg-header-card h2 strong {
+        font-weight: 800;
+    }
+
+    .kg-header-card.kg-size-small h2 {
+        font-size: 3em;
+    }
+
+    .kg-header-card.kg-size-large h2 {
+        font-size: 5em;
+    }
+
+    .kg-header-card h3 {
+        font-size: 1.25em;
+        font-weight: 500;
+        line-height: 1.3em;
+        margin: 0;
+    }
+
+    .kg-header-card h3 strong {
+        font-weight: 600;
+    }
+
+    .kg-header-card.kg-size-small h3 {
+        font-size: 1em;
+    }
+
+    .kg-header-card.kg-size-large h3 {
+        font-size: 1.5em;
+    }
+
+    .kg-header-card:not(.kg-style-light) h2,
+    .kg-header-card:not(.kg-style-light) h3 {
+        color: #ffffff;
+    }
+
+    .kg-header-card a.kg-header-card-button {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 1.2em;
+        height: 2.4em;
+        line-height: 1em;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+        background-color: var(--ghost-accent-color);
+        color: #ffffff;
+        margin: 1.75em 0 0;
+    }
+
+    .kg-header-card a.kg-header-card-button:hover {
+        opacity: 0.85;
+    }
+
+    .kg-header-card.kg-size-large a.kg-header-card-button {
+        margin-top: 2em;
+    }
+
+    .kg-header-card.kg-size-small a.kg-header-card-button {
+        margin-top: 1.5em;
+    }
+
+    .kg-header-card.kg-style-image a.kg-header-card-button,
+    .kg-header-card.kg-style-dark a.kg-header-card-button {
+        background: #ffffff;
+        color: #15171a;
+    }
+
+    .kg-header-card.kg-style-accent a.kg-header-card-button {
+        background: #ffffff;
+        color: var(--ghost-accent-color);
+    }
+
+    .kg-audio-card {
+        display: flex;
+        width: 100%;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-audio-thumbnail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        min-width: 80px;
+        height: 80px;
+        background: transparent;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .kg-audio-thumbnail.placeholder {
+        background: var(--ghost-accent-color);
+    }
+
+    .kg-audio-thumbnail.placeholder svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+    }
+
+    .kg-audio-player-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        --seek-before-width: 0%;
+        --volume-before-width: 100%;
+        --buffered-width: 0%;
+    }
+
+    .kg-audio-title {
+        width: 100%;
+        padding: 8px 12px 0;
+        border: none;
+        font-family: inherit;
+        font-size: 1.1em;
+        font-weight: 700;
+        background: transparent;
+    }
+
+    .kg-audio-player {
+        display: none;
+    }
+
+    .kg-width-full.kg-card-hascaption {
+        display: grid;
+        grid-template-columns: inherit;
+    }
+
+    .post-content table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .post-content th {
+        padding: 0.5em 0.8em;
+        text-align: left;
+        font-size: .75em;
+        text-transform: uppercase;
+    }
+
+    .post-content td {
+        padding: 0.4em 0.7em;
+    }
+
+    .post-content tbody tr:nth-child(2n + 1) {
+        background-color: rgba(0,0,0,0.1);
+        padding: 1px;
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td:last-child {
+        box-shadow:
+            inset 1px 0 rgba(0,0,0,0.1),
+            inset -1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td {
+        box-shadow: inset 1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:last-child {
+        border-bottom: 1px solid rgba(0,0,0,.1);
+    }
+
+    .page-footer {
+        padding: 60px 5vmin;
+        margin: 60px auto 0;
+        text-align: center;
+        background-color: #f8f8f8;
+    }
+
+    .page-footer h3 {
+        margin: 0.5rem 0 0 0;
+    }
+
+    .page-footer p {
+        max-width: 500px;
+        margin: 1rem auto 1.5rem;
+        font-size: 1.7rem;
+        line-height: 1.5em;
+        color: rgba(0,0,0,0.6)
+    }
+
+    .powered {
+        display: inline-flex;
+        align-items: center;
+        margin: 30px 0 0;
+        padding: 6px 9px 6px 6px;
+        border: rgba(0,0,0,0.1) 1px solid;
+        font-size: 12px;
+        line-height: 12px;
+        letter-spacing: -0.2px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-weight: 500;
+        color: #222;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 6px;
+    }
+
+    .powered svg {
+        height: 16px;
+        width: 16px;
+        margin: 0 6px 0 0;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            font-size: 1.6rem;
+        }
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        h1 {
+            font-size: 2.6rem;
+            line-height: 1.15em;
+        }
+        h2 {
+            font-size: 2rem;
+            line-height: 1.2em;
+        }
+        h3 {
+            font-size: 1.7rem;
+        }
+    }
+
+    :root {--ghost-accent-color: #FF1A75;}
+    </style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+
+
+</head>
+
+<body class="amp-template">
+    <header class="page-header">
+        <a href="https://turkogluc.com">
+                <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        </a>
+    </header>
+
+    <main class="content" role="main">
+        <article class="post">
+
+            <header class="post-header">
+                <h1 class="post-title">Kafka Connect Basics</h1>
+                <section class="post-meta">
+                    Cemal Turkoglu -
+                    <time class="post-date" datetime="2020-09-14">14 Sep 2020</time>
+                </section>
+            </header>
+            <figure class="post-image">
+                <amp-img src="https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372.png" width="600" height="340" layout="responsive"
+                alt="Kafka Connect Basics"
+                ></amp-img>
+            </figure>
+            <section class="post-content">
+
+                <figure class="kg-card kg-image-card"></figure><p>Kafka Connect is an open source Apache Kafka component that helps to move the data <strong>IN</strong> or <strong>OUT</strong> of Kafka easily. It provides a scalable, reliable, and simpler way to move the data between Kafka and other data sources. According to direction of the data moved, the connector is classified as:</p><ul><li><code>Source Connector</code>: Reads data from a datasource and writes to Kafka topic.</li><li><code>Sink Connector</code>: Reads data from Kafka topic and writes to a datasource.</li></ul><p>Kafka Connect uses connector plugins that are community developed libraries to provide most common data movement cases. Mostly developers need to implement migration between same data sources, such as PostgreSQL, MySQL, Cassandra, MongoDB, Redis, JDBC, FTP, MQTT, Couchbase, REST API, S3, ElasticSearch. Kafka plugins provides the standardised implementation for moving the data from those datastores. Find all available Kafka Connectors on <a href="https://www.confluent.io/hub/?ref=localhost">Confluent Hub</a>.</p><p>So what Kafka Connect provides is that rather than writing our own Consumer or Producer code, we can use a Connector that takes care of all the implementation details such as fault tolerance, delivery semantics, ordering etc. and get the data moved. For example we can move all of the data from Postgres database to Kafka and from Kafka to ElasticSearch without writing code. It makes it easy for non-experienced developers to get the data in or out of Kafka reliably.</p><h2 id="concepts">Concepts</h2><p>Connector plugins implement the connector API that includes connectors and tasks.</p><ul><li><code>Connector</code>: is a job that manages and coordinates the tasks. It decides how to split the data-copying work between the tasks.</li><li><code>Task</code>: is piece of work that provides service to accomplish actual job. </li></ul><p>Connectors divide the actual job into smaller pieces as tasks in order to have the ability to scalability and fault tolerance. The state of the tasks is stored in special Kafka topics, and it is configured with <code>offset.storage.topic</code>, <code>config.storage.topic</code> and <code>status.storage.topic</code>. As the task does not keep its state it can be started, stopped and restarted at any time or nodes.</p><p>For example JDBC Connector is used to copy data from databases and it creates task per each table in the database.</p><ul><li><code>Worker</code>: is the node that is running the connector and its tasks.  </li></ul><p>Kafka Connect workers executes 2 types of working modes:</p><ul><li><code>Standalone mode</code>: All work is performed in a single worker as single process. It is easier to setup and configure and can be useful where using single worker makes sense. However it does not provide fault tolerance or scalability.</li><li><code>Distributed mode</code>: Multiple workers are in a cluster. Configured by REST API. Provides scalability and fault tolerance. When one connector dies, its tasks are redistributed by rebalance mechanism among other workers.</li></ul><h2 id="running-kafka-connect">Running Kafka Connect</h2><p>Kafka Connect ships with Apache Kafka binaries. So there is no need to install it separately, but in order to run it we need to <a href="https://kafka.apache.org/downloads?ref=localhost">download Kafka binaries</a>. The executables are in the bin directory and configurations are in the config directory.</p><figure class="kg-card kg-image-card"></figure><p>I personally would prefer you to start practising with distributed mode as it is gets unnecessarily confusing if you work with the standalone and after switch to distributed mode. Also it is recommended to use distributed mode in production, and if we don't want to have a cluster we can run only 1 worker in distributed mode. </p><h3 id="1-running-kafka-cluster">1 - Running Kafka Cluster</h3><p>Let's start with getting a Kafka cluster up and running. We can set up a cluster with one zookepeer and one broker in docker environment with using the following docker compose file. </p><pre><code class="language-yaml">version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1</code></pre><p>Run the <code>docker-compose up -d</code> command to start the containers. One thing to pay attention here is that <code>KAFKA_ADVERTISED_LISTENERS</code> are set to be <code>localhost:29092</code> for outside of docker network, and <code>kafka:9092</code> for inside the docker network. So from out host machine we can access kafka instance with <code>localhost:29092</code>.</p><h3 id="2-running-kafka-connect">2 - Running Kafka Connect</h3><p>We can run the Kafka Connect with <code>connect-distributed.sh</code> script that is located inside the kafka <code>bin</code> directory. We need to provide a properties file while running this script for configuring the worker properties. </p><pre><code class="language-bash">connect-distributed.sh &lt;worker properties file&gt;</code></pre><p>We can create create <code>connect-distributed.properties</code> file to specify the worker properties as follows:</p><pre><code># A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.
+bootstrap.servers=localhost:29092
+
+# unique name for the cluster, used in forming the Connect cluster group. Note that this must not conflict with consumer group IDs
+group.id=connect-cluster
+
+# The converters specify the format of data in Kafka and how to translate it into Connect data.
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=true
+value.converter.schemas.enable=true
+
+# Topic to use for storing offsets. This topic should have many partitions and be replicated and compacted.
+offset.storage.topic=connect-offsets
+offset.storage.replication.factor=1
+
+# Topic to use for storing connector and task configurations; note that this should be a single partition, highly replicated,
+config.storage.topic=connect-configs
+config.storage.replication.factor=1
+
+# Topic to use for storing statuses. This topic can have multiple partitions and should be replicated and compacted.
+status.storage.topic=connect-status
+status.storage.replication.factor=1
+
+# Flush much faster than normal, which is useful for testing/debugging
+offset.flush.interval.ms=10000</code></pre><p><code>group.id</code> is one of the most important configuration in this file. Worker groups are created according to group id. So if we start multiple worker with same group id, they will be in the same worker cluster.</p><p><code>offset.storage.topic</code>, <code>config.storage.topic</code> and <code>status.storage.topic</code> configurations are also needed so that worker status will be stored in Kafka topics and new workers or restarted workers will be managed accordingly.</p><p>Now we can start Kafka connect with the following command:</p><pre><code class="language-bash">connect-distributed.sh /path-to-config/connect-distributed.properties</code></pre><h3 id="3-starting-connector">3 - Starting Connector</h3><p>Now we have Zookeeper, Kafka broker, and Kafka Connect running in distributed mode. As it is mentioned before, in distributed mode, connectors are manages by REST API. Our connector exposed REST API at <a href="http://localhost:8083/?ref=localhost">http://localhost:8083/</a>.</p><p>As an example, we can run a <code>FileStreamSource</code> connector that copies data from a file to Kafka topic. To start a connector we need to send a POST call to <a href="http://localhost:8083/connectors?ref=localhost">http://localhost:8083/connectors</a> endpoint with the configuration of the Connector that we want to run. Example configuration for Connector looks like as follows:</p><pre><code class="language-json">{
+  "name": "local-file-source",
+  "config": {
+    "connector.class": "FileStreamSource",
+    "tasks.max": 1,
+    "file": "/Users/cemalturkoglu/kafka/shared-folder/file.txt",
+    "topic": "file.content"
+  }
+}
+</code></pre><p>Every connector may have its own specific configurations, and these configurations can be found in the connector's Confluent Hub page.</p><ul><li><code>connector.class</code> specifies the connector plugin that we want to use. </li><li><code>file</code> is a specific config for <code>FileStreamSource</code> plugin, and it is used to point the file to be read.</li><li><code>topic</code> is the name of the topic that the data read from file will be written to.</li></ul><p>We need to send this json config in the content body of REST call. We can read this config from file for <code>curl</code> command as follows:</p><pre><code class="language-bash">curl -d @"connect-file-source.json" \
+-H "Content-Type: application/json" \
+-X POST http://localhost:8083/connectors</code></pre><p>After this call connector starts running, it reads data from the file and send to the kafka topic which is <code>file.content</code> in the example. If we start a consumer to this topic: </p><figure class="kg-card kg-image-card"></figure><p>We can see that every line in the file.txt is send to Kafka topic as a message. Note that <code>key.converter.schemas.enable</code> and <code>value.converter.schemas.enable</code> is set to be true for the worker at the beginning. So messages are wrapped with Json schema. </p><p>In order to scale up the worker cluster, you need to follow the same steps of running Kafka Connect and starting Connector on each worker (All workers should have same group id). The high level overview of the architecture looks like as follows:</p><figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>Kafka Connect Overview</figcaption></figure><h2 id="running-kafka-connect-in-docker">Running Kafka Connect in Docker</h2><p>In the above example Kafka cluster was being run in Docker but we started the Kafka Connect in the host machine with Kafka binaries. If you wish to run Kafka Connect in Docker container as well, you need a linux image that has Java 8 installed and you can download the Kafka and use <code>connect-distribued.sh</code> script to run it. For a very simple example, you can use the following Dockerfile to run workers:</p><pre><code class="language-Dockerfile">FROM openjdk:8-jre-slim
+
+RUN apt-get update &amp;&amp; \
+    apt-get install wget -y
+
+COPY start.sh start.sh
+COPY connect-distributed.properties connect-distributed.properties
+
+RUN echo "Downloading Apache Kafka" &amp;&amp; \
+    wget "http://ftp.man.poznan.pl/apache/kafka/2.6.0/kafka_2.12-2.6.0.tgz" &amp;&amp;\
+    tar -xzvf kafka*.tgz &amp;&amp; \
+    rm kafka*.tgz &amp;&amp; \
+    mv kafka* kafka &amp;&amp; \
+    export PATH="$PATH:$(pwd)kafka/bin"
+
+
+CMD /kafka/bin/connect-distributed.sh connect-distributed.properties</code></pre><p>You can customise the Dockerfile according to your needs and improve it or you can use Confluent's Kafka Connect image by adding it to the docker-compose file as follows:</p><pre><code class="language-yml">connect:
+    image: confluentinc/cp-kafka-connect:latest
+    hostname: connect
+    container_name: connect
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./shared-folder:/shared-folder
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: compose-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONNECT_PLUGIN_PATH: /usr/share/java</code></pre>
+
+            </section>
+
+        </article>
+    </main>
+    <footer class="page-footer">
+            <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        <h3>Cemal Turkoglu</h3>
+            <p>Thoughts, stories and ideas.</p>
+        <p><a href="https://turkogluc.com">Read more posts →</a></p>
+        <a class="powered" href="https://ghost.org" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156"><g fill="none" fill-rule="evenodd"><rect fill="#15212B" width="156" height="156" rx="27"/><g transform="translate(36 36)" fill="#F6F8FA"><path d="M0 71.007A4.004 4.004 0 014 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0130 84H4a4 4 0 01-4-4.007v-8.986zM50 71.007A4.004 4.004 0 0154 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0180 84H54a4 4 0 01-4-4.007v-8.986z"/><rect y="34" width="84" height="17" rx="4"/><path d="M0 4.007A4.007 4.007 0 014.007 0h41.986A4.003 4.003 0 0150 4.007v8.986A4.007 4.007 0 0145.993 17H4.007A4.003 4.003 0 010 12.993V4.007z"/><rect x="67" width="17" height="17" rx="4"/></g></g></svg> Published with Ghost</a>
+    </footer>
+
+</body>
+</html>

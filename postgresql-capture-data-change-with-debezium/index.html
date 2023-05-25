@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Making Sense of Change Data Capture Pipelines for Postgres with Debezium Kafka Connector</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" href="/assets/css/app.css?v=b36b0218e7" as="style" />
+    <link rel="preload" href="/assets/js/manifest.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor/content-api.min.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/app.js?v=b36b0218e7" as="script" />
+
+      <link rel="preload" href="/assets/css/post.css?v=b36b0218e7" as="style" />
+  <link rel="preload" href="/assets/js/post.js?v=b36b0218e7" as="script" />
+
+
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7");
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7#iefix") format('embedded-opentype'),
+        url("/assets/fonts/icomoon/icomoon.ttf?101fc3?v=b36b0218e7") format('truetype'),
+        url("/assets/fonts/icomoon/icomoon.woff?101fc3?v=b36b0218e7") format('woff'),
+        url("/assets/fonts/icomoon/icomoon.svg?101fc3?v=b36b0218e7#icomoon") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/app.css?v=b36b0218e7" media="screen" />
+
+      <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=b36b0218e7" media="screen" />
+
+
+
+
+    <meta name="description" content="Making Sense of Change Data Capture for Postgres with Debezium Kafka Connector. Understanding PostgreSQL Logical Replication and Write Ahead Log mechanism.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/postgresql-capture-data-change-with-debezium/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://turkogluc.com/postgresql-capture-data-change-with-debezium/amp/">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Making Sense of Change Data Capture Pipelines for Postgres with Debezium Kafka Connector">
+    <meta property="og:description" content="Making Sense of Change Data Capture for Postgres with Debezium Kafka Connector. Understanding PostgreSQL Logical Replication and Write Ahead Log mechanism.">
+    <meta property="og:url" content="https://turkogluc.com/postgresql-capture-data-change-with-debezium/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png">
+    <meta property="article:published_time" content="2020-09-27T13:39:38.000Z">
+    <meta property="article:modified_time" content="2020-09-27T13:42:43.000Z">
+    <meta property="article:tag" content="Apache Kafka">
+    <meta property="article:tag" content="PostgreSQL">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Making Sense of Change Data Capture Pipelines for Postgres with Debezium Kafka Connector">
+    <meta name="twitter:description" content="Making Sense of Change Data Capture for Postgres with Debezium Kafka Connector. Understanding PostgreSQL Logical Replication and Write Ahead Log mechanism.">
+    <meta name="twitter:url" content="https://turkogluc.com/postgresql-capture-data-change-with-debezium/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Apache Kafka, PostgreSQL">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="1200">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Making Sense of Change Data Capture Pipelines for Postgres with Debezium Kafka Connector",
+    "url": "https://turkogluc.com/postgresql-capture-data-change-with-debezium/",
+    "datePublished": "2020-09-27T13:39:38.000Z",
+    "dateModified": "2020-09-27T13:42:43.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png",
+        "width": 1200,
+        "height": 1200
+    },
+    "keywords": "Apache Kafka, PostgreSQL",
+    "description": "Making Sense of Change Data Capture for Postgres with Debezium Kafka Connector. Understanding PostgreSQL Logical Replication and Write Ahead Log mechanism.",
+    "mainEntityOfPage": "https://turkogluc.com/postgresql-capture-data-change-with-debezium/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.32/umd/portal.min.js" data-i18n="false" data-ghost="https://turkogluc.com/" data-key="8aed1ac6d3b2be60cf4aedf769" data-api="https://turkogluc.com/ghost/api/content/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/sodo-search.min.js" data-key="8aed1ac6d3b2be60cf4aedf769" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/main.css" data-sodo-search="https://turkogluc.com/" crossorigin="anonymous"></script>
+
+    <link href="https://turkogluc.com/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=b36b0218e7"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=b36b0218e7">
+    <script defer src="/public/member-attribution.min.js?v=b36b0218e7"></script>
+    <!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/idea.min.css" integrity="sha512-jxbAYisMjIOokHq0YnYxWqTUfJRe8s1U2F1lp+se3vv0CS8floaFL3Mc3GEpG3HCG2s6lxHb3QvQdmUOT1ZzKw==" crossorigin="anonymous" />
+
+<style>
+   .l-post-content pre>code {
+    white-space:inherit
+  }
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+
+</style>
+
+<!-- prism.js -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-okaidia.min.css" />
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-tomorrow.min.css" />
+-->
+<style>
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+</style>
+
+
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+-->
+<style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+    <style>
+      :root {
+        --primary-subtle-color: var(--ghost-accent-color) !important;
+      }
+    </style>
+
+    <script>
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "https://turkogluc.com"
+      // @license-end
+    </script>
+
+  </head>
+  <body class="post-template tag-apache-kafka tag-postgresql tag-hash-import-2023-05-25-09-05">
+
+
+
+
+
+<header class="m-header with-picture js-header">
+  <div class="m-mobile-topbar" data-aos="fade-down">
+    <button class="m-icon-button in-mobile-topbar js-open-menu" aria-label="Open menu">
+      <span class="icon-menu" aria-hidden="true"></span>
+    </button>
+      <a href="https://turkogluc.com" class="m-logo in-mobile-topbar">
+        <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+      </a>
+    <button class="m-icon-button in-mobile-topbar js-open-search" aria-label="Open search">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="m-menu js-menu">
+    <button class="m-icon-button outlined as-close-menu js-close-menu" aria-label="Close menu">
+      <span class="icon-close"></span>
+    </button>
+    <div class="m-menu__main" data-aos="fade-down">
+      <div class="l-wrapper">
+        <div class="m-nav js-main-nav">
+          <nav class="m-nav__left js-main-nav-left" role="navigation" aria-label="Main menu">
+            <ul>
+                <li class="only-desktop">
+                  <a href="https://turkogluc.com" class="m-logo">
+                    <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+                  </a>
+                </li>
+
+    <li class="nav-home">
+      <a href="https://turkogluc.com/">Home</a>
+    </li>
+    <li class="nav-spring">
+      <a href="https://turkogluc.com/tag/spring/">Spring</a>
+    </li>
+    <li class="nav-kafka">
+      <a href="https://turkogluc.com/tag/apache-kafka/">Kafka</a>
+    </li>
+    <li class="nav-java">
+      <a href="https://turkogluc.com/tag/java/">Java</a>
+    </li>
+    <li class="nav-jenkins">
+      <a href="https://turkogluc.com/tag/jenkins/">Jenkins</a>
+    </li>
+    <li class="nav-react">
+      <a href="https://turkogluc.com/tag/react/">React</a>
+    </li>
+
+              <li class="submenu-option js-submenu-option">
+                <button class="m-icon-button in-menu-main more js-toggle-submenu" aria-label="Open submenu">
+                  <span class="icon-more" aria-hidden="true"></span>
+                </button>
+                <div class="m-submenu js-submenu">
+                  <div class="l-wrapper in-submenu">
+                    <section class="m-recent-articles">
+                      <h3 class="m-submenu-title in-recent-articles">Recent articles</h3>
+                          <div class="swiper js-recent-slider">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                  <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Centralized Logging and Monitoring with Elastic Stack">
+                                      Centralized Logging and Monitoring with Elastic Stack
+                                    </h3>
+                                    <span class="m-recent-article__date">a year ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/sql-window-functions/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="SQL Window Functions Introduction">
+                                      SQL Window Functions Introduction
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Server Sent Events with Spring Boot and ReactJS">
+                                      Server Sent Events with Spring Boot and ReactJS
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/java-creating-pdf-reports-with-itext/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Creating PDF Reports with iText 7 in Java">
+                                      Creating PDF Reports with iText 7 in Java
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                            </div>
+                          </div>
+                    </section>
+                    <section class="m-tags">
+                      <h3 class="m-submenu-title">Tags</h3>
+                        <ul>
+                            <li>
+                              <a href="/tag/aop/">AOP</a>
+                            </li>
+                            <li>
+                              <a href="/tag/apache-kafka/">Apache Kafka</a>
+                            </li>
+                            <li>
+                              <a href="/tag/concurrency/">Concurrency</a>
+                            </li>
+                            <li>
+                              <a href="/tag/devops/">devops</a>
+                            </li>
+                            <li>
+                              <a href="/tag/docker/">docker</a>
+                            </li>
+                            <li>
+                              <a href="/tag/elasticsearch/">Elasticsearch</a>
+                            </li>
+                            <li>
+                              <a href="/tag/event-handling/">Event Handling</a>
+                            </li>
+                            <li>
+                              <a href="/tag/java/">Java</a>
+                            </li>
+                            <li>
+                              <a href="/tag/jenkins/">Jenkins</a>
+                            </li>
+                        </ul>
+                    </section>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div class="m-nav__right">
+            <button class="m-icon-button in-menu-main js-open-search" aria-label="Open search">
+              <span class="icon-search" aria-hidden="true"></span>
+            </button>
+            <div class="m-toggle-darkmode js-tooltip" data-tippy-content="Toggle light/dark mode" tabindex="0">
+              <label for="toggle-darkmode" class="sr-only">
+                Toggle light/dark mode
+              </label>
+              <input id="toggle-darkmode" type="checkbox" class="js-toggle-darkmode">
+              <div>
+                <span class="icon-moon moon" aria-hidden="true"></span>
+                <span class="icon-sunny sun" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<main class="main-wrap">
+
+  <section class="m-hero with-picture" data-aos="fade">
+    <div class="m-hero__picture in-post">
+      <img
+        srcset="
+          /content/images/size/w300/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png 300w,
+          /content/images/size/w600/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png 600w,
+          /content/images/size/w1000/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png 1000w,
+          /content/images/size/w2000/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png 2000w
+        "
+        sizes="(max-width: 600px) 600px, (max-width: 1000px) 1000px, 2000px"
+        src="/content/images/size/w1000/2020/09/4cff1d7bfcc6fe58267f8b8cccb6b372-2.png"
+        alt=""
+      />
+    </div>
+    </section>
+
+  <article>
+    <div class="l-content in-post">
+        <div class="l-wrapper in-post  js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">Making Sense of Change Data Capture Pipelines for Postgres with Debezium Kafka Connector</h1>
+              <div class="m-heading__meta">
+                  <a href="https://turkogluc.com/tag/apache-kafka/" class="m-heading__meta__tag">Apache Kafka</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                <span class="m-heading__meta__time">Sep 27, 2020</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https://turkogluc.com/postgresql-capture-data-change-with-debezium/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text=Making%20Sense%20of%20Change%20Data%20Capture%20Pipelines%20for%20Postgres%20with%20Debezium%20Kafka%20Connector&url=https://turkogluc.com/postgresql-capture-data-change-with-debezium/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="Scroll to top">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p>Should you need to get familiar with <a href="https://turkogluc.com/apache-kafka-connect-introduction/">Kafka Connect Basics</a> or <a href="https://turkogluc.com/kafka-connect-jdbc-source-connector/">Kafka JDBC Connector</a><strong> </strong>check out the previous post. This post focuses on PostgreSQL backup-replication mechanism and streaming data from database to Kafka with using Debezium connector.</p><p>There are basically 3 major methods to perform backups or replication in PostgreSQL:</p><ul><li>Logical dumps (Extracting SQL script that represents the data, for example with using <a href="https://www.postgresql.org/docs/12/app-pgdump.html?ref=localhost">pg_dump</a>)</li><li>Transactional Log Shipping (Using Write-Ahead Log)</li><li>Logical Decoding</li></ul><p>The first method is relatively harder to maintain and creates more load on the database. <code>Log shipping</code> and <code>Logical Decoding</code> is low level solutions that make use of transaction logs and have the major advantage of efficiency.</p><h2 id="understanding-the-transactional-log">Understanding the Transactional Log</h2><p>Transactional Log is the essential part of the modern relational database systems. It is basically <strong>history log of all actions and changes</strong> applied on the database. The database stores the data eventually in the filesystem, however this I/O operation is relatively costly and if any failure interrupts the writing process the file becomes inconsistent and it would not be easy to recover. </p><p>Therefore database writes the data to a log which is called <strong>Write-Ahead Log</strong> (WAL) directly and transaction is completed. When the data is logged in the WAL, it is considered to be successfully stored even though it is not written to file system yet. So even if system crashes or some failure arises, it will be read from the log when system restarts. </p><p>A process constantly reads the WAL, sets a <code>checkpoint</code> as point in time and writes the changes appended since the last checkpoint time to the actual database file system (every 5 mins by default). As the disk space is limited, the WAL files that are already processed are either archived or recycled (old ones are removed) in order to clean up disk space.</p><p>Each transaction log is divided into 16 MB file that is called <strong>WAL segment</strong> that consist of <strong>records</strong>. Each record has an identifier named <strong>Log Sequence Number</strong> (LSN) that shows the physical location of the record. Processing the transactions and checkpointing could be demonstrated as follows:</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-27-at-01.51.59.png" class="kg-image" alt loading="lazy"></figure><h2 id="it-s-all-about-wal-">It's All About WAL!</h2><p>The WAL has important role in replication as it contains the details about transactions, and these records are very important and useful in terms of representing the database state. Note that the WAL segments are not stored forever, once it is consumed it is removed from the disk. So one way to backup locally is copying segment files to a different directory (default dir: <code>pg_wal</code>). Sharing these records with remote servers gives the opportunity to create replicas efficiently.</p><h3 id="transactional-log-shipping">Transactional Log Shipping</h3><p>It is a solution to replicate the database in different servers by shipping the WAL segments. Replica server operates on recovery mode all the time and replays the WAL records that it receives to be consistent with primary server. This solution could be implemented by sending the complete 16MB WAL segments files or streaming individual records as they are written. Streaming is a better solution in terms of durability. See the details of psychical replication implementation details: <a href="https://www.postgresql.org/docs/13/warm-standby.html?ref=localhost">Log Shipping</a>.</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-27-at-10.36.31.png" class="kg-image" alt loading="lazy"></figure><p>In Log Shipping method the segment files which contains binary data copied physically (byte-by-byte) to another server. So it can be also called <strong>physical replication</strong>. This approach has some limitations and drawbacks as it is not possible to replicate between different versions of Postgres or different operating systems, and also it can not replicate part of a database. Logical replication is introduced to address these limitations.</p><h3 id="logical-replication">Logical Replication</h3><p>Logical replication is a method that decodes the binary WAL records into a more understandable format and sends this decoded data to remote server. It uses <code>publish</code> and <code>subscribe</code> model with one or more subscribers receiving data from publishers. In contrast to physical replication, there is no Primary and Standby servers but data can flow both sides, but from publishers to subscribers. Publisher creates a <a href="https://www.postgresql.org/docs/13/sql-createpublication.html?ref=localhost"><code>PUBLICATION</code></a>:</p><pre><code class="language-sql">CREATE PUBLICATION mypublication FOR TABLE users, departments;
+CREATE PUBLICATION alltables FOR ALL TABLES;</code></pre><p>And Subscribers creates <code><a href="https://www.postgresql.org/docs/13/sql-createsubscription.html?ref=localhost">SUBSCRIPTION</a></code>:</p><pre><code class="language-sql">CREATE SUBSCRIPTION mysubcribtion
+         CONNECTION 'host=localhost port=5432 user=foo dbname=foodb'
+        PUBLICATION mypublication, alltables;</code></pre><p>The changes send by publisher are replicated in the subscriber database to ensure that the two databases remain in sync. It is important to remember that after some time WAL segments are deleted. So if a subscriber stops for some and the the WAL record is deleted in the publisher it causes a FATAL error. </p><p><strong><a href="https://www.postgresql.org/docs/13/logicaldecoding-explanation.html?ref=localhost">Replication slots</a></strong> solves this problem for us. By assigning a subscriber to a replication slot we can guarantee that the WAL records that it related with the subscription are not going to be removed until the subscriber consumes them. <code>CREATE SUBSCRIPTION</code> command automatically generates a replication slot in the publisher side for us so we do not need to create it manually.</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-27-at-12.14.55.png" class="kg-image" alt loading="lazy"></figure><p>Now having the necessary knowledge of PostgreSQL replication concepts we can proceed to configure and manage the Debezium Connector.</p><h2 id="debezium-connector">Debezium Connector</h2><p>Debezium is an open source <strong>Change Data Capture</strong> platform that turns the existing database into event streams. Debezium Kafka Connector captures each row level change in the database and sends them to Kafka topics.</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/debezium-architecture.png" class="kg-image" alt loading="lazy"></figure><p>Debezium uses the <code>logical replication</code> feature of PostgreSQL in order to capture the transaction records from the WAL. The connector acts the subscriber role for the changes published from tables. It handles all the low level configuration for us, as creating publisher, subscribers replication slots etc.</p><p>In order to use the connector we need an <code>output plugin</code> installed in the PostgreSQL server so that it can decode the WAL records. Debezium connector supports number of output plugins:</p><ul><li><a href="https://github.com/debezium/postgres-decoderbufs?ref=localhost"><code>decoderbufs</code></a>: based on Protobuf and maintened by Debezium Community</li><li><a href="https://github.com/eulerto/wal2json/blob/master/README.md?ref=localhost"><code>wal2json</code></a>: based on JSON</li><li><code>pgoutput</code>: is the standard logical decoding output plug-in in PostgreSQL, also supported by Debezium Community.</li></ul><p>I personally recommend using <code>pgoutput</code> as it is the native plugin and it does not require any additional installation. If you would like to use another plugin you need to install it in the database server. See the <a href="https://debezium.io/documentation/reference/1.2/postgres-plugins.html?ref=localhost">documentation</a> for installing plugins. We can setup the all architecture with the following steps</p><h3 id="1-running-kafka-cluster">1-Running Kafka Cluster</h3><p>We can use the following docker-compose file to get Kafka cluster with a single broker up and running.</p><pre><code class="language-yml">version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:5.5.1
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021
+
+  postgresql:
+    image: postgresql:12
+    hostname: postgresql
+    container_name: postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+</code></pre><p>Note that confluent center is optional and used only as the user interface for Kafka broker.</p><h3 id="2-preparing-debezium-connector-plugin">2- Preparing Debezium Connector Plugin</h3><p>Download the <a href="https://debezium.io/releases/1.2/?ref=localhost">Debezium PostgreSQL Connector</a> plugin and extract the zip file to the Kafka Connect's plugins path. While we start Kafka Connector we can specify a plugin path that will be used to access the plugin libraries. For example <code>plugin.path=/usr/local/share/kafka/plugins</code>. Check <a href="https://docs.confluent.io/current/connect/managing/install.html?ref=localhost#connect-install-connectors">Install Connector Manually</a> documentation for details.</p><h3 id="3-running-kafka-connect"><strong>3- Running Kafka Connect</strong></h3><p>We can run the Kafka Connect with <code>connect-distributed.sh</code> script that is located inside the kafka <code>bin</code> directory. We need to provide a properties file while running this script for configuring the worker properties.</p><p>We can create create <code>connect-distributed.properties</code> file to specify the worker properties as follows:</p><pre><code># A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.
+bootstrap.servers=localhost:29092
+
+# unique name for the cluster, used in forming the Connect cluster group. Note that this must not conflict with consumer group IDs
+group.id=connect-cluster
+
+# The converters specify the format of data in Kafka and how to translate it into Connect data.
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=true
+value.converter.schemas.enable=true
+
+# Topic to use for storing offsets. This topic should have many partitions and be replicated and compacted.
+offset.storage.topic=connect-offsets
+offset.storage.replication.factor=1
+
+# Topic to use for storing connector and task configurations; note that this should be a single partition, highly replicated,
+config.storage.topic=connect-configs
+config.storage.replication.factor=1
+
+# Topic to use for storing statuses. This topic can have multiple partitions and should be replicated and compacted.
+status.storage.topic=connect-status
+status.storage.replication.factor=1
+
+# Flush much faster than normal, which is useful for testing/debugging
+offset.flush.interval.ms=10000
+
+plugin.path=/Users/cemalturkoglu/kafka/plugins</code></pre><p>Note that the <code>plugin.path</code> is the path that we need to place the plugin library that we downloaded.</p><p>After running the connector we can confirm that connector's REST endpoint is accessible, and we can confirm that JDBC connector is in the plugin list by calling <a href="http://localhost:8083/connector-plugins?ref=localhost"><code>http://localhost:8083/connector-plugins</code></a></p><h3 id="4-preparing-postgresql-server-for-logical-replication">4- Preparing PostgreSQL Server for Logical Replication</h3><p>The first thing we need to configure in PostgreSQL is <code>wal_level</code> that can be one of <code>minimal</code>, <code>replica</code> and <code>logical</code>. This configuration specifies how much information should be written to WAL, and the default value is <code>replica</code>, we need to set it as <code>logical</code> to be able to stream records with logical replication.</p><p>The default <code>wal_level</code> can be seen with <code>SHOW wal_level;</code> command</p><pre><code class="language-bash">postgres=# SHOW wal_level;
+ wal_level
+-----------
+ replica
+(1 row)</code></pre><p>This configuration is in the <code>postgresql.conf</code> file which is generally located at <code>/var/lib/postgresql/data/pgdata/postgresql.conf</code>. To find the config location you can use <code>SHOW config_file;</code> command. In the PosgreSQL server go to this location and edit the file:</p><pre><code class="language-bash">~ docker exec -it 62ce968539a6 /bin/bash
+root@db:/# nano /var/lib/postgresql/data/pgdata/postgresql.conf</code></pre><p>Set the <code>wal_level</code> to <code>logical</code> and save it. This change requires restarting the postgreSQL server. This is the bare minimum connection required to run the connector.</p><p>Also optionally, you can create another user who is not a super user for security reasons. This user need to have LOGIN and REPLICATION roles.</p><pre><code class="language-sql">CREATE ROLE name REPLICATION LOGIN;</code></pre><p>And this user should be added in <code>pg_hba.conf</code><em> </em>file to have authentication. This config may have <code>host all all</code> line then it accepts all connections and there is no need add the new user.</p><h3 id="5-starting-the-connector">5- Starting the Connector</h3><p>We run the connectors by calling REST endpoints with the configuration JSON. We can specify the configuration payload from a file for <code>curl</code> command. The following command starts the connector.</p><pre><code class="language-bash">curl -d @"debezium-config.json" \
+-H "Content-Type: application/json" \
+-X POST http://localhost:8083/connectors</code></pre><p>The configuration for the plugin is stored in <code>debezium-config.json</code> file can be as follows:</p><pre><code class="language-json">{
+  "name": "debezium-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "localhost",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "root",
+    "database.dbname" : "demo",
+    "plugin.name": "pgoutput",
+    "database.server.name": "demo-server"
+  }
+}</code></pre><ul><li>The connector connets to the database with the connection string.</li><li>Reads the current position of the server's transaction log.</li><li>It starts by performing an initial consistent<em> </em>snapshot of each of the database schemas. It sends messages with <code>READ</code> event for each row encountered during the snapshot.</li><li>After snapshot is completed, it starts streaming changes as <code>CREATE</code>, <code>UPDATE</code> and <code>DELETE</code> events from the transaction log starting from the saved position. So if new records are added during the snapshot they will be captured from WAL and send to Kafka.</li></ul><p>We can see that 4 tables from my demo database are shipped to Kafka topics. Topic names are generated as: <code>&lt;server-name&gt;.&lt;schema-name&gt;.&lt;table-name&gt;</code></p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-27-at-13.58.32.png" class="kg-image" alt loading="lazy"></figure><p>And each row in the tables are loaded as a message:</p><figure class="kg-card kg-image-card"><img src="https://turkogluc.com/content/images/2020/09/Screenshot-2020-09-27-at-14.04.06.png" class="kg-image" alt loading="lazy"></figure><p>Each message contains <code>schema</code> and <code>payload</code> fields. Payload has the <code>before</code> and <code>after</code> fields specifying the object that is being changed. The payload also contains <code>op</code> field which stands for the operation and maps as follows:</p><ul><li><code>c</code>: create</li><li><code>r</code>: read</li><li><code>u</code>: update</li><li><code>d</code>: delete</li></ul><pre><code class="language-json">{
+  "schema": {
+    "type": "struct",
+    "fields": [
+      {
+        "type": "struct",
+        "fields": [
+          {
+            "type": "int64",
+            "optional": false,
+            "field": "id"
+          },
+          // ...
+        ],
+        "optional": true,
+        "name": "demo_server.public.address.Value",
+        "field": "after"
+      },
+    ],
+    "optional": false,
+    "name": "demo_server.public.address.Envelope"
+  },
+  "payload": {
+    "before": null,
+    "after": {
+      "id": 5,
+      "flat": "flat-1",
+      "postal_code": "ABC",
+      "street": "street",
+      "title": "new address",
+      "city_id": 7,
+      "user_id": 2
+    },
+    "source": {
+      "version": "1.2.5.Final",
+      "connector": "postgresql",
+      "name": "demo-server",
+      "ts_ms": 1601157566900,
+      "snapshot": "false",
+      "db": "demo",
+      "schema": "public",
+      "table": "address",
+      "txId": 848,
+      "lsn": 24940072,
+      "xmin": null
+    },
+    "op": "c",
+    "ts_ms": 1601157567132,
+    "transaction": null
+  }
+}</code></pre><p>In this example <code>payload.op</code> is <code>c</code> and the <code>payload.before</code> field is null as this is a create operation.</p><h3 id="filtering-schema-and-tables">Filtering Schema and Tables</h3><ul><li><a href="https://debezium.io/documentation/reference/1.2/connectors/postgresql.html?ref=localhost#postgresql-property-schema-whitelist"><code><code>schema.whitelist</code></code></a> and <a href="https://debezium.io/documentation/reference/1.2/connectors/postgresql.html?ref=localhost#postgresql-property-schema-blacklist"><code><code>schema.blacklist</code></code></a> configuration properties can be used to choose the schemas to be subscribed to.</li><li><a href="https://debezium.io/documentation/reference/1.2/connectors/postgresql.html?ref=localhost#postgresql-property-table-whitelist"><code><code>table.whitelist</code></code></a> and <a href="https://debezium.io/documentation/reference/1.2/connectors/postgresql.html?ref=localhost#postgresql-property-table-blacklist"><code>table.blacklist</code></a> configuration properties can be used to choose the tables to be subscribed to. Table list should be comma separated list of <code>&lt;schema-name&gt;.&lt;table-name&gt;</code> format.</li><li><code>column.whitelist</code> and <code>column.blacklist</code>  configuration properties can be used to choose the subset of columns.</li></ul><h3 id="replica-identity">Replica Identity</h3><p>Replica Identity is a table level PostgreSQL setting that is used to determine the amount of the information to be written in the WAL for update events. In the <code>UPDATE</code> and <code>DELETE</code> events there is a <code>payload.before</code> field which contains the previous object and some of its details. For example in a delete event:</p><pre><code class="language-json">{
+   "payload": {
+      "before": {
+         "id": 5,
+         "flat": null,
+         "postal_code": null,
+         "street": null,
+         "title": null,
+         "city_id": null,
+         "user_id": null
+      },
+      "after": null,
+      "op": "d",
+      "ts_ms": 1601157654097,
+      "transaction": null
+   }
+}</code></pre><p><code>after</code> is null as it is removed, and before contains only primary key of the object. The details of this object depends on the <code>REPLICA IDENTITY</code> of the table. It has the following options:</p><ul><li><code>DEFAULT</code>: contains only primary keys</li><li><code>FULL</code>: contains all of the columns</li><li><code>NOTHING</code>: contains no information</li></ul><p>We can set this config at the source table with the following command:</p><pre><code class="language-sql">ALTER TABLE table_name REPLICA IDENTITY FULL;</code></pre><p>After this change on <code>address</code> table if I update a column I get the following message with the payload containing full details of the before object:</p><pre><code class="language-json">{
+   "payload": {
+      "before": {
+         "id": 4,
+         "flat": "10/1",
+         "postal_code": "KLM123",
+         "street": "Street3",
+         "title": "office address",
+         "city_id": 8,
+         "user_id": 3
+      },
+      "after": {
+         "id": 4,
+         "flat": "10/1",
+         "postal_code": "KLM02",
+         "street": "St 15",
+         "title": "office alternative address",
+         "city_id": 8,
+         "user_id": 3
+      },
+      "op": "u",
+      "ts_ms": 1601212592317,
+      "transaction": null
+   }
+}</code></pre><h3 id="final-words"><strong>Final words</strong></h3><p>In the <a href="https://turkogluc.com/kafka-connect-jdbc-source-connector/">Kafka JDBC Connector</a> post high level implementation of copying data from relational database to Kafka is discusses. JDBC connector uses SQL queries to retrieve data from database so it creates some load on the server. It is also not possible to retrieve DELETED rows in this solution.</p><p>Although it is easy to start and setup JDBC connectors, it has pitfalls. Transactional Log based Change Data Capture pipelines are better way to stream every single event from database to Kafka. CDC pipelines are more complex to set up at first than JDBC Connector, however as it directly interacts with the low level transaction log it is way more efficient. It does not generate load on the database.</p><p>One drawback of this approach is that it is not possible to get schema changes as events. If the schema changes in the source database, the destination client should be adjusted manually.</p><h3 id="references">References</h3><ul><li><a href="https://debezium.io/?ref=localhost">https://debezium.io/</a></li><li><a href="https://www.postgresql.org/docs/13/high-availability.html?ref=localhost">https://www.postgresql.org/docs/13/high-availability.html</a></li><li>Hans-Jurgen Schonig, Mastering PostgreSQL 12 Third Edition</li><li><a href="http://www.interdb.jp/pg/pgsql09.html?ref=localhost">http://www.interdb.jp/pg/pgsql09.html</a></li><li><a href="https://www.confluent.io/blog/no-more-silos-how-to-integrate-your-databases-with-apache-kafka-and-cdc/?ref=localhost">How to Integrate Your Databases with Apache Kafka and CDC</a>, by Robin Moffatt</li></ul>
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">Tags</h3>
+                  <ul>
+                      <li>
+                        <a href="/tag/apache-kafka/" title="Apache Kafka">Apache Kafka</a>
+                      </li>
+                      <li>
+                        <a href="/tag/postgresql/" title="PostgreSQL">PostgreSQL</a>
+                      </li>
+                  </ul>
+                </section>
+            </div>
+          </div>
+        </div>
+          <section class="m-subscribe-section js-newsletter">
+            <div class="l-wrapper in-post">
+              <div class="m-subscribe-section__content">
+                <div class="m-subscribe-section__text">
+                  <h4 class="m-subscribe-section__title">Subscribe to our newsletter</h4>
+                  <p class="m-subscribe-section__description">
+                    Get the latest posts delivered right to your inbox.
+                  </p>
+                </div>
+                <div class="m-subscribe-section__form">
+
+<div class="m-subscribe-section__form">
+  <form data-members-form="subscribe" id="newsletter-form" class="m-subscribe-section__container">
+    <div class="m-subscribe__form">
+      <div class="pos-relative">
+        <label for="newsletter-input" class="sr-only">Your email address</label>
+        <input data-members-email id="newsletter-input" class="m-input in-subscribe-section" type="email"
+          placeholder="Your email address" required />
+      </div>
+      <button id="newsletter-button" class="m-button primary block" type="submit">Subscribe</button>
+    </div>
+    <div class="m-subscribe__success">
+      <header class="m-heading no-margin">
+        <img src="/assets/images/success.png?v=b36b0218e7" alt="Success!" class="m-subscribe__success_icon">
+        <p class="m-heading__description in-newsletter-form">
+          Now check your inbox and click the link to confirm your subscription.
+        </p>
+      </header>
+    </div>
+    <p class="m-subscribe__invalid m-small-text">
+      Please enter a valid email address
+    </p>
+    <p class="m-subscribe__error m-small-text">
+      Oops! There was an error sending the email, please try later.
+    </p>
+  </form>
+</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="https://turkogluc.com/author/cemal/" class="m-author-picture" aria-label="Cemal Turkoglu">
+                  <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="https://turkogluc.com/author/cemal/">Cemal Turkoglu</a>
+              </h4>
+              <ul class="m-author-links">
+              </ul>
+            </div>
+          </div>
+        </section>
+            <section class="m-recommended">
+              <div class="l-wrapper in-recommended">
+                <h3 class="m-section-title in-recommended">Recommended for you</h3>
+                <div class="m-recommended-articles">
+                  <div class="m-recommended-slider swiper js-recommended-slider">
+                    <div class="swiper-wrapper">
+
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-spring tag-react tag-event-handling tag-java tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/spring/" class="m-article-card__tag">Spring</a>
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__info-link" aria-label="Server Sent Events with Spring Boot and ReactJS">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Server Sent Events with Spring Boot and ReactJS">
+            Server Sent Events with Spring Boot and ReactJS
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>2 years ago</span>
+          <span>&bull;</span>
+          <span>7 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-elasticsearch tag-java tag-devops tag-hash-import-2023-05-25-09-05 featured">
+    <div class="m-article-card__picture">
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+        <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__featured js-tooltip" data-tippy-content="Featured" aria-label="Featured">
+          <span class="icon-star" aria-hidden="true"></span>
+        </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/elasticsearch/" class="m-article-card__tag">Elasticsearch</a>
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__info-link" aria-label="Centralized Logging and Monitoring with Elastic Stack">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Centralized Logging and Monitoring with Elastic Stack">
+            Centralized Logging and Monitoring with Elastic Stack
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>a year ago</span>
+          <span>&bull;</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-docker tag-react tag-spring tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2020/09/docker-banner2.jpg" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/docker/" class="m-article-card__tag">docker</a>
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__info-link" aria-label="Running ReactJS + Spring Boot Application with Docker Compose">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Running ReactJS + Spring Boot Application with Docker Compose">
+            Running ReactJS + Spring Boot Application with Docker Compose
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>3 years ago</span>
+          <span>&bull;</span>
+          <span>2 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+                    </div>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-prev" aria-label="Previous">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-next" aria-label="Next">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+    </div>
+  </article>
+</main>
+
+
+
+
+<div class="m-search js-search" role="dialog" aria-modal="true" aria-label="Search">
+  <button class="m-icon-button outlined as-close-search js-close-search" aria-label="Close search">
+    <span class="icon-close" aria-hidden="true"></span>
+  </button>
+  <div class="m-search__content">
+    <form class="m-search__form">
+      <div class="pos-relative">
+        <span class="icon-search m-search-icon" aria-hidden="true"></span>
+        <label for="search-input" class="sr-only">
+          Type to search
+        </label>
+        <input id="search-input" type="text" class="m-input in-search js-input-search" placeholder="Type to search">
+      </div>
+    </form>
+    <div class="js-search-results hide"></div>
+    <p class="m-not-found align-center hide js-no-results">
+      No results for your search, please try with something else.
+    </p>
+  </div>
+</div>
+
+
+<footer class="m-footer">
+  <div class="m-footer__content">
+    <nav class="m-footer-social">
+        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+          <span class="icon-facebook" aria-hidden="true"></span>
+        </a>
+        <a href="https://twitter.com/turkoglu4c" target="_blank" rel="noopener" aria-label="Twitter">
+          <span class="icon-twitter" aria-hidden="true"></span>
+        </a>
+      <a href="https://turkogluc.com/rss" aria-label="RSS">
+        <span class="icon-rss" aria-hidden="true"></span>
+      </a>
+    </nav>
+    <p class="m-footer-copyright">
+      <span>Cemal Turkoglu &copy; 2023</span>
+      <span>&nbsp; &bull; &nbsp;</span>
+      <span>Published with <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></span>
+    </p>
+    <p class="m-footer-copyright jslicense">
+      <a href="/assets/html/javascript.html?v=b36b0218e7" rel="jslicense">JavaScript license information</a>
+    </p>
+  </div>
+</footer>
+
+    <script defer src="/assets/js/manifest.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor/content-api.min.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/app.js?v=b36b0218e7"></script>
+
+      <script defer src="/assets/js/post.js?v=b36b0218e7"></script>
+
+
+    <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/java.min.js" integrity="sha512-YVNh+JI3AZyDUu/aGDh2vLgstb4kYs5U/WsTge2QQhU5fTsQLPFgX64gVAE/6qDSPUfpMGtG8M74uT3Y1SUU/w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/javascript.min.js" integrity="sha512-QKMem5huKjrqi8ym4y9CvmmOvrimnBdRqEp269PoiENovcPr073iaXkoU8YPzGk+qJ4rNd4W/AatDTtB7uW52g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/yaml.min.js" integrity="sha512-Rd5FUDZGJkdJ4Z/pZTgK+6QMWl0ubeugVNnXMK/QhiDxw5IMuYYxJOoPcof66vzvkpg0XjumgSvdaLOftzR5uQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/groovy.min.js" integrity="sha512-+Pin3A2zbWHySvtjP3FIddvwD7Fl1fLZA+rwlrQOUWzQTdJ9ycbPpqqlJSgfnngME/WDlugENmeglfQilO/CgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/bash.min.js" integrity="sha512-VChHo3Iw9v3ZEvy8w2NFK62jJ27P7Y9N+uu94NwquvTSc/80oXBFnkK8Rk2z63rTwXHoJ9AiMbNbzLeB/BrryA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/json.min.js" integrity="sha512-FoN8JE+WWCdIGXAIT8KQXwpiavz0Mvjtfk7Rku3MDUNO0BDCiRMXAsSX+e+COFyZTcDb9HDgP+pM2RX12d4j+A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/dockerfile.min.js" integrity="sha512-PkYx44XPGihIBrIcdSUHi9gVPtedxVU4MiAxcdH3kG1B1ZA/2UZLLXg84gLWoFojIC2srDBjoOxNrJKGINwELw==" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-groovy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-sql.min.js"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166072389-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166072389-1');
+</script>
+  </body>
+</html>

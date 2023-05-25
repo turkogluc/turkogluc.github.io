@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html ⚡>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <title>Creating PDF Reports with iText 7 in Java</title>
+
+    <meta name="description" content="Creating and exporting pdf reports in java rest API using itext 7. Inserting image, table, page header, and logo. Learning Itext 7 basic java components.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/java-creating-pdf-reports-with-itext/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Creating PDF Reports with iText 7 in Java">
+    <meta property="og:description" content="Creating and exporting pdf reports in java rest API using itext 7. Inserting image, table, page header, and logo. Learning Itext 7 basic java components.">
+    <meta property="og:url" content="https://turkogluc.com/java-creating-pdf-reports-with-itext/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ">
+    <meta property="article:published_time" content="2020-11-27T19:29:39.000Z">
+    <meta property="article:modified_time" content="2020-11-27T19:55:07.000Z">
+    <meta property="article:tag" content="Java">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Creating PDF Reports with iText 7 in Java">
+    <meta name="twitter:description" content="Creating and exporting pdf reports in java rest API using itext 7. Inserting image, table, page header, and logo. Learning Itext 7 basic java components.">
+    <meta name="twitter:url" content="https://turkogluc.com/java-creating-pdf-reports-with-itext/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Java">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="2000">
+    <meta property="og:image:height" content="1381">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Creating PDF Reports with iText 7 in Java",
+    "url": "https://turkogluc.com/java-creating-pdf-reports-with-itext/",
+    "datePublished": "2020-11-27T19:29:39.000Z",
+    "dateModified": "2020-11-27T19:55:07.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1381
+    },
+    "keywords": "Java",
+    "description": "Creating and exporting pdf reports in java rest API using itext 7. Inserting image, table, page header, and logo. Learning Itext 7 basic java components.",
+    "mainEntityOfPage": "https://turkogluc.com/java-creating-pdf-reports-with-itext/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+
+    <style amp-custom>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        font-size: 62.5%;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        color: #3a4145;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.7rem;
+        line-height: 1.55em;
+        font-weight: 400;
+        font-style: normal;
+        background: #fff;
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    p,
+    ul,
+    ol,
+    li,
+    dl,
+    dd,
+    hr,
+    pre,
+    form,
+    table,
+    video,
+    figure,
+    figcaption,
+    blockquote {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul[class],
+    ol[class] {
+        padding: 0;
+        list-style: none;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    input,
+    button,
+    select,
+    textarea {
+        font: inherit;
+        -webkit-appearance: none;
+    }
+
+    fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        font-weight: 700;
+    }
+
+    hr {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid currentcolor;
+        opacity: 0.1;
+    }
+
+    ::selection {
+        text-shadow: none;
+        background: #cbeafb;
+    }
+
+    mark {
+        background-color: #fdffb6;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+    sup {
+        top: -0.5em;
+    }
+    sub {
+        bottom: -0.25em;
+    }
+
+    ul li + li {
+        margin-top: 0.6em;
+    }
+
+    a {
+        color: var(--ghost-accent-color, #1292EE);
+        text-decoration-skip-ink: auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        font-weight: 700;
+        color: #121212;
+        line-height: 1.4em;
+    }
+
+    h1 {
+        font-size: 3.4rem;
+        line-height: 1.1em;
+    }
+
+    h2 {
+        font-size: 2.4rem;
+        line-height: 1.2em;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+    }
+
+    h4 {
+        font-size: 1.7rem;
+    }
+
+    h5 {
+        font-size: 1.6rem;
+    }
+
+    h6 {
+        font-size: 1.6rem;
+    }
+
+    amp-img {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    amp-img img {
+        object-fit: cover;
+    }
+
+    amp-youtube {
+        height: calc(100vw / 1.78);
+        width: 100vw;
+        position: relative;
+    }
+
+    amp-youtube img {
+        position: absolute;
+    }
+
+    .page-header {
+        padding: 50px 5vmin 30px;
+        text-align: center;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .page-header a {
+        color: #121212;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.6rem;
+        letter-spacing: -0.1px;
+    }
+
+    .post {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .post-header {
+        margin: 0 5vmin 5vmin;
+        text-align: center;
+    }
+
+    .post-meta {
+        margin: 1rem 0 0 0;
+        text-transform: uppercase;
+        color: #738a94;
+        font-weight: 500;
+        font-size: 1.3rem;
+    }
+
+    .post-image {
+        margin: 0 0 5vmin;
+    }
+
+    .post-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .post-content {
+        padding: 0 5vmin;
+    }
+
+    .post-content > * + * {
+        margin-top: 1.5em;
+    }
+
+    .post-content [id]:not(:first-child) {
+        margin: 2em 0 0;
+    }
+
+    .post-content > [id] + * {
+        margin-top: 1rem;
+    }
+
+    .post-content [id] + .kg-card,
+    .post-content blockquote + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content > ul,
+    .post-content > ol,
+    .post-content > dl {
+        padding-left: 1.9em;
+    }
+
+    .post-content hr {
+        margin-top: 40px;
+    }
+
+    .post .post-content hr + * {
+        margin-top: 40px;
+    }
+
+    .post-content amp-img {
+        background-color: #f8f8f8;
+    }
+
+    .post-content blockquote {
+        position: relative;
+        font-style: italic;
+    }
+
+    .post-content blockquote::before {
+        content: "";
+        position: absolute;
+        left: -1.5em;
+        top: 0;
+        bottom: 0;
+        width: 0.3rem;
+        background: var(--ghost-accent-color, #1292EE);
+    }
+
+    .post-content blockquote.kg-blockquote-alt {
+        font-size: 1.2em;
+        font-style: italic;
+        line-height: 1.6em;
+        text-align: center;
+        color: #738a94;
+        padding: 0.75em 3em 1.25em;
+    }
+
+    .post-content blockquote.kg-blockquote-alt::before {
+        display: none;
+    }
+
+    .post-content :not(.kg-card):not([id]) + .kg-card {
+        margin-top: 40px;
+    }
+
+    .post-content .kg-card + :not(.kg-card) {
+        margin-top: 40px;
+    }
+
+    .kg-card figcaption {
+        padding: 1.5rem 1.5rem 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.4em;
+        opacity: 0.6;
+    }
+
+    .kg-card figcaption strong {
+        color: rgba(0,0,0,0.8);
+    }
+
+    .post-content :not(pre) code {
+        vertical-align: middle;
+        padding: 0.15em 0.4em 0.15em;
+        border: #e1eaef 1px solid;
+        font-weight: 400;
+        font-size: 0.9em;
+        line-height: 1em;
+        color: #15171a;
+        background: #f0f6f9;
+        border-radius: 0.25em;
+    }
+
+    .post-content > pre {
+        overflow: scroll;
+        padding: 16px 20px;
+        color: #fff;
+        background: #1F2428;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px -2px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+    }
+
+    .kg-embed-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .kg-image-card img {
+        margin: auto;
+    }
+
+    .kg-gallery-card + .kg-gallery-card {
+        margin-top: 0.75em;
+    }
+
+    .kg-gallery-container {
+        position: relative;
+    }
+
+    .kg-gallery-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .kg-gallery-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .kg-gallery-row:not(:first-of-type) {
+        margin: 0.75em 0 0 0;
+    }
+
+    .kg-gallery-image:not(:first-of-type) {
+        margin: 0 0 0 0.75em;
+    }
+
+    .kg-bookmark-card,
+    .kg-bookmark-publisher {
+        position: relative;
+    }
+
+    .kg-bookmark-container,
+    .kg-bookmark-container:hover {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+        color: currentColor;
+        background: rgba(255,255,255,0.6);
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        text-decoration: none;
+        border-radius: 3px;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+    }
+
+    .kg-bookmark-content {
+        flex-basis: 0;
+        flex-grow: 999;
+        padding: 20px;
+        order: 1;
+    }
+
+    .kg-bookmark-title {
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 1.3em;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        max-height: 45px;
+        margin: 0.5em 0 0 0;
+        font-size: 1.4rem;
+        line-height: 1.55em;
+        overflow: hidden;
+        opacity: 0.8;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .kg-bookmark-metadata {
+        margin-top: 20px;
+    }
+
+    .kg-bookmark-metadata {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+        line-height: 1.3em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kg-bookmark-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-metadata amp-img {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
+        margin-right: 10px;
+    }
+
+    .kg-bookmark-thumbnail {
+        display: flex;
+        flex-basis: 20rem;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+
+    .kg-bookmark-thumbnail amp-img {
+        max-height: 200px;
+    }
+
+    .kg-bookmark-author {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .kg-bookmark-publisher::before {
+        content: "•";
+        margin: 0 .5em;
+    }
+
+    .kg-toggle-card-icon {
+        display: none;
+    }
+
+    .kg-toggle-content {
+        margin-top: 0.8rem;
+    }
+
+    .kg-product-card-container {
+        background: transparent;
+        padding: 20px;
+        width: 100%;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 1px rgb(124 139 154 / 25%);
+    }
+
+    .kg-product-card-description p {
+        margin-top: 1.5em;
+    }
+
+    .kg-product-card-description ul {
+        margin-left: 24px;
+    }
+
+    .kg-product-card-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+    }
+
+    .kg-product-card-rating-star {
+        height: 28px;
+        width: 20px;
+        margin-right: 2px;
+    }
+
+    .kg-product-card-rating-star svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.15;
+    }
+
+    .kg-product-card-rating-active.kg-product-card-rating-star svg {
+    opacity: 1;
+    }
+
+    .kg-nft-card-container {
+        position: relative;
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+        text-decoration: none;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        box-shadow: 0 2px 6px -2px rgb(0 0 0 / 10%), 0 0 1px rgb(0 0 0 / 40%);
+        width: 100%;
+        max-width: 512px;
+        color: #15212A;
+        background: #fff;
+        border-radius: 5px;
+        transition: none;
+        margin: 0 auto;
+    }
+
+    .kg-nft-metadata {
+        padding: 2.0rem;
+    }
+
+    .kg-nft-image-container {
+        position: relative;
+    }
+
+    .kg-nft-image {
+        display: flex;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .kg-nft-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .kg-nft-header h4.kg-nft-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin: 0;
+        color: #15212A;
+    }
+
+    .kg-nft-header amp-img {
+        max-width: 114px;
+        max-height: 26px;
+    }
+
+    .kg-nft-opensea-logo {
+        margin-top: 2px;
+        width: 100px;
+    }
+
+    .kg-nft-creator {
+        font-family: inherit;
+        color: #95A1AD;
+    }
+
+    .kg-nft-creator span {
+        font-weight: 500;
+        color: #15212A;
+    }
+
+    .kg-nft-card p.kg-nft-description {
+        font-size: 1.4rem;
+        line-height: 1.4em;
+        margin: 2.0rem 0 0;
+        color: #222;
+    }
+
+    .kg-button-card {
+        display: flex;
+        position: static;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kg-btn {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 2.0rem;
+        height: 4.0rem;
+        line-height: 4.0rem;
+        font-size: 1.65rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .kg-btn:hover {
+        opacity: 0.85;
+    }
+
+    .kg-btn-accent {
+        background-color: var(--ghost-accent-color, #1292EE);
+        color: #fff;
+    }
+
+    .kg-callout-card {
+        display: flex;
+        padding: 20px 28px;
+        border-radius: 3px;
+    }
+
+    .kg-callout-card-grey {
+        background: rgba(124, 139, 154, 0.13);
+    }
+
+    .kg-callout-card-white {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-callout-card-blue {
+        background: rgba(33, 172, 232, 0.12);
+    }
+
+    .kg-callout-card-green {
+        background: rgba(52, 183, 67, 0.12);
+    }
+
+    .kg-callout-card-yellow {
+        background: rgba(240, 165, 15, 0.13);
+    }
+
+    .kg-callout-card-red {
+        background: rgba(209, 46, 46, 0.11);
+    }
+
+    .kg-callout-card-pink {
+        background: rgba(225, 71, 174, 0.11);
+    }
+
+    .kg-callout-card-purple {
+        background: rgba(135, 85, 236, 0.12);
+    }
+
+    .kg-callout-card-accent {
+        background: var(--ghost-accent-color);
+        color: #fff;
+    }
+
+    .kg-callout-card-accent a {
+        color: #fff;
+    }
+
+    .kg-callout-emoji {
+        padding-right: 16px;
+        line-height: 1.3;
+        font-size: 1.25em;
+    }
+
+    .kg-header-card {
+        padding: 6em 3em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .kg-header-card.kg-size-small {
+        padding-top: 4em;
+        padding-bottom: 4em;
+    }
+
+    .kg-header-card.kg-size-large {
+        padding-top: 12em;
+        padding-bottom: 12em;
+    }
+
+    .kg-header-card.kg-width-full {
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+
+    .kg-header-card.kg-align-left {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .kg-header-card.kg-style-dark {
+        background: #15171a;
+        color: #ffffff;
+    }
+
+    .kg-header-card.kg-style-light {
+        color: #15171a;
+        border: 1px solid rgba(124, 139, 154, 0.25);
+        border-width: 1px 0;
+    }
+
+    .kg-header-card.kg-style-accent {
+        background-color: var(--ghost-accent-color);
+    }
+
+    .kg-header-card.kg-style-image {
+        background-color: #e7e7eb;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .kg-header-card h2 {
+        font-size: 4em;
+        font-weight: 700;
+        line-height: 1.1em;
+        margin: 0;
+    }
+
+    .kg-header-card h2 strong {
+        font-weight: 800;
+    }
+
+    .kg-header-card.kg-size-small h2 {
+        font-size: 3em;
+    }
+
+    .kg-header-card.kg-size-large h2 {
+        font-size: 5em;
+    }
+
+    .kg-header-card h3 {
+        font-size: 1.25em;
+        font-weight: 500;
+        line-height: 1.3em;
+        margin: 0;
+    }
+
+    .kg-header-card h3 strong {
+        font-weight: 600;
+    }
+
+    .kg-header-card.kg-size-small h3 {
+        font-size: 1em;
+    }
+
+    .kg-header-card.kg-size-large h3 {
+        font-size: 1.5em;
+    }
+
+    .kg-header-card:not(.kg-style-light) h2,
+    .kg-header-card:not(.kg-style-light) h3 {
+        color: #ffffff;
+    }
+
+    .kg-header-card a.kg-header-card-button {
+        display: flex;
+        position: static;
+        align-items: center;
+        padding: 0 1.2em;
+        height: 2.4em;
+        line-height: 1em;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: opacity 0.2s ease-in-out;
+        background-color: var(--ghost-accent-color);
+        color: #ffffff;
+        margin: 1.75em 0 0;
+    }
+
+    .kg-header-card a.kg-header-card-button:hover {
+        opacity: 0.85;
+    }
+
+    .kg-header-card.kg-size-large a.kg-header-card-button {
+        margin-top: 2em;
+    }
+
+    .kg-header-card.kg-size-small a.kg-header-card-button {
+        margin-top: 1.5em;
+    }
+
+    .kg-header-card.kg-style-image a.kg-header-card-button,
+    .kg-header-card.kg-style-dark a.kg-header-card-button {
+        background: #ffffff;
+        color: #15171a;
+    }
+
+    .kg-header-card.kg-style-accent a.kg-header-card-button {
+        background: #ffffff;
+        color: var(--ghost-accent-color);
+    }
+
+    .kg-audio-card {
+        display: flex;
+        width: 100%;
+        box-shadow: inset 0 0 0 1px rgba(124, 139, 154, 0.25);
+    }
+
+    .kg-audio-thumbnail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        min-width: 80px;
+        height: 80px;
+        background: transparent;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .kg-audio-thumbnail.placeholder {
+        background: var(--ghost-accent-color);
+    }
+
+    .kg-audio-thumbnail.placeholder svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+    }
+
+    .kg-audio-player-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        --seek-before-width: 0%;
+        --volume-before-width: 100%;
+        --buffered-width: 0%;
+    }
+
+    .kg-audio-title {
+        width: 100%;
+        padding: 8px 12px 0;
+        border: none;
+        font-family: inherit;
+        font-size: 1.1em;
+        font-weight: 700;
+        background: transparent;
+    }
+
+    .kg-audio-player {
+        display: none;
+    }
+
+    .kg-width-full.kg-card-hascaption {
+        display: grid;
+        grid-template-columns: inherit;
+    }
+
+    .post-content table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .post-content th {
+        padding: 0.5em 0.8em;
+        text-align: left;
+        font-size: .75em;
+        text-transform: uppercase;
+    }
+
+    .post-content td {
+        padding: 0.4em 0.7em;
+    }
+
+    .post-content tbody tr:nth-child(2n + 1) {
+        background-color: rgba(0,0,0,0.1);
+        padding: 1px;
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td:last-child {
+        box-shadow:
+            inset 1px 0 rgba(0,0,0,0.1),
+            inset -1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:nth-child(2n + 2) td {
+        box-shadow: inset 1px 0 rgba(0,0,0,0.1);
+    }
+
+    .post-content tbody tr:last-child {
+        border-bottom: 1px solid rgba(0,0,0,.1);
+    }
+
+    .page-footer {
+        padding: 60px 5vmin;
+        margin: 60px auto 0;
+        text-align: center;
+        background-color: #f8f8f8;
+    }
+
+    .page-footer h3 {
+        margin: 0.5rem 0 0 0;
+    }
+
+    .page-footer p {
+        max-width: 500px;
+        margin: 1rem auto 1.5rem;
+        font-size: 1.7rem;
+        line-height: 1.5em;
+        color: rgba(0,0,0,0.6)
+    }
+
+    .powered {
+        display: inline-flex;
+        align-items: center;
+        margin: 30px 0 0;
+        padding: 6px 9px 6px 6px;
+        border: rgba(0,0,0,0.1) 1px solid;
+        font-size: 12px;
+        line-height: 12px;
+        letter-spacing: -0.2px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        font-weight: 500;
+        color: #222;
+        text-decoration: none;
+        background: #fff;
+        border-radius: 6px;
+    }
+
+    .powered svg {
+        height: 16px;
+        width: 16px;
+        margin: 0 6px 0 0;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            font-size: 1.6rem;
+        }
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        h1 {
+            font-size: 2.6rem;
+            line-height: 1.15em;
+        }
+        h2 {
+            font-size: 2rem;
+            line-height: 1.2em;
+        }
+        h3 {
+            font-size: 1.7rem;
+        }
+    }
+
+    :root {--ghost-accent-color: #FF1A75;}
+    </style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+
+
+</head>
+
+<body class="amp-template">
+    <header class="page-header">
+        <a href="https://turkogluc.com">
+                <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        </a>
+    </header>
+
+    <main class="content" role="main">
+        <article class="post">
+
+            <header class="post-header">
+                <h1 class="post-title">Creating PDF Reports with iText 7 in Java</h1>
+                <section class="post-meta">
+                    Cemal Turkoglu -
+                    <time class="post-date" datetime="2020-11-27">27 Nov 2020</time>
+                </section>
+            </header>
+            <figure class="post-image">
+                <amp-img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="340" layout="responsive"
+                alt="Creating PDF Reports with iText 7 in Java"
+                ></amp-img>
+            </figure>
+            <section class="post-content">
+
+                <p>I have been using <a href="https://react-pdf.org/?ref=localhost">React-pdf</a> for PDF report generation for quite sometime in one of the React project. It is a nice library for certain size of reports, as content is prepared as React components and styling becomes way easier. However if the page content is generated dynamically and there is no certainty in number of pages it might cause serious problems in the frontend side. I ended up getting my browser frozen or memory limit exceed errors. So for the huge reports I started looking for Java modules to handle it in the backend server, and it did not take me much to come across <a href="https://itextpdf.com/?ref=localhost">iText 7</a>.</p><p>First thing caught my attention was <code>html2pdf</code> module and I gave it a try. Html content can be provided as a string or a file.</p><pre><code class="language-java">public static void main(String[] args) throws FileNotFoundException {
+    String html = "&lt;h1&gt;Test&lt;/h1&gt;" +
+            "&lt;p&gt;Hello World&lt;/p&gt;";
+
+    String dest = "hello.pdf";
+    HtmlConverter.convertToPdf(html, new FileOutputStream(dest));
+}</code></pre><p>Resulting PDF:</p><figure class="kg-card kg-image-card"></figure><p>If you have a certain design in Html or you would like to generate Html with <a href="thymeleaf.org">thymeleaf</a>, this module could be a good fit for your case. </p><p>In my scenario, each item is retrieved from database and inserted to the report, and its images are also placed. The length of the text in the fields and the number of images differs in each item. I decided to use iText core module and APIs to build up a report rather than generating html and converting to pdf. So let's have a look at the building blocks of core API.</p><h2 id="basic-components">Basic Components</h2><p>We can add the dependency as follows:</p><pre><code>implementation 'com.itextpdf:itext7-core:7.1.13'</code></pre><h3 id="pdf-document">PDF Document</h3><p>PDF files are represented by <code>PdfDocument</code> class and it has a wrapper called <code>Document</code>. Instantiating <code>PdfDocument</code> class can be done by providing the <code>PdfReader</code>, or <code>PdfWriter</code> in the constructor. As we intent to write to file we can instantiate with a <code>PdfWriter</code> which wraps the <code>OutputStream</code> or destination <code>File</code>.</p><pre><code class="language-java">// Creating a PdfWriter
+String dest = "example.pdf";
+PdfWriter writer = new PdfWriter(dest);
+
+// Creating a PdfDocument
+PdfDocument pdfDoc = new PdfDocument(writer);
+
+// Adding a new page
+pdfDoc.addNewPage();
+
+// Creating a Document
+Document document = new Document(pdfDoc);
+
+// Closing the document
+document.close();
+System.out.println("PDF Created");</code></pre><p>We are going to add the components that we want to insert to the <code>Document</code> object by using the following method:</p><pre><code class="language-java">public Document add(IBlockElement element)</code></pre><h3 id="paragraph">Paragraph </h3><p><code>Paragraph</code> class is a container for textual information. It can be filled by sending string to constructor or added text by <code>add</code> method. It has many useful elements related to the text or the paragraph view.</p><pre><code class="language-java">String content = "Lorem ipsum dolor sit amet...";
+Paragraph paragraph = new Paragraph(content);
+paragraph.setFontSize(14);
+paragraph.setTextAlignment(TextAlignment.CENTER);
+paragraph.setBorder(Border.NO_BORDER);
+paragraph.setFirstLineIndent(20);
+paragraph.setItalic();
+paragraph.setBold();
+paragraph.setBackgroundColor(new DeviceRgb(245, 245, 245));
+paragraph.setMargin(10);
+paragraph.setPaddingLeft(10);
+paragraph.setPaddingRight(10);
+paragraph.setWidth(1000);
+paragraph.setHeight(100);
+document.add(paragraph);
+
+document.add(paragraph); // add second time</code></pre><figure class="kg-card kg-image-card"></figure><h3 id="areabreak">AreaBreak</h3><p><code>AreaBreak</code> can be used when we would like to start some element at the beginning of the next page. So the remaining part of the current page will be left empty and following elements will start from the next page.</p><pre><code class="language-java">String content = "Lorem ipsum dolor sit amet...";
+document.add(new Paragraph(content));
+document.add(new AreaBreak());
+document.add(new Paragraph("This text will be located in the next pagee"));</code></pre><figure class="kg-card kg-image-card"></figure><h3 id="list">List</h3><p>We can insert a <code>List</code> as follows:</p><pre><code class="language-java">Paragraph paragraph = new Paragraph("Lorem ipsum dolor...");
+document.add(paragraph);
+
+List list = new List();
+list.add("Java");
+list.add("Go");
+list.add("React");
+list.add("Apache Kafka");
+list.add("Jenkins");
+list.add("Elastic Search");
+document.add(list);</code></pre><figure class="kg-card kg-image-card"></figure><h3 id="table">Table</h3><p><code>Table</code> class can be instantiated with providing either number of columns or array of column length. We can insert <code>Cell</code> objects to a table and a cell may contain any <code>IBlockElement</code> object.</p><pre><code class="language-java">float [] pointColumnWidths = {150F, 150F, 150F, 150F};
+Table table = new Table(pointColumnWidths);
+// Table table = new Table(4); init by number of columns
+
+table.addCell(new Cell().add(new Paragraph("Id")));
+table.addCell(new Cell().add(new Paragraph("Name")));
+table.addCell(new Cell().add(new Paragraph("Location")));
+table.addCell(new Cell().add(new Paragraph("Date")));
+
+table.addCell(new Cell().add(new Paragraph("1000")));
+table.addCell(new Cell().add(new Paragraph("Item-1")));
+table.addCell(new Cell().add(new Paragraph("Istanbul")));
+table.addCell(new Cell().add(new Paragraph("01/12/2020")));
+
+table.addCell(new Cell().add(new Paragraph("1005")));
+table.addCell(new Cell().add(new Paragraph("Item-2")));
+table.addCell(new Cell().add(new Paragraph("Warsaw")));
+table.addCell(new Cell().add(new Paragraph("05/12/2020")));</code></pre><figure class="kg-card kg-image-card"></figure><p><code>Table</code> and <code>Cell</code> classes contains many methods related to styling such as borders, alignments, background options, margin/padding settings etc.</p><h3 id="image">Image</h3><p><code>Image</code> class is used to insert an image to pdf file. It might be created by a local file, remote url or stream. </p><pre><code class="language-java">String imFile = "images/logo2.png";
+ImageData data = ImageDataFactory.create(imFile);
+Image image = new Image(data);
+image.setPadding(20);
+image.setMarginTop(20);
+image.setWidth(200);
+image.setMaxHeight(250);
+image.setAutoScale(false);
+document.add(image);</code></pre><p>ImageDataFactory class may create an image instance from local path or remote URL. <code>Image</code> class has many styling methods as other components.</p><figure class="kg-card kg-image-card"></figure><h2 id="exporting-reports-with-rest-apis">Exporting Reports With REST APIs</h2><p>As a solution to my scenario, first of all, I prepared some general styling for each report type so that I can use it for different entity types. I created an <code>AbstractPdfDocument</code> in order to re-use the common functionality, for example having title and logo at the top of each page, or some common functionality as inserting remote images, or tables. I achieved placing logo and title at the top of each page by registering an EventHandler to the Document class. So the components are listed as follows:</p><h3 id="imagedownloader">ImageDownloader</h3><p>As the images are going to be downloaded from remote URLs, I decided to create some <code>ImageDownloader</code> service to download images with a thread pool in parallel.</p><pre><code class="language-java">public class ImageDownloader {
+
+    private static final Logger logger = LoggerFactory.getLogger(ImageDownloader.class);
+    private final int NUMBER_OF_THREADS = 12;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+
+    public ConcurrentHashMap &lt;String, Future &lt;Image&gt;&gt; downloadImagesInParallel(
+            List &lt;String&gt; imageList, ConcurrentHashMap &lt;String, Future &lt;Image&gt;&gt; imageMap) {
+
+        if (imageList != null &amp;&amp; imageList.size() &gt; 0) {
+            imageList.forEach(image -&gt; startDownloadImageTask(imageMap, image));
+        }
+        return imageMap;
+    }
+
+    private void startDownloadImageTask(ConcurrentHashMap &lt;String, Future &lt;Image&gt;&gt; imageMap, String image) {
+        Future &lt;Image&gt; imageFuture = executorService.submit(() -&gt; getImageObject(image));
+        imageMap.put(image, imageFuture);
+    }
+
+    private Image getImageObject(String url) {
+        try {
+            return new Image(ImageDataFactory.create(url, false));
+        } catch (MalformedURLException e) {
+            logger.error("download image failed: {}", e.getMessage());
+            return null;
+        }
+    }
+}</code></pre><h3 id="tableheadereventhandler">TableHeaderEventHandler</h3><p>This event handler is used to add a table with logo and title at the top of each page and it is code is as follows:</p><pre><code class="language-java">class TableHeaderEventHandler implements IEventHandler {
+    private Table table;
+    private float tableHeight;
+    private Document doc;
+
+    public TableHeaderEventHandler(Document doc, String documentTitle) {
+        this.doc = doc;
+        // Calculate top margin to be sure that the table will fit the margin.
+        initTable(documentTitle);
+
+        TableRenderer renderer = (TableRenderer) table.createRendererSubTree();
+        renderer.setParent(new DocumentRenderer(doc));
+
+        // Simulate the positioning of the renderer to find out how much space the header table will occupy.
+        LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(0, PageSize.A4)));
+        tableHeight = result.getOccupiedArea().getBBox().getHeight();
+
+        // set top margin
+        float topMargin = 36 + getTableHeight();
+        doc.setMargins(topMargin, 36, 36, 36);
+    }
+
+    @Override
+    public void handleEvent(Event currentEvent) {
+        PdfDocumentEvent docEvent = (PdfDocumentEvent) currentEvent;
+        PdfDocument pdfDoc = docEvent.getDocument();
+        PdfPage page = docEvent.getPage();
+        PdfCanvas canvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), pdfDoc);
+        PageSize pageSize = pdfDoc.getDefaultPageSize();
+        float coordX = pageSize.getX() + doc.getLeftMargin();
+        float coordY = pageSize.getTop() - doc.getTopMargin();
+        float width = pageSize.getWidth() - doc.getRightMargin() - doc.getLeftMargin();
+        float height = getTableHeight();
+        Rectangle rect = new Rectangle(coordX, coordY, width, height);
+
+        new Canvas(canvas, rect)
+                .add(table)
+                .close();
+    }
+
+    public float getTableHeight() {
+        return tableHeight;
+    }
+
+    private void initTable(String documentTitle) {
+        table = new Table(new float[]{320F, 200F});
+        table.useAllAvailableWidth();
+        Cell title = new Cell();
+        title.setBorder(Border.NO_BORDER);
+        Paragraph movement_report = new Paragraph(documentTitle).setFontSize(17);
+        title.add(movement_report);
+        table.addCell(title);
+        table.setMarginBottom(20);
+        ImageData data = ImageDataFactory.create("images/rsz_logo10.png");
+        Image img = new Image(data);
+        img.setWidth(200);
+        Cell logo = new Cell();
+        logo.setBorder(Border.NO_BORDER);
+        logo.add(img);
+        table.addCell(logo);
+    }
+}</code></pre><h3 id="abstractpdfdocument">AbstractPdfDocument</h3><p><code>AbstractPdfDocument</code> contains the common functionality as adding header to pages, creation and destruction of <code>Document</code> object, and helper methods as inserting images, tables, titles etc.</p><pre><code class="language-java">public abstract class AbstractPdfDocument&lt;T&gt; {
+
+    protected final int MAX_IMAGE_NUM = 4;
+    protected final Color GRAY = new DeviceRgb(245, 245, 245);
+    protected final Color GRAY_LINE = new DeviceRgb(212, 212, 212);
+    protected final Color WHITE = new DeviceRgb(255, 255, 255);
+    ConcurrentHashMap &lt;String, Future &lt;Image&gt;&gt; imageMap = new ConcurrentHashMap&lt;&gt;();
+
+    private final ImageDownloader imageDownloader;
+    protected final String documentTitle;
+
+    AbstractPdfDocument(ImageDownloader imageDownloader, String documentTitle) {
+        this.imageDownloader = imageDownloader;
+        this.documentTitle = documentTitle;
+    }
+
+    public final byte[] generatePdf(List&lt;T&gt; data) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
+        Document document = new Document(pdfDocument);
+        TableHeaderEventHandler handler = new TableHeaderEventHandler(document, documentTitle);
+        pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, handler);
+
+        writeData(document, data);
+
+        document.close();
+        return outputStream.toByteArray();
+    }
+
+    public void startDownloadingImages(List &lt;String&gt; imageList) {
+        if (imageList != null &amp;&amp; imageList.size() &gt; 0) {
+            imageDownloader.downloadImagesInParallel(imageList, imageMap);
+        }
+    }
+
+    protected void insertImageTable(Document document, List &lt;String&gt; imageList) {
+        Table imageTable = new Table(4);
+
+        imageList.forEach(image -&gt; {
+            try {
+                Image img = imageMap.get(image).get();
+                imageTable.addCell(new Cell()
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setHorizontalAlignment(HorizontalAlignment.CENTER)
+                        .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                        .setBorder(new SolidBorder(GRAY_LINE, 1))
+                        .add(img.scaleToFit(114, 114))
+                        .setPadding(7));
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+        document.add(new Paragraph().setMarginTop(10));
+        document.add(imageTable);
+    }
+
+    protected Table createTable(TableFields tableFields) {
+        Table table = new Table(new float[]{220F, 300F});
+        AtomicInteger rowCounter = new AtomicInteger(0);
+
+        tableFields.fieldList.forEach(field -&gt;
+                insertIfNotNull(field.displayName, field.value, table, rowCounter));
+        return table;
+    }
+
+    protected Paragraph getBlockTitle(String title) {
+        return new Paragraph(title)
+                .setFontSize(13)
+                .setBorderBottom(new SolidBorder(GRAY_LINE, 1))
+                .setMarginTop(35);
+    }
+
+    protected void insertIfNotNull(String displayName, Object value, Table table, AtomicInteger rowCounter) {
+        if (value != null) {
+            Color color = rowCounter
+                    .getAndIncrement() % 2 == 0 ?
+                    GRAY :
+                    WHITE;
+
+            table.addCell(new Cell()
+                    .setBorder(Border.NO_BORDER)
+                    .setBackgroundColor(color)
+                    .add(new Paragraph(displayName)));
+
+            table.addCell(new Cell()
+                    .setBorder(Border.NO_BORDER)
+                    .setBackgroundColor(color)
+                    .add(new Paragraph(String.valueOf(value))));
+        }
+    }
+
+    protected static class TableField {
+        public String displayName;
+        public Object value;
+
+        protected TableField(String displayName, Object value) {
+            this.displayName = displayName;
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TableField)) return false;
+            TableField that = (TableField) o;
+            return Objects.equals(displayName, that.displayName) &amp;&amp;
+                    Objects.equals(value, that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(displayName, value);
+        }
+    }
+
+    protected static class TableFields {
+        private List &lt;TableField&gt; fieldList = new ArrayList &lt;&gt;();
+
+        protected void add(String displayName, Object value) {
+            fieldList.add(new TableField(displayName, value));
+        }
+
+        protected void add(TableField field) {
+            fieldList.add(field);
+        }
+    }
+
+    protected abstract void writeData(Document document, List&lt;T&gt; data);
+}</code></pre><p>This class uses <code>Factory Method</code> design pattern with its <code>writeData</code> abstract method. The inheritors of this class has to implement this method to lead the insertion of actual content. For each entity the content is inserted differently, and by implementing this method the concrete classes should define how it should be inserted. And also, child classes might use the helper methods for common tasks.</p><h3 id="itempdfdocument">ItemPdfDocument</h3><p><code>ItemPdfDocument</code> is the concrete class which extends the <code>AbstractPdfDocument</code> and implements the <code>writeData</code> method. It handles inserting item details and after uses helper method <code>insertImageTable</code> of its parent class.</p><pre><code class="language-java">public class ItemPdfDocument extends AbstractPdfDocument&lt;Item&gt; {
+
+    ItemPdfDocument(ImageDownloader imageDownloader) {
+        super(imageDownloader, "Item Report");
+    }
+
+    @Override
+    protected void writeData(Document document, List &lt;Item&gt; items) {
+        startDownloadingItemImages(items);
+        items.forEach(item -&gt; {
+            addItemFields(document, item);
+            addItemImages(document, item);
+        });
+
+    }
+
+    private void startDownloadingItemImages(List &lt;Item&gt; items) {
+        if(items != null &amp;&amp; items.size() &gt; 0) {
+            startDownloadingImages(
+                    items.stream()
+                            .map(Item::getImgList)
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toList())
+            );
+        }
+    }
+
+    private void addItemFields(Document document, Item item) {
+        document.add(getBlockTitle("Report: " + item.getId()).setMarginTop(0));
+
+        TableFields movementFields = new TableFields();
+        movementFields.add("Report Id", item.getId());
+        movementFields.add("Item Name", item.getName());
+        movementFields.add("Title", item.getTitle());
+        movementFields.add("Description", item.getDescription());
+        movementFields.add("Area", item.getArea());
+        movementFields.add("Location", item.getLocation());
+        Table movementDetails = createTable(movementFields);
+
+        document.add(movementDetails);
+    }
+
+    private void addItemImages(Document document, Item item) {
+        insertImageTable(document, item.getImgList());
+        document.add(new Paragraph());
+    }
+}</code></pre><p>So introducing new reports for each entity type is easy, we can create a new concrete class and show how to insert the content in the <code>writeData</code> method.</p><p>An example report generated by this document looks like as follows:</p><figure class="kg-card kg-image-card"></figure><h3 id="controller">Controller</h3><p>At the controller I create an endpoint to retrieve the generated pdf file. At the first attempt I returned the byte array from output stream however I realized that might cause corrupted PDF files at the client side. So I encode it with base64 and client should decode it before saving the file.</p><pre><code class="language-java">@PostMapping("/pdf")
+public void exportPdf(@RequestParam(required = false) List&lt;Long&gt; idList, HttpServletResponse response) throws IOException {
+
+    response.setHeader("Expires", "0");
+    response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+    response.setHeader("Pragma", "public");
+    response.setContentType("application/pdf");
+
+    byte[] byteArray = itemService.exportPdf(idList);
+
+    byte[] encodedBytes = Base64.getEncoder().encode(byteArray);
+    response.setContentLength(encodedBytes.length);
+    OutputStream os = response.getOutputStream();
+    os.write(encodedBytes);
+    os.flush();
+    os.close();
+}</code></pre>
+
+            </section>
+
+        </article>
+    </main>
+    <footer class="page-footer">
+            <amp-img class="site-icon" src="https://turkogluc.com/content/images/2020/05/64x64.png" width="50" height="50" layout="fixed" alt="Cemal Turkoglu"></amp-img>
+        <h3>Cemal Turkoglu</h3>
+            <p>Thoughts, stories and ideas.</p>
+        <p><a href="https://turkogluc.com">Read more posts →</a></p>
+        <a class="powered" href="https://ghost.org" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 156"><g fill="none" fill-rule="evenodd"><rect fill="#15212B" width="156" height="156" rx="27"/><g transform="translate(36 36)" fill="#F6F8FA"><path d="M0 71.007A4.004 4.004 0 014 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0130 84H4a4 4 0 01-4-4.007v-8.986zM50 71.007A4.004 4.004 0 0154 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0180 84H54a4 4 0 01-4-4.007v-8.986z"/><rect y="34" width="84" height="17" rx="4"/><path d="M0 4.007A4.007 4.007 0 014.007 0h41.986A4.003 4.003 0 0150 4.007v8.986A4.007 4.007 0 0145.993 17H4.007A4.003 4.003 0 010 12.993V4.007z"/><rect x="67" width="17" height="17" rx="4"/></g></g></svg> Published with Ghost</a>
+    </footer>
+
+</body>
+</html>

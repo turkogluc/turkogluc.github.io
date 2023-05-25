@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Spring Security JWT Authentication</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preload" href="/assets/css/app.css?v=b36b0218e7" as="style" />
+    <link rel="preload" href="/assets/js/manifest.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor/content-api.min.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/vendor.js?v=b36b0218e7" as="script" />
+    <link rel="preload" href="/assets/js/app.js?v=b36b0218e7" as="script" />
+
+      <link rel="preload" href="/assets/css/post.css?v=b36b0218e7" as="style" />
+  <link rel="preload" href="/assets/js/post.js?v=b36b0218e7" as="script" />
+
+
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-regular.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-600.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff2?v=b36b0218e7") format('woff2'),
+            url("/assets/fonts/source-sans-pro/latin/source-sans-pro-700.woff?v=b36b0218e7") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7");
+        src: url("/assets/fonts/icomoon/icomoon.eot?101fc3?v=b36b0218e7#iefix") format('embedded-opentype'),
+        url("/assets/fonts/icomoon/icomoon.ttf?101fc3?v=b36b0218e7") format('truetype'),
+        url("/assets/fonts/icomoon/icomoon.woff?101fc3?v=b36b0218e7") format('woff'),
+        url("/assets/fonts/icomoon/icomoon.svg?101fc3?v=b36b0218e7#icomoon") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/app.css?v=b36b0218e7" media="screen" />
+
+      <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=b36b0218e7" media="screen" />
+
+
+
+
+    <meta name="description" content="Spring Security JWT Authentication made easy. JSON Web Tokens (JWT) are commonly used for user authentication.">
+    <link rel="icon" href="https://turkogluc.com/content/images/size/w256h256/2020/05/64x64.png" type="image/png">
+    <link rel="canonical" href="https://turkogluc.com/spring-jwt-authentication/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://turkogluc.com/spring-jwt-authentication/amp/">
+
+    <meta property="og:site_name" content="Cemal Turkoglu">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Spring Security JWT Authentication">
+    <meta property="og:description" content="Spring Security JWT Authentication explained.">
+    <meta property="og:url" content="https://turkogluc.com/spring-jwt-authentication/">
+    <meta property="og:image" content="https://turkogluc.com/content/images/2020/05/jwt_05.jpg">
+    <meta property="article:published_time" content="2020-05-23T01:56:32.000Z">
+    <meta property="article:modified_time" content="2020-05-31T20:08:29.000Z">
+    <meta property="article:tag" content="Spring">
+    <meta property="article:tag" content="Security">
+
+    <meta property="article:publisher" content="https://www.facebook.com/ghost">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Spring Security JWT Authentication">
+    <meta name="twitter:description" content="Spring Security JWT Authentication explained.">
+    <meta name="twitter:url" content="https://turkogluc.com/spring-jwt-authentication/">
+    <meta name="twitter:image" content="https://turkogluc.com/content/images/2020/05/jwt_05.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Cemal Turkoglu">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Spring, Security">
+    <meta name="twitter:site" content="@turkoglu4c">
+    <meta property="og:image:width" content="1000">
+    <meta property="og:image:height" content="600">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://static.ghost.org/v1.0.0/images/ghost-logo.svg"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Cemal Turkoglu",
+        "url": "https://turkogluc.com/author/cemal/",
+        "sameAs": []
+    },
+    "headline": "Spring Security JWT Authentication",
+    "url": "https://turkogluc.com/spring-jwt-authentication/",
+    "datePublished": "2020-05-23T01:56:32.000Z",
+    "dateModified": "2020-05-31T20:08:29.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://turkogluc.com/content/images/2020/05/jwt_05.jpg",
+        "width": 1000,
+        "height": 600
+    },
+    "keywords": "Spring, Security",
+    "description": "Spring Security JWT Authentication explained. ",
+    "mainEntityOfPage": "https://turkogluc.com/spring-jwt-authentication/"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 5.49">
+    <link rel="alternate" type="application/rss+xml" title="Cemal Turkoglu" href="https://turkogluc.com/rss/">
+    <script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.32/umd/portal.min.js" data-i18n="false" data-ghost="https://turkogluc.com/" data-key="8aed1ac6d3b2be60cf4aedf769" data-api="https://turkogluc.com/ghost/api/content/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/sodo-search.min.js" data-key="8aed1ac6d3b2be60cf4aedf769" data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.1/umd/main.css" data-sodo-search="https://turkogluc.com/" crossorigin="anonymous"></script>
+
+    <link href="https://turkogluc.com/webmentions/receive/" rel="webmention">
+    <script defer src="/public/cards.min.js?v=b36b0218e7"></script>
+    <link rel="stylesheet" type="text/css" href="/public/cards.min.css?v=b36b0218e7">
+    <script defer src="/public/member-attribution.min.js?v=b36b0218e7"></script>
+    <!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/idea.min.css" integrity="sha512-jxbAYisMjIOokHq0YnYxWqTUfJRe8s1U2F1lp+se3vv0CS8floaFL3Mc3GEpG3HCG2s6lxHb3QvQdmUOT1ZzKw==" crossorigin="anonymous" />
+
+<style>
+   .l-post-content pre>code {
+    white-space:inherit
+  }
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+
+</style>
+
+<!-- prism.js -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-okaidia.min.css" />
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism-tomorrow.min.css" />
+-->
+<style>
+  pre[class*="language-"] {
+    margin: 0 0 1.5em !important;
+  }
+  code {
+    text-shadow: none !important;
+  }
+  .token.operator {
+    background: none !important;
+  }
+  :not(pre) > code[class*="language-"],
+  pre[class*="language-"] {
+    background: #20262E !important;
+  }
+</style>
+
+
+<!--
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+-->
+<style>:root {--ghost-accent-color: #FF1A75;}</style>
+
+    <style>
+      :root {
+        --primary-subtle-color: var(--ghost-accent-color) !important;
+      }
+    </style>
+
+    <script>
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "https://turkogluc.com"
+      // @license-end
+    </script>
+
+  </head>
+  <body class="post-template tag-spring tag-security tag-hash-import-2023-05-25-09-05">
+
+
+
+
+
+<header class="m-header with-picture js-header">
+  <div class="m-mobile-topbar" data-aos="fade-down">
+    <button class="m-icon-button in-mobile-topbar js-open-menu" aria-label="Open menu">
+      <span class="icon-menu" aria-hidden="true"></span>
+    </button>
+      <a href="https://turkogluc.com" class="m-logo in-mobile-topbar">
+        <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+      </a>
+    <button class="m-icon-button in-mobile-topbar js-open-search" aria-label="Open search">
+      <span class="icon-search" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="m-menu js-menu">
+    <button class="m-icon-button outlined as-close-menu js-close-menu" aria-label="Close menu">
+      <span class="icon-close"></span>
+    </button>
+    <div class="m-menu__main" data-aos="fade-down">
+      <div class="l-wrapper">
+        <div class="m-nav js-main-nav">
+          <nav class="m-nav__left js-main-nav-left" role="navigation" aria-label="Main menu">
+            <ul>
+                <li class="only-desktop">
+                  <a href="https://turkogluc.com" class="m-logo">
+                    <img src="https://static.ghost.org/v1.0.0/images/ghost-logo.svg" alt="Cemal Turkoglu" class="">
+                  </a>
+                </li>
+
+    <li class="nav-home">
+      <a href="https://turkogluc.com/">Home</a>
+    </li>
+    <li class="nav-spring">
+      <a href="https://turkogluc.com/tag/spring/">Spring</a>
+    </li>
+    <li class="nav-kafka">
+      <a href="https://turkogluc.com/tag/apache-kafka/">Kafka</a>
+    </li>
+    <li class="nav-java">
+      <a href="https://turkogluc.com/tag/java/">Java</a>
+    </li>
+    <li class="nav-jenkins">
+      <a href="https://turkogluc.com/tag/jenkins/">Jenkins</a>
+    </li>
+    <li class="nav-react">
+      <a href="https://turkogluc.com/tag/react/">React</a>
+    </li>
+
+              <li class="submenu-option js-submenu-option">
+                <button class="m-icon-button in-menu-main more js-toggle-submenu" aria-label="Open submenu">
+                  <span class="icon-more" aria-hidden="true"></span>
+                </button>
+                <div class="m-submenu js-submenu">
+                  <div class="l-wrapper in-submenu">
+                    <section class="m-recent-articles">
+                      <h3 class="m-submenu-title in-recent-articles">Recent articles</h3>
+                          <div class="swiper js-recent-slider">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                  <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Centralized Logging and Monitoring with Elastic Stack">
+                                      Centralized Logging and Monitoring with Elastic Stack
+                                    </h3>
+                                    <span class="m-recent-article__date">a year ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/sql-window-functions/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wxfDF8YWxsfDF8fHx8fHwyfHwxNjM0OTg5MzQ0&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="SQL Window Functions Introduction">
+                                      SQL Window Functions Introduction
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="/content/images/size/w300/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Server Sent Events with Spring Boot and ReactJS">
+                                      Server Sent Events with Spring Boot and ReactJS
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                                <div class="swiper-slide">
+                                  <a href="/java-creating-pdf-reports-with-itext/" class="m-recent-article">
+                                    <div class="m-recent-article__picture ">
+                                        <img src="https://images.unsplash.com/photo-1542216172-f356fdd22653?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;w&#x3D;300" loading="lazy" alt="">
+                                    </div>
+                                    <h3 class="m-recent-article__title js-recent-article-title" title="Creating PDF Reports with iText 7 in Java">
+                                      Creating PDF Reports with iText 7 in Java
+                                    </h3>
+                                    <span class="m-recent-article__date">2 years ago</span>
+                                  </a>
+                                </div>
+                            </div>
+                          </div>
+                    </section>
+                    <section class="m-tags">
+                      <h3 class="m-submenu-title">Tags</h3>
+                        <ul>
+                            <li>
+                              <a href="/tag/aop/">AOP</a>
+                            </li>
+                            <li>
+                              <a href="/tag/apache-kafka/">Apache Kafka</a>
+                            </li>
+                            <li>
+                              <a href="/tag/concurrency/">Concurrency</a>
+                            </li>
+                            <li>
+                              <a href="/tag/devops/">devops</a>
+                            </li>
+                            <li>
+                              <a href="/tag/docker/">docker</a>
+                            </li>
+                            <li>
+                              <a href="/tag/elasticsearch/">Elasticsearch</a>
+                            </li>
+                            <li>
+                              <a href="/tag/event-handling/">Event Handling</a>
+                            </li>
+                            <li>
+                              <a href="/tag/java/">Java</a>
+                            </li>
+                            <li>
+                              <a href="/tag/jenkins/">Jenkins</a>
+                            </li>
+                        </ul>
+                    </section>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <div class="m-nav__right">
+            <button class="m-icon-button in-menu-main js-open-search" aria-label="Open search">
+              <span class="icon-search" aria-hidden="true"></span>
+            </button>
+            <div class="m-toggle-darkmode js-tooltip" data-tippy-content="Toggle light/dark mode" tabindex="0">
+              <label for="toggle-darkmode" class="sr-only">
+                Toggle light/dark mode
+              </label>
+              <input id="toggle-darkmode" type="checkbox" class="js-toggle-darkmode">
+              <div>
+                <span class="icon-moon moon" aria-hidden="true"></span>
+                <span class="icon-sunny sun" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<main class="main-wrap">
+
+  <section class="m-hero with-picture" data-aos="fade">
+    <div class="m-hero__picture in-post">
+      <img
+        srcset="
+          /content/images/size/w300/2020/05/jwt_05.jpg 300w,
+          /content/images/size/w600/2020/05/jwt_05.jpg 600w,
+          /content/images/size/w1000/2020/05/jwt_05.jpg 1000w,
+          /content/images/size/w2000/2020/05/jwt_05.jpg 2000w
+        "
+        sizes="(max-width: 600px) 600px, (max-width: 1000px) 1000px, 2000px"
+        src="/content/images/size/w1000/2020/05/jwt_05.jpg"
+        alt=""
+      />
+    </div>
+    </section>
+
+  <article>
+    <div class="l-content in-post">
+        <div class="l-wrapper in-post  js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">Spring Security JWT Authentication</h1>
+              <div class="m-heading__meta">
+                  <a href="https://turkogluc.com/tag/spring/" class="m-heading__meta__tag">Spring</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                <span class="m-heading__meta__time">May 23, 2020</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https://turkogluc.com/spring-jwt-authentication/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text=Spring%20Security%20JWT%20Authentication&url=https://turkogluc.com/spring-jwt-authentication/"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="Scroll to top">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p>JSON Web Tokens (JWT) are commonly used for user authentication. It is a token generated by the backend and given to the frontend to be used in the subsequent requests as the session identifier.</p><p>JWT tokens are consist of 3 parts separated by dots, as <code>header</code>.<code>payload</code>.<code>signature</code>. <strong>Header</strong> contains the the token type and the algorithm used to sign, such as HMAC SHA256 or RSA. The <strong>payload</strong> contains the claims which is the data to be stored in the token, and you can think like key value pairs.</p><pre><code class="language-json">{
+  "timestamp": "1234567890",
+  "name": "Frodo Baggins",
+  "group": "Fellowship",
+  "active: true
+}</code></pre><p>The <strong>signature</strong> part contains the signature created by the algorithm that is using the header, payload, and a <strong>secret</strong> key. So the signature is used to verify that the message is not changed on the way by any intruder. So we should keep the secret key private. Read more details on JWT Details: <a href="https://jwt.io/?ref=localhost">jwt.io</a>. An example token looks like as follows:</p><figure class="kg-card kg-image-card kg-width-wide"><img src="https://turkogluc.com/content/images/2020/05/Screenshot-2020-05-23-at-00.55.15.png" class="kg-image" alt loading="lazy"></figure><p>After login operation, backend creates such a token and sends back to frontend. In the following requests frontend should send this key for example in the header <code>Authorization</code> in order to recognise the owner of the session. Backend application should verify this token at each API call as follows:</p><ul><li>Check if the JWT token exists in the Authorization header</li><li>Validate the token</li><li>Otherwise reject with permission denied (403)</li><li>If it is a login call, check the credentials, generate a token and send it back.</li></ul><h2 id="initiate-the-spring-project">Initiate the Spring Project</h2><p>We initiate our project from <a href="https://start.spring.io/?ref=localhost">Spring Initializr</a> with the <code>web</code>, <code>jpa</code> and <code>security</code> dependincies. We need to make sure that we have the security dependency:</p><figure class="kg-card kg-code-card"><pre><code class="language-gradle">dependencies {
+    ...
+    compile("org.springframework.boot:spring-boot-starter-security")
+}</code></pre><figcaption>build.gradle</figcaption></figure><p>After that we can run a database for example on docker.</p><pre><code class="language-bash">docker run -e POSTGRES_PASSWORD=root -d -p 5432:5432 -v db-data:/var/lib/postgresql/data postgres</code></pre><p>And provide the connection details in <code>application.yml</code> </p><figure class="kg-card kg-code-card"><pre><code class="language-yml">spring:
+    datasource:
+        password: root
+        url: jdbc:postgresql://db:5432/postgres
+        username: postgres
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+                temp:
+                    use_jdbc_metadata_defaults: false
+</code></pre><figcaption>application.yml</figcaption></figure><h2 id="user-registration">User Registration</h2><p>Spring provides <code>UserDetails</code> class that can be used for authentication so we need to extend this class and generate our <code>ApplicationUser</code> entity. We can add desired fields for a user and we also need to override the parent's methods.</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@Entity
+@Data
+public class ApplicationUser implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String username;
+    private String password;
+    private String name;
+    private String email;
+    private String phoneNumber;
+    private String address;
+    private String avatarUrl;
+    private String type;
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public Collection &lt;? extends GrantedAuthority&gt; getAuthorities() {
+        return null;
+    }
+}</code></pre><figcaption>ApplicationUser.class</figcaption></figure><p>In order to interact with the database we can use JPA's <code>JpaRepository</code>. It has all the built in save, update, find, delete methods.  We only need to add <code>findByUsername</code> method that will be need later.</p><pre><code class="language-java">@Repository
+public interface ApplicationUserRepository extends JpaRepository &lt;ApplicationUser, Long&gt; {
+    ApplicationUser findByUsername(String username);
+}
+</code></pre><p>Spring Security also provides built-in <code>UserDetailsService</code>. We only need to extend it override the <code>loadUserByUsername</code> method to configure how the user will. be retrieved. So it gives us the prototype, but implementation is flexible.</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+    private ApplicationUserRepository applicationUserRepository;
+
+    public UserDetailsServiceImpl(ApplicationUserRepository applicationUserRepository) {
+        this.applicationUserRepository = applicationUserRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        ApplicationUser applicationUser = applicationUserRepository.findByUsername(username);
+        if (applicationUser == null) {
+            throw new UsernameNotFoundException(username);
+        }
+        return applicationUser;
+    }</code></pre><figcaption>UserDetailsService.java</figcaption></figure><p>We have our service and repository, now we can create the controller to expose the registration API to our clients.</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final ApplicationUserRepository applicationUserRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public UserController(ApplicationUserRepository applicationUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.applicationUserRepository = applicationUserRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    @PostMapping("/sign-up")
+    public void signUp(@RequestBody ApplicationUser user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        applicationUserRepository.save(user);
+    }
+}
+</code></pre><figcaption>UserController.java</figcaption></figure><p>When we receive the user details to be saved, we are encoding the user password with Bcrypt encoder. We can create <code>BCryptPasswordEncoder</code> bean as follows:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">@Configuration
+public class BCryptEncoder {
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}</code></pre><figcaption>BCryptEncoder.java</figcaption></figure><p>Now we expose the <code>/api/users/sign-up/</code> endpoint to our users. We can send user details to this endpoint and it will be saved to database.</p><h2 id="user-authentication-and-authorization">User Authentication and Authorization</h2><p>In this step we will secure our endpoints and configure the spring via security filters to check authorization (if the user is eligible to access the resource) , and also handle the authentication while logging in. First of all let's keep our constants in a class:</p><figure class="kg-card kg-code-card"><pre><code class="language-java">public class SecurityConstants {
+    public static final String SECRET = "PrivateSecurityKey";
+    public static final long EXPIRATION_TIME = 864_000_000; // 10 days
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
+    public static final String SIGN_UP_URL = "/api/users/sign-up";
+}</code></pre><figcaption>SecurityConstants.java</figcaption></figure><p>And then we will apply following steps:</p><ul><li>Extend the <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configuration/WebSecurityConfigurerAdapter.html?ref=localhost"><code>WebSecurityConfigurerAdapter</code></a> to customise the security configuration.</li></ul><figure class="kg-card kg-code-card"><pre><code class="language-java">@EnableWebSecurity
+public class WebSecurity extends WebSecurityConfigurerAdapter {
+    private UserDetailsServiceImpl userDetailsService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public WebSecurity(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userDetailsService = userDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().
+                csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), userDetailsService))
+                // this disables session creation on Spring Security
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.applyPermitDefaultValues();
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addExposedHeader(SecurityConstants.HEADER_STRING);
+        source.registerCorsConfiguration("/**",corsConfiguration);
+        return source;
+    }
+
+}</code></pre><figcaption>WebSecurity.java</figcaption></figure><p>We are configuring our endpoints to be private, except the <code>SIGN_UP_URL</code> and <code>actuator</code> which can be used for health checks. So to be able to access rest of the endpoints a user need to have an <code>Authorization</code> header with issued JWT Token. We are adding the Authentication filter and the Authorization filter in the security filter chain. And we are setting our <code>UserDetailsService</code> to be used for checking credentials. Finally we configure the <code>Cors</code> configuration.</p><ul><li>Create authentication filter that will issue JWTs to users logging in</li></ul><figure class="kg-card kg-code-card"><pre><code class="language-java">public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private AuthenticationManager authenticationManager;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest req,
+                                                HttpServletResponse res) throws AuthenticationException {
+        try {
+            ApplicationUser creds = new ObjectMapper()
+                    .readValue(req.getInputStream(), ApplicationUser.class);
+
+            return authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            creds.getUsername(),
+                            creds.getPassword(),
+                            new ArrayList &lt;&gt;())
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
+                                            FilterChain chain,
+                                            Authentication auth) throws IOException, ServletException {
+
+
+        ApplicationUser principal = (ApplicationUser) auth.getPrincipal();
+
+        String token = JWT.create()
+                .withSubject(principal.getUsername())
+                .withClaim("userId", principal.getId())
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .sign(HMAC256(SECRET.getBytes()));
+        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+    }</code></pre><figcaption>JWTAuthenticationFilter.java</figcaption></figure><p>So we are extending <code>UsernamePasswordAuthenticationFilter</code> and implementing its methods:</p><p><strong>attemptAuthentication: </strong>checks the user credentials</p><p><strong>successfulAuthentication</strong>: issues the JWT token. Note that it is adding user id and username claims to the token. We can also add any custom data to be stored as a claim inside the token.</p><ul><li>Create authorization filter to validate requests containing JWTs</li></ul><figure class="kg-card kg-code-card"><pre><code class="language-java">public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+
+    private UserDetailsServiceImpl userDetailsService;
+
+    JWTAuthorizationFilter(AuthenticationManager authManager, UserDetailsServiceImpl userDetailsService) {
+        super(authManager);
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain) throws IOException, ServletException {
+        String header = req.getHeader(HEADER_STRING);
+
+        if (header == null || header.endsWith("null")) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        chain.doFilter(req, res);
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        String token = request.getHeader(HEADER_STRING);
+        if (token != null) {
+            // parse the token.
+            Long userId = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
+                    .build()
+                    .verify(token.replace(TOKEN_PREFIX, ""))
+                    .getClaim("userId").asLong();
+
+            if (userId &gt; 0) {
+                ApplicationUser user = userDetailsService.getApplicationUserById(userId);
+                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList &lt;&gt;());
+            }
+            return null;
+        }
+        return null;
+    }
+}</code></pre><figcaption>JWTAuthorizationFilter.class</figcaption></figure><p>For this one we are extending the <code>BasicAuthenticationFilter</code>  and implementing its method <code>doFilterInternal</code>. This method is checking if there is a <code>HEADER_STRING</code>, which is <code>Authorization</code> in the request. If there is no header or the token is null, it calls. <code>chain.doFilter(req, res);</code> to continue the filter chain and returns. If there is a token in the header our <code>getAuthentication</code> method tries to verify the token with using the <code>SECRET</code> key and parses the token.  </p><p>We can retrieve our claims in here.  For example with retrieving userId from the token we can find the user details from the database and set as principal. Spring keeps the principal object in the Security context as the current user. Later on in our services if we need to get the user who makes the call we can retrieve it from Security context as follows:</p><pre><code class="language-java">ApplicationUser principal = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+</code></pre><h2 id="demo">Demo</h2><p>As the spring security automatically exposes the endpoint <code>/login</code> we can register a user and try to login.</p><ul><li> Register User</li></ul><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><img src="https://turkogluc.com/content/images/2020/05/Screenshot-2020-05-23-at-03.18.46-1.png" class="kg-image" alt loading="lazy"><figcaption>Register User</figcaption></figure><ul><li>Login. After Successful login we receive JWT in the response header</li></ul><figure class="kg-card kg-image-card kg-width-wide"><img src="https://turkogluc.com/content/images/2020/05/Screenshot-2020-05-23-at-03.20.02-1.png" class="kg-image" alt loading="lazy"></figure><ul><li>If we try to access a private endpoint without sending JWT,  security filters will complain and do not allow as the request is not authorized</li></ul><figure class="kg-card kg-image-card kg-width-wide"><img src="https://turkogluc.com/content/images/2020/05/Screenshot-2020-05-23-at-03.23.47.png" class="kg-image" alt loading="lazy"></figure><ul><li>If we access a private endpoint with the issued JWT, we will be allowed as we are authorized, and our JWT token proves our session.</li></ul><figure class="kg-card kg-image-card kg-width-wide"><img src="https://turkogluc.com/content/images/2020/05/Screenshot-2020-05-23-at-03.28.27.png" class="kg-image" alt loading="lazy"></figure><p>So we can store the JWT issued after the login inside the cookies or local storage at our frontend application and send for each request. </p><p>Bare in mind that there are some drawback of using JWT as Auth Token. As we are not storing tokens in the database,  in other words we do not store the user sessions but only verify if the received token is valid or not, <strong>we can not invalidate the tokens</strong>. So if we ban a user, or delete user its token will be still valid. If the user takes the token manually from the local storage or cache content and repeat the call with supplying the token it will be authorized. So we have to wait until token timeouts. </p><p>If we store the token in database and control it while checking auth. then it brings extra complexity of making database call per request. And also as JWT tokens are long it takes relatively big space in the database, so it is also not very efficient to store it. Moreover verify the token consumes time as well for each request. So if we use JWT authentication for internal service communication it would be efficient to verify token without making db calls and storing the sessions, but we may face the listed problems for using REST calls open to your clients. Refer to <a href="http://cryto.net/~joepie91/blog/2016/06/13/stop-using-jwt-for-sessions/?ref=localhost">Link</a> for more details about the drawbacks.</p>
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">Tags</h3>
+                  <ul>
+                      <li>
+                        <a href="/tag/spring/" title="Spring">Spring</a>
+                      </li>
+                      <li>
+                        <a href="/tag/security/" title="Security">Security</a>
+                      </li>
+                  </ul>
+                </section>
+            </div>
+          </div>
+        </div>
+          <section class="m-subscribe-section js-newsletter">
+            <div class="l-wrapper in-post">
+              <div class="m-subscribe-section__content">
+                <div class="m-subscribe-section__text">
+                  <h4 class="m-subscribe-section__title">Subscribe to our newsletter</h4>
+                  <p class="m-subscribe-section__description">
+                    Get the latest posts delivered right to your inbox.
+                  </p>
+                </div>
+                <div class="m-subscribe-section__form">
+
+<div class="m-subscribe-section__form">
+  <form data-members-form="subscribe" id="newsletter-form" class="m-subscribe-section__container">
+    <div class="m-subscribe__form">
+      <div class="pos-relative">
+        <label for="newsletter-input" class="sr-only">Your email address</label>
+        <input data-members-email id="newsletter-input" class="m-input in-subscribe-section" type="email"
+          placeholder="Your email address" required />
+      </div>
+      <button id="newsletter-button" class="m-button primary block" type="submit">Subscribe</button>
+    </div>
+    <div class="m-subscribe__success">
+      <header class="m-heading no-margin">
+        <img src="/assets/images/success.png?v=b36b0218e7" alt="Success!" class="m-subscribe__success_icon">
+        <p class="m-heading__description in-newsletter-form">
+          Now check your inbox and click the link to confirm your subscription.
+        </p>
+      </header>
+    </div>
+    <p class="m-subscribe__invalid m-small-text">
+      Please enter a valid email address
+    </p>
+    <p class="m-subscribe__error m-small-text">
+      Oops! There was an error sending the email, please try later.
+    </p>
+  </form>
+</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="https://turkogluc.com/author/cemal/" class="m-author-picture" aria-label="Cemal Turkoglu">
+                  <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="https://turkogluc.com/author/cemal/">Cemal Turkoglu</a>
+              </h4>
+              <ul class="m-author-links">
+              </ul>
+            </div>
+          </div>
+        </section>
+            <section class="m-recommended">
+              <div class="l-wrapper in-recommended">
+                <h3 class="m-section-title in-recommended">Recommended for you</h3>
+                <div class="m-recommended-articles">
+                  <div class="m-recommended-slider swiper js-recommended-slider">
+                    <div class="swiper-wrapper">
+
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-spring tag-react tag-event-handling tag-java tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2021/01/Blank-diagram--1--1.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/spring/" class="m-article-card__tag">Spring</a>
+      <a href="/server-sent-events-with-spring-boot-and-reactjs/" class="m-article-card__info-link" aria-label="Server Sent Events with Spring Boot and ReactJS">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Server Sent Events with Spring Boot and ReactJS">
+            Server Sent Events with Spring Boot and ReactJS
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>2 years ago</span>
+          <span>&bull;</span>
+          <span>7 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-elasticsearch tag-java tag-devops tag-hash-import-2023-05-25-09-05 featured">
+    <div class="m-article-card__picture">
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2022/02/5ad917357c0c50d0337ce7773184d0ed.png" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+        <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__featured js-tooltip" data-tippy-content="Featured" aria-label="Featured">
+          <span class="icon-star" aria-hidden="true"></span>
+        </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/elasticsearch/" class="m-article-card__tag">Elasticsearch</a>
+      <a href="/centralised-logging-and-monitoring-with-elastic-stack/" class="m-article-card__info-link" aria-label="Centralized Logging and Monitoring with Elastic Stack">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Centralized Logging and Monitoring with Elastic Stack">
+            Centralized Logging and Monitoring with Elastic Stack
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>a year ago</span>
+          <span>&bull;</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+    <div class="m-recommended-slider__item swiper-slide">
+  <article class="m-article-card  post tag-docker tag-react tag-spring tag-hash-import-2023-05-25-09-05">
+    <div class="m-article-card__picture">
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__picture-link" aria-hidden="true" tabindex="-1"></a>
+        <img class="m-article-card__picture-background" src="/content/images/size/w600/2020/09/docker-banner2.jpg" loading="lazy" alt="">
+      <a href="https://turkogluc.com/author/cemal/" class="m-article-card__author js-tooltip" aria-label="Cemal Turkoglu" data-tippy-content="Posted by Cemal Turkoglu ">
+          <div style="background-image: url(/assets/images/default-avatar-square-small.jpg?v=b36b0218e7);"></div>
+      </a>
+    </div>
+      <div class="m-article-card__info">
+        <a href="https://turkogluc.com/tag/docker/" class="m-article-card__tag">docker</a>
+      <a href="/run-react-and-spring-docker-compose/" class="m-article-card__info-link" aria-label="Running ReactJS + Spring Boot Application with Docker Compose">
+        <div>
+          <h2 class="m-article-card__title js-article-card-title " title="Running ReactJS + Spring Boot Application with Docker Compose">
+            Running ReactJS + Spring Boot Application with Docker Compose
+          </h2>
+        </div>
+        <div class="m-article-card__timestamp">
+          <span>3 years ago</span>
+          <span>&bull;</span>
+          <span>2 min read</span>
+        </div>
+      </a>
+    </div>
+  </article>
+    </div>
+                    </div>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-prev" aria-label="Previous">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button class="m-icon-button filled in-recommended-articles swiper-button-next" aria-label="Next">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+    </div>
+  </article>
+</main>
+
+
+
+
+<div class="m-search js-search" role="dialog" aria-modal="true" aria-label="Search">
+  <button class="m-icon-button outlined as-close-search js-close-search" aria-label="Close search">
+    <span class="icon-close" aria-hidden="true"></span>
+  </button>
+  <div class="m-search__content">
+    <form class="m-search__form">
+      <div class="pos-relative">
+        <span class="icon-search m-search-icon" aria-hidden="true"></span>
+        <label for="search-input" class="sr-only">
+          Type to search
+        </label>
+        <input id="search-input" type="text" class="m-input in-search js-input-search" placeholder="Type to search">
+      </div>
+    </form>
+    <div class="js-search-results hide"></div>
+    <p class="m-not-found align-center hide js-no-results">
+      No results for your search, please try with something else.
+    </p>
+  </div>
+</div>
+
+
+<footer class="m-footer">
+  <div class="m-footer__content">
+    <nav class="m-footer-social">
+        <a href="https://www.facebook.com/ghost" target="_blank" rel="noopener" aria-label="Facebook">
+          <span class="icon-facebook" aria-hidden="true"></span>
+        </a>
+        <a href="https://twitter.com/turkoglu4c" target="_blank" rel="noopener" aria-label="Twitter">
+          <span class="icon-twitter" aria-hidden="true"></span>
+        </a>
+      <a href="https://turkogluc.com/rss" aria-label="RSS">
+        <span class="icon-rss" aria-hidden="true"></span>
+      </a>
+    </nav>
+    <p class="m-footer-copyright">
+      <span>Cemal Turkoglu &copy; 2023</span>
+      <span>&nbsp; &bull; &nbsp;</span>
+      <span>Published with <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a></span>
+    </p>
+    <p class="m-footer-copyright jslicense">
+      <a href="/assets/html/javascript.html?v=b36b0218e7" rel="jslicense">JavaScript license information</a>
+    </p>
+  </div>
+</footer>
+
+    <script defer src="/assets/js/manifest.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor/content-api.min.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/vendor.js?v=b36b0218e7"></script>
+    <script defer src="/assets/js/app.js?v=b36b0218e7"></script>
+
+      <script defer src="/assets/js/post.js?v=b36b0218e7"></script>
+
+
+    <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/java.min.js" integrity="sha512-YVNh+JI3AZyDUu/aGDh2vLgstb4kYs5U/WsTge2QQhU5fTsQLPFgX64gVAE/6qDSPUfpMGtG8M74uT3Y1SUU/w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/javascript.min.js" integrity="sha512-QKMem5huKjrqi8ym4y9CvmmOvrimnBdRqEp269PoiENovcPr073iaXkoU8YPzGk+qJ4rNd4W/AatDTtB7uW52g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/yaml.min.js" integrity="sha512-Rd5FUDZGJkdJ4Z/pZTgK+6QMWl0ubeugVNnXMK/QhiDxw5IMuYYxJOoPcof66vzvkpg0XjumgSvdaLOftzR5uQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/groovy.min.js" integrity="sha512-+Pin3A2zbWHySvtjP3FIddvwD7Fl1fLZA+rwlrQOUWzQTdJ9ycbPpqqlJSgfnngME/WDlugENmeglfQilO/CgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/bash.min.js" integrity="sha512-VChHo3Iw9v3ZEvy8w2NFK62jJ27P7Y9N+uu94NwquvTSc/80oXBFnkK8Rk2z63rTwXHoJ9AiMbNbzLeB/BrryA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/json.min.js" integrity="sha512-FoN8JE+WWCdIGXAIT8KQXwpiavz0Mvjtfk7Rku3MDUNO0BDCiRMXAsSX+e+COFyZTcDb9HDgP+pM2RX12d4j+A==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/dockerfile.min.js" integrity="sha512-PkYx44XPGihIBrIcdSUHi9gVPtedxVU4MiAxcdH3kG1B1ZA/2UZLLXg84gLWoFojIC2srDBjoOxNrJKGINwELw==" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-groovy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-sql.min.js"></script>
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166072389-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166072389-1');
+</script>
+  </body>
+</html>
